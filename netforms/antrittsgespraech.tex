@@ -56,12 +56,11 @@ In contrary to common hardware switches, the whole packet processing is done in
 software. This allows a more versatile use of the same router in different
 applications and provides flexibility regarding hardware it can run on.
 
-Typically hardware router are expected to be faster than software router, but
+Typically hardware routers are expected to be faster than software routers, but
 VPP has several approaches to perform better compared to similar software
 projects like Open vSwitch or the Linux Router: As the name indicates, it
 processes packages in vectors, in other words, multiple packages at a time which
-reduces overhead per package. Furthermore it uses an own driver for it's network
-interfaces.
+reduces overhead per package. Furthermore it doesn't use the slow linux network drivers for it's interfaces, but an own one.
 
 The scope of this Bachelor's thesis shall be to measure the performance of VPP
 and to evaluate which scenarios are important to be tested.
@@ -75,26 +74,30 @@ shall be implemented to run the scenarios on the Baltikum testbed. In the end a
 conclusion shall be made, giving VPP a rough rank relative to real world routing
 solutions.
 
-This Bachelor's Thesis shall test VPP torwards IPv4 versus IPv6,
-packet sizes, cpu scaling (optionally multi socket NUMA architectures) and
-routing table sizes (BGP table size \textgreater 600.000 entries in 2017 \cite{bgphelp:1}).
-Optionally one specific VPP feature like tunneling, firewall or NAT can be analyzed, too.
+This Bachelor's Thesis shall test VPP torwards IPv4 versus IPv6, packet sizes,
+cpu scaling (optionally multi socket NUMA architectures) and routing table sizes
+(BGP table size \textgreater 600.000 entries in 2017 \cite{bgphelp:1}).
+Optionally one specific VPP feature can be analyzed, too, like tunneling,
+firewall or NAT.
 
-Measurement results shall contain package count (per time), latency, package loss and whitebox testing results: cpu load and cache misses.
+Measurement results shall contain package count (per time), latency, package
+loss and whitebox testing results: Cpu load and cache misses.
 
-** planned scenarios / parameters
+moongen, kaunas, vpp
 
-** timetable
+\subsection*{Timetable}
 
-\begin{table}[]
-\begin{tabular}{|l|l|l|l|l|}
+\begin{tabular}{|l|p{10cm}|}
 \hline
-Target Tate & Task &  &  &  \\ \hline
-asdasd      &      &  &  &  \\ \hline
-            &      &  &  &  \\ \hline
-            &      &  &  &  \\ \hline
+Deadline after $n$ Months & Task \\ \hline
+0.5 & automate a basic testbench setup and run a test using moongen for
+the tester and VPP for the DUT \\ \hline
+1.0 & run tests with changing parameters \\ \hline
+1.5 & create result visualization pilelines and analyze them \\ \hline
+2.5 & improve tests and extend them by whitebox testing \\ \hline
+3.0 & analyze new results and review testing methodology \\ \hline
+4.0 & Assemble Thesis from analysiss and testing results \\ \hline
 \end{tabular}
-\end{table}
 
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,lit}
