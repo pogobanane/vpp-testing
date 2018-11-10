@@ -1,0 +1,103 @@
+\documentclass[NET,a4,12pt,ngerman]{netforms}
+
+\usepackage[utf8]{inputenc}
+\usepackage{tumlang}
+\usepackage{tumcontact}
+\usepackage{scrpage2}
+
+\geometry{%
+	top=10mm,
+	bottom=10mm,
+	left=25mm,
+	right=25mm,
+	headsep=1.5cm,
+	includehead,
+}
+\input{studentdefs}
+
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\chead{\TUMheader{1cm}}
+
+\renewcommand{\maketitle}{%
+	\begin{center}
+		\textbf{\introductoryheadline}%
+
+		\Large%
+		\textbf{\thetitle}%
+	\end{center}
+
+	\footnotesize%
+	\hrule
+	\vskip1ex
+	\begin{tabular}{ll}
+		\thenamelabel: & \thevorname{} \textbf{\thenachname}\\
+		\theadvisorlabel: & \hspace*{-.5ex}\thebetreuer\\
+		\thesupervisorlabel: & \chairhead\\
+		\thebeginlabel: & \thebeginnmonat/\thebeginnjahr\\
+		\theendlabel: & \theendmonat/\theendjahr\\
+	\end{tabular}
+	\vskip1ex
+	\hrule
+	\vskip4ex
+}
+
+\linespread{1.2}
+\setlength{\parskip}{.5\baselineskip}
+
+\begin{document}
+\maketitle
+
+\subsection*{Topic}
+
+VPP (Vector Packet Processing) \cite{vppwiki:1} is an open source software for
+providing efficient network switching and routing.
+In contrary to common hardware switches, the whole packet processing is done in
+software. This allows a more versatile use of the same router in different
+applications and provides flexibility regarding hardware it can run on.
+
+Typically hardware router are expected to be faster than software router, but
+VPP has several approaches to perform better compared to similar software
+projects like Open vSwitch or the Linux Router: As the name indicates, it
+processes packages in vectors, in other words, multiple packages at a time which
+reduces overhead per package. Furthermore it uses an own driver for it's network
+interfaces.
+
+The scope of this Bachelor's thesis shall be to measure the performance of VPP
+and to evaluate which scenarios are important to be tested.
+
+
+\subsection*{Approach}
+
+Fist of all this Bachelor's Thesis shall explain, why the below stated scenarios
+have been selected to measure the performance of VPP. Afterwards automated tests
+shall be implemented to run the scenarios on the Baltikum testbed. In the end a
+conclusion shall be made, giving VPP a rough rank relative to real world routing
+solutions.
+
+This Bachelor's Thesis shall test VPP torwards IPv4 versus IPv6,
+packet sizes, cpu scaling (optionally multi socket NUMA architectures) and
+routing table sizes (BGP table size \textgreater 600.000 entries in 2017 \cite{bgphelp:1}).
+Optionally one specific VPP feature like tunneling, firewall or NAT can be analyzed, too.
+
+Measurement results shall contain package count (per time), latency, package loss and whitebox testing results: cpu load and cache misses.
+
+** planned scenarios / parameters
+
+** timetable
+
+\begin{table}[]
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+Target Tate & Task &  &  &  \\ \hline
+asdasd      &      &  &  &  \\ \hline
+            &      &  &  &  \\ \hline
+            &      &  &  &  \\ \hline
+\end{tabular}
+\end{table}
+
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,lit}
+
+
+\end{document}

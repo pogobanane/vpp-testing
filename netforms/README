@@ -1,0 +1,54 @@
+
+netforms
+========
+
+LaTeX template for student forms. The most important things are documented
+below.
+
+
+Dependencies
+------------
+
+In order to compile the template you need the following packages:
+	texlive-full >= 2015
+	make
+
+Tested under Linux (Debian) and OSX only.
+
+
+Customization
+-------------
+
+Customizations such as department, chair, exmainer, module number etc. are made
+in studentdefs.tex.  All configuration commands are documented there.
+
+
+Usage
+-----
+
+Edit studentdefs.tex to fit your needs. Then type on of the following commands:
+
+make - defaults to 'make all' (see below)
+make bachelor - compile the registration for a Bachelor's thesis
+make vertrag - compile the chair's 'vertrag' form
+make aufnahme - compile the chair's 'aufnahme' form
+make all - compile all targets listed above
+
+
+Package options
+---------------
+
+none
+
+
+Command reference
+-----------------
+
+See studentdefs.tex for more information.
+
+
+Known bugs:
+-----------
+
+- Templates for Master's thesis, IDP and guided research are missing.
+
