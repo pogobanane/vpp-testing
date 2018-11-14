@@ -70,23 +70,21 @@ and to evaluate which scenarios are important to be tested.
 
 For this Bachelor's Thesis  automated tests shall be implemented to run test
 scenarios on the Baltikum testbed. Moongen \cite{moongen:1} shall be used on the
-tester to generate loads.
+tester to generate loads. The testing shall be reproducable by beeing automated
+and shall be comparable by documenting circumstances well.
 
-VPP shall be tested torwards IPv4 versus IPv6, packet sizes, cpu scaling
-(optionally multi socket NUMA architectures) and routing table sizes (BGP table
-size \textgreater 600.000 entries in 2017 \cite{bgphelp:1}). Optionally one
-specific VPP feature can be analyzed, too, like tunneling, firewall or NAT.
+VPP shall be tested torwards IPv4 versus IPv6, packet sizes, test traffic
+patterns, cpu scaling (optionally multi socket NUMA architectures) and size of
+the Forwarding and Routing Information Base (BGP size \textgreater 600.000
+entries in 2017 \cite{bgphelp:1}). Optionally one advanced scenario can be
+analyzed, too, like tunneling, firewall, NAT or virtualization.
 
-Measurement results shall contain package count (per time), latency, package
-loss and whitebox testing results: Cpu load and cache misses.
+Measurement results shall contain package count (per time), package loss,
+latency and whitebox testing results using perf: Cpu load and cache misses.
 
 In the end a conclusion shall be made, giving VPP a rough rank relative to real
 world routing solutions.
 
-** optional: VPP performance in quemu
-
-** important related work: \cite{vppwiki:perfomance} \cite{vppwiki:benchmarks}
-\cite{revisiting-benchmarking:1} \cite{openvswitch:gym}
 
 \subsection*{Timetable}
 
