@@ -1,0 +1,10 @@
+port:
+        tx: 1
+        rx: 0
+
+cpu-freq: 50
+
+vpp:
+        # config path relative to
+        # dut_setup_variables.yaml/vpp_testing_git/repo's root
+        config: 'scripts/vpp-configs/simple.conf'

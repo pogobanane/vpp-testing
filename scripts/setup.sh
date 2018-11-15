@@ -12,9 +12,6 @@ DUT=$2
 echo "allocate hosts"
 pos allocations allocate "$DUT"
 
-echo "load experiment variables"
-pos allocations variables "$DUT" dut-variables.yaml
-
 echo "set images to debian stretch"
 pos nodes image "$DUT" debian-stretch
 
@@ -29,6 +26,21 @@ pos nodes push "$DUT" vpp-lib.deb
 pos nodes push "$DUT" vpp-plugins.deb
 echo "done"
 
-echo "deploy & run experiment scripts..."
-{ pos nodes cmd --infile dut.sh "$DUT"; echo "$DUT userscript executed"; } &
+# install vpp
+
+echo "load vpp installation variables"
+pos allocations variables "$DUT" dut_setup_variables.yaml
+
+echo "install vpp..."
+pos nodes cmd --infile dut_vpp_install.sh "$DUT"
+echo "$DUT vpp installed"
+
+# run test
+
+echo "load vars for vpp test"
+pos allocations variables "$DUT" dut_test1.yaml
+
+echo "run test..."
+pos nodes cmd --infile dut_vpp_run.sh "$DUT"
+echo "$DUT finished test"
 wait

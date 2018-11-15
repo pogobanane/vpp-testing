@@ -1,3 +1,11 @@
 vpp.service
 
 vppctl show int
+
+vppctl -s localhost:5002
+
+/usr/bin/vpp -c /etc/vpp/startup.conf
+
+
+rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
+modprobe uio_pci_generic

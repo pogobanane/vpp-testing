@@ -1,5 +1,9 @@
 
 
+# expects a dut_setup_variables.yaml
+
+
+
 VPP_DEBS=$(pos_get_variable dependencies)
 for i in "${VPP_DEBS[@]}"
 do

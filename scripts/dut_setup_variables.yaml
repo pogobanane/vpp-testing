@@ -11,9 +11,3 @@ vpp_testing_git:
 dependencies:
         - '/tmp/vpp1.deb'
         - '/tmp/vpp2.deb'
-
-port:
-        tx: 1
-        rx: 0
-
-cpu-freq: 50

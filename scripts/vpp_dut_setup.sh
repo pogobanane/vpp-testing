@@ -1,3 +1,4 @@
+# deprivated
 apt-get install apt-transport-https
 echo "deb [trusted=yes] https://nexus.fd.io/content/repositories/fd.io.ubuntu.xenial.main/ ./" > /etc/apt/sources.list.d/99fd.io.list
 apt-get update
