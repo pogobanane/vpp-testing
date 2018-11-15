@@ -82,8 +82,9 @@ analyzed, too, like tunneling, firewall, NAT or virtualization.
 Measurement results shall contain package count (per time), package loss,
 latency and whitebox testing results using perf: Cpu load and cache misses.
 
-In the end a conclusion shall be made, giving VPP a rough rank relative to real
-world routing solutions.
+In the end a performance model shall be created (as in \cite{compare-highperf})
+and a conclusion shall be made, giving VPP a rough rank relative to real world
+routing solutions.
 
 
 \subsection*{Timetable}
@@ -91,12 +92,12 @@ world routing solutions.
 \begin{tabular}{|l|p{10cm}|}
 \hline
 Deadline after $n$ Months & Task \\ \hline
-0.5 & automate a basic testbench setup and run a test using moongen for
+0.5 & Automate a basic testbench setup and run a test using moongen for
 the tester and VPP for the DUT \\ \hline
-1.0 & run tests with changing parameters \\ \hline
-1.5 & create result visualization pilelines and analyze them \\ \hline
-2.5 & improve tests and extend them by whitebox testing \\ \hline
-3.0 & analyze new results and review testing methodology \\ \hline
+1.0 & Design and run benchmarking scenarios for basic VPP configurations \\ \hline
+1.5 & Create result visualization pipelines and analyze them \\ \hline
+2.5 & Improve tests and implement advanced test scenarios \\ \hline
+3.0 & Analyze new results and review testing methodology \\ \hline
 4.0 & Assemble Thesis from analysiss and testing results \\ \hline
 \end{tabular}
 
