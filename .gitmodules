@@ -1,3 +1,6 @@
 [submodule "libmoon"]
 	path = libmoon
 	url = https://github.com/libmoon/libmoon.git
+[submodule "vpp"]
+	path = vpp
+	url = https://gerrit.fd.io/r/vpp
