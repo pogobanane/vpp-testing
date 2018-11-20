@@ -29,6 +29,8 @@ dpkg -i build-root/vpp-plugins_*_amd64.deb
 # insufficient memory for socket-mem!
 
 ## verify/check installation
+systemctl stop vpp
+systemctl disable vpp
 # nvm this paragraph
 #`vpp.service`
 #`'linux-vdso.so.1': No such file or directory` is expected.
