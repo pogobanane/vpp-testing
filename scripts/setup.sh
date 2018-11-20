@@ -1,3 +1,5 @@
+# expects to be run from the ba-okelmann project root
+
 # hosts. The two experiment scripts demonstrate how to use all of the postools on the hosts.
 # The experiment is to run one of the example MoonGen scripts
 
@@ -9,21 +11,19 @@ fi
 DUT=$2
 
 # allocate all hosts for ONE experiment
-echo "allocate hosts"
-pos allocations allocate "$DUT"
+#echo "allocate hosts"
+#pos allocations allocate "$DUT"
 
-echo "set images to debian stretch"
-pos nodes image "$DUT" debian-stretch
+#echo "set images to debian stretch"
+#pos nodes image "$DUT" debian-stretch
 
-echo "reboot experiment hosts..."
+#echo "reboot experiment hosts..."
 # run reset blocking in background and wait for processes to end before continuing
-{ pos nodes reset "$DUT"; echo "$DUT booted successfully"; } &
-wait
+#{ pos nodes reset "$DUT"; echo "$DUT booted successfully"; } &
+#wait
 
 echo "transferring binaries to $DUT..."
-pos nodes push "$DUT" vpp.deb
-pos nodes push "$DUT" vpp-lib.deb
-pos nodes push "$DUT" vpp-plugins.deb
+scp -r ./ "$DUT":~/ba-okelmann
 echo "done"
 
 # install vpp
@@ -32,7 +32,7 @@ echo "load vpp installation variables"
 pos allocations variables "$DUT" dut_setup_variables.yaml
 
 echo "install vpp..."
-pos nodes cmd --infile dut_vpp_install.sh "$DUT"
+pos nodes cmd "$DUT" scripts/vpp_build_install.sh
 echo "$DUT vpp installed"
 
 # run test
@@ -41,6 +41,6 @@ echo "load vars for vpp test"
 pos allocations variables "$DUT" dut_test1.yaml
 
 echo "run test..."
-pos nodes cmd --infile dut_vpp_run.sh "$DUT"
+#pos nodes cmd --infile dut_vpp_run.sh "$DUT"
 echo "$DUT finished test"
 wait
