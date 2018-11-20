@@ -37,7 +37,7 @@ echo "load vpp installation variables"
 pos allocations variables "$DUT" scripts/dut_setup_variables.yaml
 
 echo "install vpp..."
-pos nodes cmd "$DUT" scripts/vpp_build_install.sh
+pos nodes cmd "$DUT" ba-okelmann/scripts/vpp_build_install.sh
 echo "$DUT vpp installed"
 
 # run test
