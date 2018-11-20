@@ -5,8 +5,7 @@
 
 #apt-get install git
 #git clone https://gerrit.fd.io/r/vpp
-apt-get install make gcc sudo
-cd vpp
+apt-get -y install make gcc sudo
 ./build-root/vagrant/build.sh
 make install-dep
 make install-ext-deps
@@ -17,9 +16,9 @@ make pkg-deb
 # ls build-root/*.deb
 
 ## install
-dpkg -i vpp-lib_19.01-rc0\~249-gb4d30534_amd64.deb
-dpkg -i vpp_19.01-rc0\~249-gb4d30534_amd64.deb
-dpkg -i vpp/build-root/vpp-plugins_19.01-rc0\~249-gb4d30534_amd64.deb
+dpkg -i build-root/vpp-lib_19.01-rc0\~249-gb4d30534_amd64.deb
+dpkg -i build-root/vpp_19.01-rc0\~249-gb4d30534_amd64.deb
+dpkg -i build-root/vpp-plugins_19.01-rc0\~249-gb4d30534_amd64.deb
 
 
 # running
