@@ -23,7 +23,7 @@ DUT=$2
 #wait
 
 echo "transferring binaries to $DUT..."
-scp -r ./ "$DUT":~/ba-okelmann
+scp -r ./ "$DUT":~/
 echo "done"
 
 # install vpp
