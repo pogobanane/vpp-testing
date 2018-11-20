@@ -16,9 +16,9 @@ make pkg-deb
 # ls build-root/*.deb
 
 ## install
-dpkg -i build-root/vpp-lib_19.01-rc0\~249-gb4d30534_amd64.deb
-dpkg -i build-root/vpp_19.01-rc0\~249-gb4d30534_amd64.deb
-dpkg -i build-root/vpp-plugins_19.01-rc0\~249-gb4d30534_amd64.deb
+dpkg -i "build-root/vpp-lib_19.01-rc0~249-gb4d30534_amd64.deb"
+dpkg -i "build-root/vpp_19.01-rc0~249-gb4d30534_amd64.deb"
+dpkg -i "build-root/vpp-plugins_19.01-rc0~249-gb4d30534_amd64.deb"
 
 
 # running
