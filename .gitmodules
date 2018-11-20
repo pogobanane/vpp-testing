@@ -4,3 +4,4 @@
 [submodule "vpp"]
 	path = vpp
 	url = https://gerrit.fd.io/r/vpp
+	ignore = all

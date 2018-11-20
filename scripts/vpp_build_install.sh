@@ -1,6 +1,9 @@
 # tested on debian stretch mini
 # expects to be in the vpp repo root
 
+# exit on error
+set -e
+
 ## build vpp
 
 #apt-get install git
