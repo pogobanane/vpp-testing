@@ -10,6 +10,11 @@ fi
 
 DUT=$1
 
+# exit on error
+set -e
+# log every command
+set -x
+
 # allocate all hosts for ONE experiment
 #echo "allocate hosts"
 #pos allocations allocate "$DUT"
