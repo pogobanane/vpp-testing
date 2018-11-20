@@ -28,7 +28,7 @@ set -x
 #wait
 
 echo "transferring binaries to $DUT..."
-rsync -r -l ./ "$DUT":~/ba-okelmann/
+rsync -r -l --delete ./ "$DUT":~/ba-okelmann/
 echo "done"
 
 # install vpp
