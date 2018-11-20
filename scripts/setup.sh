@@ -34,7 +34,7 @@ echo "done"
 # install vpp
 
 echo "load vpp installation variables"
-pos allocations variables "$DUT" dut_setup_variables.yaml
+pos allocations variables "$DUT" scripts/dut_setup_variables.yaml
 
 echo "install vpp..."
 pos nodes cmd "$DUT" scripts/vpp_build_install.sh
@@ -43,7 +43,7 @@ echo "$DUT vpp installed"
 # run test
 
 echo "load vars for vpp test"
-pos allocations variables "$DUT" dut_test1.yaml
+pos allocations variables "$DUT" scripts/dut_test1.yaml
 
 echo "run test..."
 #pos nodes cmd --infile dut_vpp_run.sh "$DUT"
