@@ -21,6 +21,6 @@ echo "load vars for vpp test"
 pos allocations variables "$DUT" scripts/dut_test1.yaml
 
 echo "run test..."
-pos nodes cmd --infile dut_vpp_run.sh "$DUT"
+pos nodes cmd --infile scripts/dut_vpp_run.sh "$DUT"
 echo "$DUT finished test"
 wait
