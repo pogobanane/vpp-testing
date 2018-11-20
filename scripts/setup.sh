@@ -8,7 +8,7 @@ if test "$#" -ne 1; then
 	exit
 fi
 
-DUT=$2
+DUT=$1
 
 # allocate all hosts for ONE experiment
 #echo "allocate hosts"
