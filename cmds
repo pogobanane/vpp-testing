@@ -9,3 +9,6 @@ vppctl -s localhost:5002
 
 rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
 modprobe uio_pci_generic
+
+# pos results end up in
+/srv/testbed/results/manual_test_okelmann
