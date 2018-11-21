@@ -56,6 +56,6 @@ echo "Stopped test $STEP"
 
 # kill the process started with pos_run
 # command/stdout/stderr are uploaded automatically
-pos_kill tuttest1
+pos_kill duttest1
 
 echo "all done"
