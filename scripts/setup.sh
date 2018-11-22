@@ -33,9 +33,6 @@ echo "done"
 
 # install vpp
 
-echo "load vpp installation variables"
-pos allocations variables "$DUT" scripts/dut_setup_variables.yaml
-
 echo "install vpp..."
 ssh "$DUT" "cd ba-okelmann/vpp && ../scripts/vpp_build_install.sh"
 echo "$DUT vpp installed"
