@@ -13,15 +13,15 @@ apt-get -y install make gcc sudo
 make install-dep
 make install-ext-deps
 # make release build and package for .deb
-make pkg-deb
+make build-release
 
 # Artifacts:
 # ls build-root/*.deb
 
 ## install
-dpkg -i build-root/vpp-lib_*_amd64.deb
-dpkg -i build-root/vpp_*_amd64.deb
-dpkg -i build-root/vpp-plugins_*_amd64.deb
+# dpkg -i build-root/vpp-lib_*_amd64.deb
+# dpkg -i build-root/vpp_*_amd64.deb
+# dpkg -i build-root/vpp-plugins_*_amd64.deb
 
 
 # running
@@ -32,8 +32,8 @@ dpkg -i build-root/vpp-plugins_*_amd64.deb
 # insufficient memory for socket-mem!
 
 ## verify/check installation
-systemctl stop vpp
-systemctl disable vpp
+# systemctl stop vpp
+# systemctl disable vpp
 # nvm this paragraph
 #`vpp.service`
 #`'linux-vdso.so.1': No such file or directory` is expected.
