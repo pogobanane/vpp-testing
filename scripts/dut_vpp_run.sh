@@ -2,6 +2,7 @@
 # expects a dut_test*.yaml
 # expects the ba-okelmann git to be checked out at ~/ba-okelmann
 GITDIR="/root/ba-okelmann"
+BINDIR="${GITDIR}/build-root/build-vpp-native/bin"
 cd "$GITDIR"
 
 # exit on error
@@ -35,10 +36,10 @@ echo $(pos_get_variable cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_per
 
 # set clean up vpp
 rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
-#modprobe uio_pci_generic
+modprobe uio_pci_generic
 
 # load some variables
-VPP_CONFIG=$(pos_get_variable vpp/config)
+# VPP_CONFIG=$(pos_get_variable vpp/config)
 
 echo 'Done setting up'
 pos_sync
@@ -48,7 +49,7 @@ echo "Starting test"
 
 # run libmoon in background using pos_run
 # pos_run COMMMAND_ID -- COMMAND
-pos_run duttest1 -- /usr/bin/vpp -c $VPP_CONFIG
+pos_run duttest1 -- ${BINDIR}/vpp -c 
 
 # wait for test done signal
 pos_sync
