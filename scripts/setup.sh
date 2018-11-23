@@ -3,12 +3,13 @@
 # hosts. The two experiment scripts demonstrate how to use all of the postools on the hosts.
 # The experiment is to run one of the example MoonGen scripts
 
-if test "$#" -ne 1; then
-	echo "Usage: setup.sh dut"
+if test "$#" -ne 2; then
+	echo "Usage: setup.sh dut loadgen"
 	exit
 fi
 
 DUT=$1
+LOADGEN=$2
 
 # exit on error
 set -e
@@ -31,11 +32,18 @@ echo "transferring binaries to $DUT..."
 rsync -r -l --delete ./ "$DUT":~/ba-okelmann/
 echo "done"
 
-# install vpp
+# install vpp and moongen
 
 echo "install vpp..."
-ssh "$DUT" "cd ba-okelmann/vpp && ../scripts/vpp_build_install.sh"
-echo "$DUT vpp installed"
+{ 
+	ssh "$DUT" "cd ba-okelmann/vpp && ../scripts/vpp_build_install.sh"
+	echo "$DUT vpp installed"
+} &
+{
+	ssh "$LOADGEN" "cd ba-okelmann/MoonGen && ../scripts/loadgen_build.sh"
+	echo "$LOADGEN MoonGen installed"
+} &
+wait
 
 # run test
 
