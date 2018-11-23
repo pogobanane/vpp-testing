@@ -13,7 +13,7 @@ apt-get -y install make gcc sudo
 make install-dep
 make install-ext-deps
 # make release build and package for .deb
-make build-release
+make build
 
 # Artifacts:
 # ls build-root/*.deb
