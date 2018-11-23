@@ -5,3 +5,6 @@
 	path = vpp
 	url = https://gerrit.fd.io/r/vpp
 	ignore = all
+[submodule "MoonGen"]
+	path = MoonGen
+	url = https://github.com/emmericp/MoonGen.git
