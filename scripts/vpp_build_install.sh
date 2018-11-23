@@ -8,8 +8,8 @@ set -e
 
 #apt-get install git
 #git clone https://gerrit.fd.io/r/vpp
-# dont do this maybe? apt-get -y install make gcc sudo
-./build-root/vagrant/build.sh
+apt-get -y install make gcc sudo
+# dont do this maybe?  ./build-root/vagrant/build.sh
 make install-dep
 make install-ext-deps
 # make release build and package for .deb
