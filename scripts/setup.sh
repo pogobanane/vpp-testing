@@ -28,8 +28,14 @@ set -x
 #{ pos nodes reset "$DUT"; echo "$DUT booted successfully"; } &
 #wait
 
-echo "transferring binaries to $DUT..."
-rsync -r -l --delete ./ "$DUT":~/ba-okelmann/
+echo "transferring binaries to $DUT and $LOADGEN..."
+{
+	rsync -r -l --delete ./ "$DUT":~/ba-okelmann/ 
+} &
+{ 
+	rsync -r -l --delete ./ "$LOADGEN":~/ba-okelmann/
+} &
+wait
 echo "done"
 
 # install vpp and moongen
