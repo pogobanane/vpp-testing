@@ -10,8 +10,8 @@ set -e
 #git clone https://gerrit.fd.io/r/vpp
 apt-get -y install make gcc sudo
 # dont do this maybe?  ./build-root/vagrant/build.sh
-make install-dep
-make install-ext-deps
+UNATTENDED=y make install-dep
+UNATTENDED=y make install-ext-deps
 # make release build and package for .deb
 make build
 
