@@ -1,0 +1,11 @@
+@VPP:
+
+set int state GigabitEthernet4/0/0 up
+set int state GigabitEthernet4/0/1 up
+set int l2 bridge GigabitEthernet4/0/0 1
+set int l2 bridge GigabitEthernet4/0/1 1
+
+
+@MoonGen:
+
+./build/MoonGen examples/l2-load-latency.lua  -f asd.csv 0 1
