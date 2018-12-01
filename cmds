@@ -8,6 +8,9 @@ show int addr
 # show err <=> node mapping
 show err
 
+trace add dpdk-input 10 # or virtio-input or af-packet-input
+trace show
+clear trace
 
 vppctl -s localhost:5002
 
