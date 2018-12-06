@@ -2,7 +2,7 @@
 # expects a dut_test*.yaml
 # expects the ba-okelmann git to be checked out at ~/ba-okelmann
 GITDIR="/root/ba-okelmann"
-BINDIR="${GITDIR}/build-root/build-vpp-native/bin"
+BINDIR="${GITDIR}/build-root/install-vpp_debug-native/vpp/bin"
 cd "$GITDIR"
 
 # exit on error
