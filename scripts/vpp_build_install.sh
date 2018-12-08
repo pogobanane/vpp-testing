@@ -13,7 +13,7 @@ apt-get -y install make gcc sudo
 UNATTENDED=y make install-dep
 UNATTENDED=y make install-ext-deps
 # make release build and package for .deb
-make build
+make build-release
 
 # Artifacts:
 # ls build-root/*.deb
