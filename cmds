@@ -5,6 +5,7 @@ show ip arp
 show ip fib
 show l2fib verbose
 show int addr
+show threads
 # show err <=> node mapping
 show err
 
