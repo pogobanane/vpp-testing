@@ -6,6 +6,8 @@ show ip fib
 show l2fib verbose
 show int addr
 show threads
+show dpdk interface hqos placement
+show dpdk interface hqos INTERFACE
 # show err <=> node mapping
 show err
 
