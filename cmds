@@ -1,5 +1,15 @@
 vpp.service
 
+# CPUSET
+## build cage
+cset shield --sysset=freeset --userset=vppcage --cpu=2-15 --kthread=on
+## list procs of cupsets
+cset proc --list --set vppcagertByF7Nice
+## run something in the cage
+cset proc --set vppcage --exec -- ./run.sh asdf
+
+extras/vpp_config/data/startup.conf.template
+
 vppctl show int
 show ip arp
 show ip fib
