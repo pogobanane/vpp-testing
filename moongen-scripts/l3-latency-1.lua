@@ -96,10 +96,11 @@ function waitWarmup(rxQueue, timeout)
 	bufs:free(rx)
 	if rx <= 0 then
 		log:error("no packet could be received!")
-	else 
+	else
 		log:info("first packet received")
 	end
 	return rx
+end
 
 function timerSlave(txQueue, rxQueue, size, flows)
 	if size < 84 then
@@ -128,4 +129,3 @@ function timerSlave(txQueue, rxQueue, size, flows)
 	hist:print()
 	hist:save("histogram.csv")
 end
-
