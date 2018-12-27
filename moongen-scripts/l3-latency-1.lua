@@ -92,7 +92,7 @@ function waitWarmup(rxQueue, timeout)
 	local bufs = memory.bufArray()
 
 	log:info("waiting for first successful packet...")
-	local rx = rxQueue:tryRecv(bufs, timeout)
+	local rx = rxQueue:recv(bufs, 1)
 	bufs:free(rx)
 	if rx <= 0 then
 		log:error("no packet could be received!")
