@@ -89,11 +89,11 @@ end
 
 -- exits on error!
 function waitWarmup(rxQueue, timeout)
-	local bufs = memory.bufArray()
+	local bufs = memory.bufArray(128)
 
 	log:info("waiting for first successful packet...")
-	local rx = rxQueue:recv(bufs, 1)
-	bufs:free(rx)
+	local rx = rxQueue:tryRecv(bufs, 10000000)
+	bufs:freeAll()
 	if rx <= 0 then
 		log:error("no packet could be received!")
 	else
@@ -107,9 +107,12 @@ function timerSlave(txQueue, rxQueue, size, flows)
 		log:warn("Packet size %d is smaller than minimum timestamp size 84. Timestamped packets will be larger than load packets.", size)
 		size = 84
 	end
+
+	waitWarmup(rxQueue, 10000)
+	log:info("timing")
+
 	local timestamper = ts:newUdpTimestamper(txQueue, rxQueue)
 	local hist = hist:new()
-	waitWarmup(rxQueue, 10000)
 	mg.sleepMillis(1000) -- ensure that the load task is running
 	local counter = 0
 	local rateLimit = timer:new(0.001)
