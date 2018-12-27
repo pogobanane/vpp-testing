@@ -45,7 +45,7 @@ function master(args)
 		txDev:getTxQueue(0):setRate(args.rate - (args.size + 4) * 8 / 1000)
 	end
 	mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.size, args.flows)
-	mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.size, args.flows)
+	mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.size, args.flows, rxDev:getRxQueue(0))
 	mg.waitForTasks()
 end
 
@@ -102,13 +102,13 @@ function waitWarmup(rxQueue, timeout)
 	return rx
 end
 
-function timerSlave(txQueue, rxQueue, size, flows)
+function timerSlave(txQueue, rxQueue, size, flows, rxWarmupQueue)
 	if size < 84 then
 		log:warn("Packet size %d is smaller than minimum timestamp size 84. Timestamped packets will be larger than load packets.", size)
 		size = 84
 	end
 
-	waitWarmup(rxQueue, 10000)
+	waitWarmup(rxWarmupQueue, 10000)
 	log:info("timing")
 
 	local timestamper = ts:newUdpTimestamper(txQueue, rxQueue)
