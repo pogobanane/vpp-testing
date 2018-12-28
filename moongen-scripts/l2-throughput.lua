@@ -28,12 +28,12 @@ function master(args)
   local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
   txWarmup(recTask, txDev:getTxQueue(0), args.ethDst, args.pktSize)
   mg.waitForTasks()
-  mg.startTask("loadSlave", txDev:getTxQueue(0), args.ethDst, args.pktSize)
+  mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.ethDst, args.pktSize)
   mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.file)
   mg.waitForTasks()
 end
 
-function loadSlave(txQueue, eth_dst, pktSize)
+function loadSlave(txQueue, rxDev, eth_dst, pktSize)
   local mem = memory.createMemPool(function(buf)
     buf:getEthernetPacket():fill{
       ethSrc = txQueue,
@@ -42,10 +42,16 @@ function loadSlave(txQueue, eth_dst, pktSize)
     }
   end)
   local bufs = mem:bufArray()
+	local txCtr = stats:newDevTxCounter(txQueue, "plain")
+	local rxCtr = stats:newDevRxCounter(rxDev, "plain")
   while mg.running() do
     bufs:alloc(pktSize)
     txQueue:send(bufs)
+    txCtr:update()
+    rxCtr:update()
   end
+  txCtr:finalize()
+  rxCtr:finalize()
 end
 
 function timerSlave(txQueue, rxQueue, ethDst, histfile)
