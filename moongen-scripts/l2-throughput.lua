@@ -28,6 +28,8 @@ function master(args)
   mg.startTask("txWarmup", txDev:getTxQueue(0), args.ethDst, args.pktSize)
   mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
   mg.waitForTasks()
+  mg.startTask("loadSlave", txDev:getTxQueue(0), args.ethDst, args.pktSize)
+  mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.file)
 end
 
 function loadSlave(txQueue, eth_dst, pktSize)
@@ -43,6 +45,17 @@ function loadSlave(txQueue, eth_dst, pktSize)
     bufs:alloc(pktSize)
     txDev:send(bufs)
   end
+end
+
+function timerSlave(txQueue, rxQueue, histfile)
+	local timestamper = ts:newTimestamper(txQueue, rxQueue)
+	local hist = hist:new()
+	mg.sleepMillis(1000) -- ensure that the load task is running
+	while mg.running() do
+		hist:update(timestamper:measureLatency(function(buf) buf:getEthernetPacket().eth.dst:setString(ETH_DST) end))
+	end
+	hist:print()
+	hist:save(histfile)
 end
 
 function txWarmup(txQueue, eth_dst, pktSize)
