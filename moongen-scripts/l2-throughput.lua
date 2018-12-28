@@ -29,7 +29,7 @@ function master(args)
   txWarmup(recTask, txDev:getTxQueue(0), args.ethDst, args.pktSize)
   mg.waitForTasks()
   mg.startTask("loadSlave", txDev:getTxQueue(0), args.ethDst, args.pktSize)
-  mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.file)
+  mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.file)
   mg.waitForTasks()
 end
 
@@ -48,7 +48,7 @@ function loadSlave(txQueue, eth_dst, pktSize)
   end
 end
 
-function timerSlave(txQueue, rxQueue, histfile)
+function timerSlave(txQueue, rxQueue, ethDst, histfile)
 	local timestamper = ts:newTimestamper(txQueue, rxQueue)
 	local hist = hist:new()
 	mg.sleepMillis(1000) -- ensure that the load task is running
