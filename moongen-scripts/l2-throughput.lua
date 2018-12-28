@@ -25,8 +25,8 @@ function master(args)
     txDev:getTxQueue(0):setRate(args.rate)
     rxDev:getTxQueue(0):setRate(args.rate)
   end
-  mg.startTask("onePacket", txDev:getTxQueue(0), args.ethDst, args.pktSize)
-  mg.startTask("waitWarmup", rxDev:getRxQueue(0), 10000000)
+  mg.startTask("txWarmup", txDev:getTxQueue(0), args.ethDst, args.pktSize)
+  mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
   mg.waitForTasks()
 end
 
@@ -45,7 +45,7 @@ function loadSlave(txQueue, eth_dst, pktSize)
   end
 end
 
-function onePacket(txQueue, eth_dst, pktSize)
+function txWarmup(txQueue, eth_dst, pktSize)
   local mem = memory.createMemPool(function(buf)
     buf:getEthernetPacket():fill{
       ethSrc = txQueue,
@@ -60,7 +60,7 @@ function onePacket(txQueue, eth_dst, pktSize)
   log:info("first packet sent")
 end
 
-function waitWarmup(rxQueue, timeout)
+function rxWarmup(rxQueue, timeout)
 	local bufs = memory.bufArray(128)
 
 	log:info("waiting for first successful packet...")
