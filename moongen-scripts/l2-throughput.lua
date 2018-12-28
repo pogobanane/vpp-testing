@@ -26,7 +26,8 @@ function master(args)
     rxDev:getTxQueue(0):setRate(args.rate)
   end
   local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
-  mg.startTask("txWarmup", recTask, txDev:getTxQueue(0), args.ethDst, args.pktSize)
+  log:info(recTask:isRunning())
+  txWarmup(recTask, txDev:getTxQueue(0), args.ethDst, args.pktSize)
   mg.waitForTasks()
   mg.startTask("loadSlave", txDev:getTxQueue(0), args.ethDst, args.pktSize)
   mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.file)
@@ -59,6 +60,7 @@ function timerSlave(txQueue, rxQueue, histfile)
 	hist:save(histfile)
 end
 
+-- recTask is only usable in master thread
 function txWarmup(recTask, txQueue, eth_dst, pktSize)
   local mem = memory.createMemPool(function(buf)
     buf:getEthernetPacket():fill{
@@ -69,7 +71,7 @@ function txWarmup(recTask, txQueue, eth_dst, pktSize)
   end)
   local bufs = mem:bufArray(1)
   mg.sleepMillis(1000) -- ensure that waitWarmup is listening
-  while recTask.isRunning() do
+  while recTask:isRunning() do
     bufs:alloc(pktSize)
     txQueue:send(bufs)
     log:info("warmup packet sent")
@@ -84,7 +86,7 @@ function rxWarmup(rxQueue, timeout)
 	local rx = rxQueue:tryRecv(bufs, timeout)
 	bufs:freeAll()
 	if rx <= 0 then
-		log:error("no packet could be received!")
+		log:fatal("no packet could be received!")
 	else
 		log:info("first packet received")
 	end
