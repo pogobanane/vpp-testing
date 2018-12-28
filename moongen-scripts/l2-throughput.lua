@@ -25,11 +25,12 @@ function master(args)
     txDev:getTxQueue(0):setRate(args.rate)
     rxDev:getTxQueue(0):setRate(args.rate)
   end
-  mg.startTask("txWarmup", txDev:getTxQueue(0), args.ethDst, args.pktSize)
-  mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
+  local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
+  mg.startTask("txWarmup", recTask, txDev:getTxQueue(0), args.ethDst, args.pktSize)
   mg.waitForTasks()
   mg.startTask("loadSlave", txDev:getTxQueue(0), args.ethDst, args.pktSize)
   mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.file)
+  mg.waitForTasks()
 end
 
 function loadSlave(txQueue, eth_dst, pktSize)
@@ -43,7 +44,7 @@ function loadSlave(txQueue, eth_dst, pktSize)
   local bufs = mem:bufArray()
   while mg.running() do
     bufs:alloc(pktSize)
-    txDev:send(bufs)
+    txQueue:send(bufs)
   end
 end
 
@@ -58,7 +59,7 @@ function timerSlave(txQueue, rxQueue, histfile)
 	hist:save(histfile)
 end
 
-function txWarmup(txQueue, eth_dst, pktSize)
+function txWarmup(recTask, txQueue, eth_dst, pktSize)
   local mem = memory.createMemPool(function(buf)
     buf:getEthernetPacket():fill{
       ethSrc = txQueue,
@@ -68,9 +69,12 @@ function txWarmup(txQueue, eth_dst, pktSize)
   end)
   local bufs = mem:bufArray(1)
   mg.sleepMillis(1000) -- ensure that waitWarmup is listening
-  bufs:alloc(pktSize)
-  txQueue:send(bufs)
-  log:info("first packet sent")
+  while recTask.isRunning() do
+    bufs:alloc(pktSize)
+    txQueue:send(bufs)
+    log:info("warmup packet sent")
+    mg.sleepMillis(1500)
+  end
 end
 
 function rxWarmup(rxQueue, timeout)
