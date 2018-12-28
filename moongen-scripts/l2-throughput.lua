@@ -53,7 +53,7 @@ function timerSlave(txQueue, rxQueue, ethDst, histfile)
 	local hist = hist:new()
 	mg.sleepMillis(1000) -- ensure that the load task is running
 	while mg.running() do
-		hist:update(timestamper:measureLatency(function(buf) buf:getEthernetPacket().eth.dst:setString(ETH_DST) end))
+		hist:update(timestamper:measureLatency(function(buf) buf:getEthernetPacket().eth.dst:setString(ethDst) end))
 	end
 	hist:print()
 	hist:save(histfile)
