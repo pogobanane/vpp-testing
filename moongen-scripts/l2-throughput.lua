@@ -36,18 +36,18 @@ end
 
 function logThroughput(txCtr, rxCtr, file)
   file = io.open(file, "w+")
-  file::write("devDesc,mpps_avg,mpps_stdDev,mbit_avg,mbit_stdDev,wirembit_avg,bytes_total,packets_total\n")
-  file::write(("txCtr,%f,%f,%f,%f,%f,%f,%f\n"):format(
-    stats.mpps.avg, stats.mpps.stdDev,
-    stats.mbit.avg, stats.mbit.stdDev,
-    stats.wireMbit.avg,
-    stats.total, stats.totalBytes
+  file:write("devDesc,mpps_avg,mpps_stdDev,mbit_avg,mbit_stdDev,wirembit_avg,bytes_total,packets_total\n")
+  file:write(("txCtr,%f,%f,%f,%f,%f,%f,%f\n"):format(
+    txCtr.mpps.avg, txCtr.mpps.stdDev,
+    txCtr.mbit.avg, txCtr.mbit.stdDev,
+    txCtr.wireMbit.avg,
+    txCtr.total, txCtr.totalBytes
   ))
-  file::write(("rxCtr,%f,%f,%f,%f,%f,%f,%f\n"):format(
-    stats.mpps.avg, stats.mpps.stdDev,
-    stats.mbit.avg, stats.mbit.stdDev,
-    stats.wireMbit.avg,
-    stats.total, stats.totalBytes
+  file:write(("rxCtr,%f,%f,%f,%f,%f,%f,%f\n"):format(
+    rxCtr.mpps.avg, rxCtr.mpps.stdDev,
+    rxCtr.mbit.avg, rxCtr.mbit.stdDev,
+    rxCtr.wireMbit.avg,
+    rxCtr.total, rxCtr.totalBytes
   ))
   file:close()
 end
