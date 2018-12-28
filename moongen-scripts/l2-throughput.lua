@@ -54,6 +54,7 @@ function onePacket(txQueue, eth_dst, pktSize)
     }
   end)
   local bufs = mem:bufArray(1)
+  mg.sleepMillis(1000) -- ensure that waitWarmup is listening
   bufs:alloc(pktSize)
   txQueue:send(bufs)
   log:info("first packet sent")
