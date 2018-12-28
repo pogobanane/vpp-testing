@@ -14,7 +14,8 @@ function configure(parser)
   parser:option("-d --ethDst", "Target eth addr."):default("11:12:13:14:15:16"):convert(tostring)
   parser:option("-s --pktSize", "Packet size."):default(60):convert(tonumber)
   parser:option("-r --rate", "Transmit rate in Mbit/s."):default(10000):convert(tonumber)
-  parser:option("-f --file", "Filename for the latency histogram."):default("histogram.csv")
+  parser:option("-l --lafile", "Filename for the latency histogram."):default("histogram.csv")
+  parser:option("-t --thfile", "Filename for the throughput csv file."):default("throuput.csv")
 end
 
 function master(args)
@@ -28,12 +29,30 @@ function master(args)
   local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
   txWarmup(recTask, txDev:getTxQueue(0), args.ethDst, args.pktSize)
   mg.waitForTasks()
-  mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.ethDst, args.pktSize)
-  mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.file)
+  mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.ethDst, args.pktSize, args.thfile)
+  mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.lafile)
   mg.waitForTasks()
 end
 
-function loadSlave(txQueue, rxDev, eth_dst, pktSize)
+function logThroughput(txCtr, rxCtr, file)
+  file = io.open(file, "w+")
+  file::write("devDesc,mpps_avg,mpps_stdDev,mbit_avg,mbit_stdDev,wirembit_avg,bytes_total,packets_total\n")
+  file::write(("txCtr,%f,%f,%f,%f,%f,%f,%f\n"):format(
+    stats.mpps.avg, stats.mpps.stdDev,
+    stats.mbit.avg, stats.mbit.stdDev,
+    stats.wireMbit.avg,
+    stats.total, stats.totalBytes
+  ))
+  file::write(("rxCtr,%f,%f,%f,%f,%f,%f,%f\n"):format(
+    stats.mpps.avg, stats.mpps.stdDev,
+    stats.mbit.avg, stats.mbit.stdDev,
+    stats.wireMbit.avg,
+    stats.total, stats.totalBytes
+  ))
+  file:close()
+end
+
+function loadSlave(txQueue, rxDev, eth_dst, pktSize, file)
   local mem = memory.createMemPool(function(buf)
     buf:getEthernetPacket():fill{
       ethSrc = txQueue,
@@ -44,6 +63,8 @@ function loadSlave(txQueue, rxDev, eth_dst, pktSize)
   local bufs = mem:bufArray()
 	local txCtr = stats:newDevTxCounter(txQueue, "plain")
 	local rxCtr = stats:newDevRxCounter(rxDev, "plain")
+	-- local txCtrF = stats:newDevTxCounter(txQueue, "csv", "txthrouhput.csv")
+	-- local rxCtrF = stats:newDevRxCounter(rxDev, "csv", "rxthroughput.csv")
   while mg.running() do
     bufs:alloc(pktSize)
     txQueue:send(bufs)
@@ -52,6 +73,7 @@ function loadSlave(txQueue, rxDev, eth_dst, pktSize)
   end
   txCtr:finalize()
   rxCtr:finalize()
+  logThroughput(txCtr, rxCtr, file)
 end
 
 function timerSlave(txQueue, rxQueue, ethDst, histfile)
