@@ -26,7 +26,6 @@ function master(args)
     rxDev:getTxQueue(0):setRate(args.rate)
   end
   local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
-  log:info(recTask:isRunning())
   txWarmup(recTask, txDev:getTxQueue(0), args.ethDst, args.pktSize)
   mg.waitForTasks()
   mg.startTask("loadSlave", txDev:getTxQueue(0), args.ethDst, args.pktSize)
