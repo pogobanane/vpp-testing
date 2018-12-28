@@ -41,6 +41,8 @@ modprobe uio_pci_generic
 
 ./ba-okelmann/MoonGen/build/MoonGen ba-okelmann/MoonGen/examples/l3-load-latency.lua 1 0
 
+l2fib add 00:11:22:33:44:55 1 TenGigabitEthernet5/0/1
+
 set int state GigabitEthernet4/0/0 up
 set int state GigabitEthernet4/0/1 up
 set int ip address GigabitEthernet4/0/0 10.10.1.2/24
