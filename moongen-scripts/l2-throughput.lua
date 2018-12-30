@@ -52,13 +52,29 @@ function logThroughput(txCtr, rxCtr, file)
   file:close()
 end
 
+local function fillUdpPacket(buf, len)
+	buf:getUdpPacket():fill{
+		ethSrc = txQueue,
+		ethDst = eth_dst,
+		ip4Src = "4.3.2.1",
+		ip4Dst = "1.2.3.4",
+		udpSrc = 1,
+		udpDst = 2,
+		pktLength = len
+	}
+end
+
+local function fillEthPacket(buf)
+  buf:getEthernetPacket():fill{
+    ethSrc = txQueue,
+    ethDst = eth_dst,
+    ethType = 0x1234
+  }
+end
+
 function loadSlave(txQueue, rxDev, eth_dst, pktSize, file)
   local mem = memory.createMemPool(function(buf)
-    buf:getEthernetPacket():fill{
-      ethSrc = txQueue,
-      ethDst = eth_dst,
-      ethType = 0x1234
-    }
+    fillEthPacket(buf)
   end)
   local bufs = mem:bufArray()
 	local txCtr = stats:newDevTxCounter(txQueue, "plain")
@@ -90,11 +106,7 @@ end
 -- recTask is only usable in master thread
 function txWarmup(recTask, txQueue, eth_dst, pktSize)
   local mem = memory.createMemPool(function(buf)
-    buf:getEthernetPacket():fill{
-      ethSrc = txQueue,
-      ethDst = eth_dst,
-      ethType = 0x1234
-    }
+    fillEthPacket(buf)
   end)
   local bufs = mem:bufArray(1)
   mg.sleepMillis(1000) -- ensure that waitWarmup is listening
