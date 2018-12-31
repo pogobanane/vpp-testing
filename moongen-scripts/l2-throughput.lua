@@ -35,6 +35,7 @@ function master(args)
 end
 
 function logThroughput(txCtr, rxCtr, file)
+  log:info(("Saving throughput to '%s'"):format(file))
   file = io.open(file, "w+")
   file:write("devDesc,mpps_avg,mpps_stdDev,mbit_avg,mbit_stdDev,wirembit_avg,bytes_total,packets_total\n")
   file:write(("txCtr,%f,%f,%f,%f,%f,%f,%f\n"):format(
