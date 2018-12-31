@@ -52,7 +52,7 @@ function logThroughput(txCtr, rxCtr, file)
   file:close()
 end
 
-local function fillUdpPacket(buf, len)
+local function fillUdpPacket(buf, eth_dst, len)
 	buf:getUdpPacket():fill{
 		ethSrc = txQueue,
 		ethDst = eth_dst,
@@ -64,7 +64,7 @@ local function fillUdpPacket(buf, len)
 	}
 end
 
-local function fillEthPacket(buf)
+local function fillEthPacket(buf, eth_dst)
   buf:getEthernetPacket():fill{
     ethSrc = txQueue,
     ethDst = eth_dst,
@@ -74,7 +74,7 @@ end
 
 function loadSlave(txQueue, rxDev, eth_dst, pktSize, file)
   local mem = memory.createMemPool(function(buf)
-    fillEthPacket(buf)
+    fillEthPacket(buf, eth_dst)
   end)
   local bufs = mem:bufArray()
 	local txCtr = stats:newDevTxCounter(txQueue, "plain")
