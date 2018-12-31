@@ -106,7 +106,7 @@ end
 -- recTask is only usable in master thread
 function txWarmup(recTask, txQueue, eth_dst, pktSize)
   local mem = memory.createMemPool(function(buf)
-    fillEthPacket(buf)
+    fillEthPacket(buf, eth_dst)
   end)
   local bufs = mem:bufArray(1)
   mg.sleepMillis(1000) -- ensure that waitWarmup is listening
