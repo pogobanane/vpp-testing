@@ -22,7 +22,7 @@ echo "load vars for vpp test"
 pos allocations variables "$DUT" scripts/dut_test1.yaml
 
 echo "run test..."
-pos commands launch -n --infile "$DUT" scripts/dut_vpp_run.sh
-pos commands launch --infile "$GEN" scripts/loadgen_run.sh
+pos commands launch -n --infile scripts/dut_vpp_run.sh "$DUT"
+pos commands launch --infile scripts/loadgen_run.sh "$GEN"
 echo "$DUT finished test"
 wait
