@@ -34,3 +34,17 @@ dpdk {
 	socket-mem 1024,1024
 }
 "
+
+config_2worker="
+unix {
+	exec $VPP_EXEC
+	cli-listen $VPP_CLI_LISTEN
+}
+cpu {
+	main-core 1
+	corelist-workers 4-5
+}
+dpdk {
+	socket-mem 1024,1024
+}
+"

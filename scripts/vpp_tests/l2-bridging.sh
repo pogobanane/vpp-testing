@@ -26,4 +26,4 @@ l2fib add $MAC_SRC $bdid $INT_SRC
 l2fib add $MAC_DST $bdid $INT_DST
 "
 
-test_vpp_with "$config_1worker" "$exec"
+test_vpp_with "$config_2worker" "$exec"
