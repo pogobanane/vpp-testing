@@ -90,3 +90,7 @@ echo "run test..."
 #pos nodes cmd --infile dut_vpp_run.sh "$DUT"
 echo "$DUT finished test"
 wait
+
+echo "freeing nodes..."
+pos allocations free "$DUT"
+pos allocations free "$LOADGEN"
