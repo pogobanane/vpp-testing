@@ -42,7 +42,7 @@ echo "done"
 
 echo "install vpp..."
 { 
-	ssh "$DUT" "cd ba-okelmann/vpp && ../scripts/vpp_build_install.sh"
+	ssh "$DUT" "cd ba-okelmann/vpp && ../scripts/dut_vpp_build_install.sh"
 	echo "$DUT vpp installed"
 } &
 {
