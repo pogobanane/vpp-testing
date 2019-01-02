@@ -32,9 +32,10 @@ vppctl -s localhost:5002
 /usr/bin/vpp -c /etc/vpp/startup.conf
 vpp unix interactive
 
-
+# for v18.04-rc2
 rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
 modprobe uio_pci_generic
+./vpp/build-root/install-vpp-native/vpp/bin/vpp unix interactive plugin_path ./vpp/build-root/install-vpp-native/vpp/lib64/vpp_plugins
 
 # pos results end up in
 /srv/testbed/results/manual_test_okelmann
@@ -42,6 +43,8 @@ modprobe uio_pci_generic
 ./ba-okelmann/MoonGen/build/MoonGen ba-okelmann/MoonGen/examples/l3-load-latency.lua 1 0
 
 l2fib add 00:11:22:33:44:55 1 TenGigabitEthernet5/0/1
+# add 4 sequential macs
+test l2fib add mac 52:54:00:53:00:00 count 4
 
 set int state GigabitEthernet4/0/0 up
 set int state GigabitEthernet4/0/1 up
@@ -57,3 +60,8 @@ show int
 set interface l2 bridge loop0 1 bvi
 set int state loop0 up
 set int ip address loop0 10.10.3.2/24
+
+set int state TenGigabitEthernet5/0/0 up
+set int state TenGigabitEthernet5/0/1 up
+set int l2 bridge TenGigabitEthernet5/0/0 1
+set int l2 bridge TenGigabitEthernet5/0/1 1
