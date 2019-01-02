@@ -45,7 +45,7 @@ echo "Starting test"
 echo "waiting for vpp setup"
 pos_sync
 echo "running loadgen"
-pos_run l2_bridging_0_load -- ${DIBDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3
+pos_run l2_bridging_0_load -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3
 
 sleep 30
 # pos r
