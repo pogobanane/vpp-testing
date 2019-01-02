@@ -57,6 +57,9 @@ echo "Stopped test"
 # kill the process started with pos_run
 # command/stdout/stderr are uploaded automatically
 pos_kill l2_bridging_0_load
+
+echo "uploading csv files..."
+sleep 10 # wait until moongen did actually stop and write the files
 pos_upload throughput.csv
 pos_upload histogram.csv
 
