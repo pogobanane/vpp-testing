@@ -6,7 +6,7 @@
 source scripts/vpp_tests/functions.sh
 
 bdid=1 # bridge-domain-id
-bdcrators=( "create bridge-domain $bdid learn 0"
+bdcreators=( "create bridge-domain $bdid learn 0"
 	"create bridge-domain $bdid learn 1"
 	"create bridge-domain $bdid learn 0 mac-age 60"
 	"create bridge-domain $bdid learn 1 mac-age 60"
