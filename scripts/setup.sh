@@ -18,6 +18,7 @@ set -x
 
 # takes resolvable host as $1
 function posping() {
+	set +x
 	printf "%s" "waiting for $1 to come online"
 	i=0
 	while ! ping -c 1 -n -w 1 "$1" &> /dev/null
@@ -32,6 +33,7 @@ function posping() {
 	done
 	echo ""
 	echo "server is online"
+	set -x
 }
 
 # allocate all hosts for ONE experiment
