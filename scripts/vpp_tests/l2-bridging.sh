@@ -6,7 +6,7 @@ INT_SRC="TenGigabitEthernet5/0/0"
 INT_DST="TenGigabitEthernet5/0/1"
 
 MAC_SRC="00:11:22:33:44:55"
-MAC_DST="01:11:22:33:44:55"
+MAC_DST="00:11:22:33:44:56"
 
 VPP_CLI_LISTEN="/tmp/vpptesting_cli"
 VPP_CONF="/tmp/vpptesting_startup.conf"
