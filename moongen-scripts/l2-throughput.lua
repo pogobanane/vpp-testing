@@ -11,7 +11,8 @@ function configure(parser)
   parser:description("Generates CBR traffic with hardware rate control")
   parser:argument("txDev", "Device to send from."):convert(tonumber)
   parser:argument("rxDev", "Device to recieve from."):convert(tonumber)
-  parser:option("-d --ethDst", "Target eth addr."):default("11:12:13:14:15:16"):convert(tostring)
+  parser:option("--ethSrc", "Source eth addr."):default("00:11:22:33:44:55"):convert(tostring)
+  parser:option("-d --ethDst", "Target eth addr."):default("01:11:22:33:44:55"):convert(tostring)
   parser:option("-s --pktSize", "Packet size."):default(60):convert(tonumber)
   parser:option("-r --rate", "Transmit rate in Mbit/s."):default(10000):convert(tonumber)
   parser:option("-l --lafile", "Filename for the latency histogram."):default("histogram.csv")
@@ -27,9 +28,9 @@ function master(args)
     rxDev:getTxQueue(0):setRate(args.rate)
   end
   local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
-  txWarmup(recTask, txDev:getTxQueue(0), args.ethDst, args.pktSize)
+  txWarmup(recTask, txDev:getTxQueue(0), args.ethSrc, args.ethDst, args.pktSize)
   mg.waitForTasks()
-  mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.ethDst, args.pktSize, args.thfile)
+  mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.ethSrc, args.ethDst, args.pktSize, args.thfile)
   mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.lafile)
   mg.waitForTasks()
 end
@@ -53,9 +54,9 @@ function logThroughput(txCtr, rxCtr, file)
   file:close()
 end
 
-local function fillUdpPacket(buf, eth_dst, len)
+local function fillUdpPacket(buf, eth_src, eth_dst, len)
 	buf:getUdpPacket():fill{
-		ethSrc = txQueue,
+		ethSrc = eth_src,
 		ethDst = eth_dst,
 		ip4Src = "4.3.2.1",
 		ip4Dst = "1.2.3.4",
@@ -65,17 +66,17 @@ local function fillUdpPacket(buf, eth_dst, len)
 	}
 end
 
-local function fillEthPacket(buf, eth_dst)
+local function fillEthPacket(buf, eth_src, eth_dst)
   buf:getEthernetPacket():fill{
-    ethSrc = txQueue,
+    ethSrc = eth_src,
     ethDst = eth_dst,
     ethType = 0x1234
   }
 end
 
-function loadSlave(txQueue, rxDev, eth_dst, pktSize, file)
+function loadSlave(txQueue, rxDev, eth_src, eth_dst, pktSize, file)
   local mem = memory.createMemPool(function(buf)
-    fillEthPacket(buf, eth_dst)
+    fillEthPacket(buf, eth_src, eth_dst)
   end)
   local bufs = mem:bufArray()
 	local txCtr = stats:newDevTxCounter(txQueue, "plain")
@@ -105,9 +106,9 @@ function timerSlave(txQueue, rxQueue, ethDst, histfile)
 end
 
 -- recTask is only usable in master thread
-function txWarmup(recTask, txQueue, eth_dst, pktSize)
+function txWarmup(recTask, txQueue, eth_src, eth_dst, pktSize)
   local mem = memory.createMemPool(function(buf)
-    fillEthPacket(buf, eth_dst)
+    fillEthPacket(buf, eth_src, eth_dst)
   end)
   local bufs = mem:bufArray(1)
   mg.sleepMillis(1000) -- ensure that waitWarmup is listening
