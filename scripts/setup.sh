@@ -16,17 +16,46 @@ set -e
 # log every command
 set -x
 
+# takes resolvable host as $1
+function posping() {
+	printf "%s" "waiting for $1 to come online"
+	i=0
+	while ! ping -c 1 -n -w 1 "$1" &> /dev/null
+	do
+		if [ $i -gt 800 ]; then
+			echo "server didnt come online ERROR"
+			exit 1
+		fi
+		printf "%c" "."
+		sleep 2
+		i=$(($i+1))
+	done
+	echo ""
+	echo "server is online"
+}
+
 # allocate all hosts for ONE experiment
-#echo "allocate hosts"
-#pos allocations allocate "$DUT"
+echo "allocate hosts"
+pos allocations allocate "$DUT"
+pos allocations allocate "$LOADGEN"
 
-#echo "set images to debian stretch"
-#pos nodes image "$DUT" debian-stretch
+echo "set images to debian stretch"
+pos nodes image "$DUT" debian-stretch
+pos nodes image "$LOADGEN" debian-stretch
 
-#echo "reboot experiment hosts..."
+echo "load pos vars"
+pos allocations variables "$DUT" scripts/dut_test1.yaml
+pos allocations variables "$LOADGEN" scripts/dut_test1.yaml
+
+echo "reboot experiment hosts..."
 # run reset blocking in background and wait for processes to end before continuing
-#{ pos nodes reset "$DUT"; echo "$DUT booted successfully"; } &
+pos nodes reset "$DUT" &
+pos nodes reset "$LOADGEN" &
 #wait
+
+# better wait (longer timeout)
+posping "$DUT"
+posping "$LOADGEN"
 
 echo "transferring binaries to $DUT and $LOADGEN..."
 {
@@ -51,15 +80,9 @@ echo "install vpp..."
 } &
 wait
 
-# run test
-
 echo "pos bootstraping"
 pos nodes bootstrap $DUT
 pos nodes bootstrap $LOADGEN
-
-echo "load pos vars"
-pos allocations variables "$DUT" scripts/dut_test1.yaml
-pos allocations variables "$LOADGEN" scripts/dut_test1.yaml
 
 echo "run test..."
 #pos nodes cmd --infile dut_vpp_run.sh "$DUT"
