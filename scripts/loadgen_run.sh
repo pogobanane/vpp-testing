@@ -57,5 +57,7 @@ echo "Stopped test"
 # kill the process started with pos_run
 # command/stdout/stderr are uploaded automatically
 pos_kill l2_bridging_0_load
+pos_upload throughput.csv
+pos_upload histogram.csv
 
 echo "all done"
