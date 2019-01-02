@@ -2,7 +2,7 @@
 
 # expects to be run from the ba-okelmann project root
 
-source scripts/vpp_tests/function.sh
+source scripts/vpp_tests/functions.sh
 
 exec="set int state $INT_SRC up
 set int state $INT_DST up

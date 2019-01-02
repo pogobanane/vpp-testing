@@ -3,7 +3,7 @@
 # expects to be run from the ba-okelmann project root
 # expects $1: bdcreators[$1]
 
-source scripts/vpp_tests/function.sh
+source scripts/vpp_tests/functions.sh
 
 bdid=1 # bridge-domain-id
 bdcrators=( "create bridge-domain $bdid learn 0"
