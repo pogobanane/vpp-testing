@@ -52,7 +52,8 @@ echo "reboot experiment hosts..."
 pos nodes reset "$DUT" &
 pos nodes reset "$LOADGEN" &
 #wait
-
+# give nodes time to shut down for next step to work
+sleep 30
 # better wait (longer timeout)
 posping "$DUT"
 posping "$LOADGEN"
