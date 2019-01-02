@@ -2,7 +2,7 @@
 # expects a dut_test*.yaml
 # expects the ba-okelmann git to be checked out at ~/ba-okelmann
 GITDIR="/root/ba-okelmann"
-BINDIR="${GITDIR}/vpp/build-root/install-vpp_debug-native/vpp/bin"
+BINDIR="${GITDIR}/MoonGen/build"
 cd "$GITDIR"
 
 # exit on error
@@ -34,13 +34,6 @@ echo 1 >   /sys/devices/system/cpu/intel_pstate/no_turbo
 echo $(pos_get_variable cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_perf_pct
 echo $(pos_get_variable cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
-# set clean up vpp
-rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
-modprobe uio_pci_generic
-
-# load some variables
-# VPP_CONFIG=$(pos_get_variable vpp/config)
-
 echo 'Done setting up'
 pos_sync
 echo 'sync done'
@@ -49,12 +42,12 @@ echo "Starting test"
 
 # run libmoon in background using pos_run
 # pos_run COMMMAND_ID -- COMMAND
-# pos_run vpp-cleanup -- ${GITDIR}/scripts/vpp_tests/cleanup.sh
-# pos_sync
-pos_run l2_bridging_0_setup -- ${GITDIR}/scripts/vpp_tests/l2-bridging.sh 0
+echo "waiting for vpp setup"
 pos_sync
-# pos_run l2_bridging_0_whiteboxing -- ${GITDIR}/scripts/vpp_tests/whiteboxinfo.sh 10
+echo "running loadgen"
+pos_run l2_bridging_0_load -- ${DIBDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3
 
+sleep 30
 # pos r
 
 # wait for test done signal
@@ -63,6 +56,6 @@ echo "Stopped test"
 
 # kill the process started with pos_run
 # command/stdout/stderr are uploaded automatically
-pos_kill l2_bridging_0_setup
+pos_kill l2_bridging_0_load
 
 echo "all done"
