@@ -3,12 +3,13 @@
 # hosts. The two experiment scripts demonstrate how to use all of the postools on the hosts.
 # The experiment is to run one of the example MoonGen scripts
 
-if test "$#" -ne 1; then
-	echo "Usage: setup.sh dut"
+if test "$#" -ne 2; then
+	echo "Usage: setup.sh dut loadgen"
 	exit
 fi
 
 DUT=$1
+GEN=$2
 
 # exit on error
 set -e
@@ -21,6 +22,7 @@ echo "load vars for vpp test"
 pos allocations variables "$DUT" scripts/dut_test1.yaml
 
 echo "run test..."
-pos nodes cmd --infile scripts/dut_vpp_run.sh "$DUT"
+pos commands launch -n --infile "$DUT" scripts/dut_vpp_run.sh
+pos commands launch -n --infile "$GEN" scripts/loadgen_run.sh
 echo "$DUT finished test"
 wait
