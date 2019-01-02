@@ -31,8 +31,8 @@ cd "$GITDIR"
 echo 1 >   /sys/devices/system/cpu/intel_pstate/no_turbo
 
 # set frequency
-echo $(pos_get_variable cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_perf_pct
-echo $(pos_get_variable cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
+echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_perf_pct
+echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
 echo 'Done setting up'
 pos_sync
