@@ -53,8 +53,13 @@ wait
 
 # run test
 
-echo "load vars for vpp test"
+echo "pos bootstraping"
+pos nodes bootstrap $DUT
+pos nodes bootstrap $LOADGEN
+
+echo "load pos vars"
 pos allocations variables "$DUT" scripts/dut_test1.yaml
+pos allocations variables "$LOADGEN" scripts/dut_test1.yaml
 
 echo "run test..."
 #pos nodes cmd --infile dut_vpp_run.sh "$DUT"
