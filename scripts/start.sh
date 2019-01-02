@@ -31,7 +31,7 @@ pos allocations variables $DUT scripts/dut_test1.yaml
 pos allocations variables $LOADGEN scripts/dut_test1.yaml
 
 echo "run test..."
-pos commands launch --infile scripts/dut_vpp_run.sh "$DUT"
+pos commands launch -n --infile scripts/dut_vpp_run.sh "$DUT"
 pos commands launch --infile scripts/loadgen_run.sh "$LOADGEN"
 echo "$DUT finished test"
 wait
