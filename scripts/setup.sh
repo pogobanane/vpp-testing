@@ -12,7 +12,7 @@ DUT=$1
 LOADGEN=$2
 
 # exit on error
-# set -e # dont do this. Otherwise you will not free the hosts. 
+set -e
 # log every command
 set -x
 
