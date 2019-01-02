@@ -19,8 +19,8 @@ set -x
 # run test
 
 echo "load vars for vpp test"
-pos allocations variables "$DUT" scripts/dut_test1.yaml
-pos allocations variables "$GEN" scripts/dut_test1.yaml
+pos allocations variables $DUT scripts/dut_test1.yaml
+pos allocations variables $GEN scripts/dut_test1.yaml
 
 echo "run test..."
 pos commands launch -n --infile scripts/dut_vpp_run.sh "$DUT"
