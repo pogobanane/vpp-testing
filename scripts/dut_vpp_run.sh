@@ -42,6 +42,18 @@ function cleanup_vpp () {
 	modprobe uio_pci_generic
 }
 
+# does this work?
+# $1: basemac as hex number bigger 0x20 00 00 00 00 00
+# $2: nr. of macs to add
+function add_macs () {
+	upper=$(($1+$2))
+	for i in {$i, $upper}
+	do
+		mac=`printf "%x" $i | sed 's/./&:/10;s/./&:/8;s/./&:/6;s/./&:/4;s/./&:/2'`
+		echo "mac" > /tmp/vpptesting_cli
+	done
+}
+
 # load some variables
 # VPP_CONFIG=$(pos_get_variable vpp/config)
 
