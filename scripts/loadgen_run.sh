@@ -40,7 +40,8 @@ pos_sync
 echo 'sync done'
 
 # $1: jobname
-function l2-throughput-lua () {
+# $2: rate in mbit/s
+function l2-throughput-rate () {
 	echo "Starting test"
 
 	# pos_run COMMMAND_ID -- COMMAND
@@ -53,7 +54,7 @@ function l2-throughput-lua () {
 	latencyfile="/tmp/$jobname.histogram.csv"
 	throughputfile="/tmp/$jobname.throughput.csv"
 
-	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --lafile $latencyfile --thfile $throughputfile
+	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --lafile $latencyfile --thfile $throughputfile --rate $2
 
 	sleep 30
 
@@ -71,11 +72,27 @@ function l2-throughput-lua () {
 	echo "Stopped test"
 }
 
+# $1: jobname
+function l2-throughput () {
+	l2-throughput-rate $1 10000
+}
+
 for i in {0..5}
 do
-	l2-throughput-lua "l2_bridging_${i}_load"
+	l2-throughput "l2_bridging_${i}_load"
 done
 
-l2-throughput-lua "l2_xconnect_load"
+l2-throughput "l2_xconnect_load"
+
+l2-throughput-rate "l2_bridging_7000mbit" 7000
+l2-throughput-rate "l2_bridging_6800mbit" 6800
+l2-throughput-rate "l2_bridging_6600mbit" 6600
+l2-throughput-rate "l2_bridging_6400mbit" 6400
+l2-throughput-rate "l2_bridging_6000mbit" 6000
+l2-throughput-rate "l2_bridging_5000mbit" 5000
+l2-throughput-rate "l2_bridging_4000mbit" 4000
+l2-throughput-rate "l2_bridging_2000mbit" 2000
+l2-throughput-rate "l2_bridging_1000mbit" 1000
+l2-throughput-rate "l2_bridging_0500mbit" 500
 
 echo "all done"
