@@ -19,6 +19,7 @@ from tabulate import tabulate
 import matplotlib.pyplot as plt
 from matplotlib2tikz import get_tikz_code
 import csv
+import re
 
 
 # In[2]:
@@ -214,6 +215,30 @@ for psize, dfg in dfthr_.groupby(["psize"]):
 
 """
 
+
+# pasted from https://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates
+def tex_escape(text):
+    """
+        :param text: a plain text message
+        :return: the message escaped to appear correctly in LaTeX
+    """
+    conv = {
+        '&': r'\&',
+        '%': r'\%',
+        '$': r'\$',
+        '#': r'\#',
+        '_': r'\_',
+        '{': r'\{',
+        '}': r'\}',
+        '~': r'\textasciitilde{}',
+        '^': r'\^{}',
+        '\\': r'\textbackslash{}',
+        '<': r'\textless{}',
+        '>': r'\textgreater{}',
+    }
+    regex = re.compile('|'.join(re.escape(str(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
+    return regex.sub(lambda match: conv[match.group()], text)
+
 def parse_throughput(csvfile):
     print("penis")
     with open(csvfile, ) as f:
@@ -284,31 +309,33 @@ def latency_csv2tex(latfile, throughfile):
 
     plt.hist(latencies, weights=weights, bins=100)
     #plt.title('Rate {} Mbit/s - Packet size: {} B'.format(rate, psize))
-    plt.title("{}: \n{}".format(os.path.basename(latfile), parse_throughput(throughfile)))
+    plt.title("{}: \n{}".format(tex_escape(os.path.basename(latfile)), tex_escape(parse_throughput(throughfile))))
     #plt.legend(loc=0)
     plt.ylabel("Number of events")
     plt.xlabel("Processing latency (ns)")
     fig.tight_layout()
     plt.grid(True)
 
-    outf = '{}.tex'.format(latfile)
-    with codecs.open(outf, "w+", encoding="utf8") as f:
-        f.write(tikz_header)
-        f.write(get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm"))
-        f.write(tikz_footer)
+    return get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm")
 
     #plt.show()
-    plt.draw()
-    plt.pause(0.001)
+    #plt.draw()
+    #plt.pause(0.001)
 
 
 
-for i in range(0, len(flatency)):
+outf = "netronome.tex"
+with codecs.open(outf, "w+", encoding="utf8") as f:
+    f.write(tikz_header)
+    for i in range(0, len(flatency)):
 
-    #outf = '{}.tex'.format(flatency[i])
-    #with codecs.open(outf, "w+", encoding="utf8") as f:
-    #    f.write(tikz_header)
-    #tex = 
-    latency_csv2tex(flatency[i], fthroughput[i])
+        #outf = '{}.tex'.format(flatency[i])
+        
+        f.write(latency_csv2tex(flatency[i], fthroughput[i]))
+        f.write("\n\n\n")
 
-input("Press [enter] to continue.")
+    f.write(tikz_footer)
+
+
+
+# pdflatex netronome.tex
