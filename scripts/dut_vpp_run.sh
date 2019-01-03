@@ -37,7 +37,7 @@ echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_
 
 # set clean up vpp
 function cleanup_vpp () {
-	pkill -f "vpp/build-root/install-vpp-native/vpp/bin/vpp"
+	pkill vpp_main
 	rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
 	modprobe uio_pci_generic
 }
