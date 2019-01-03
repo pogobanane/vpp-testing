@@ -4,9 +4,6 @@
 GITDIR="/root/ba-okelmann"
 BINDIR="${GITDIR}/MoonGen/build"
 
-THROUGHPUTF="/tmp/throughput.csv"
-LATENCYF="/tmp/histogram.csv"
-
 cd "$GITDIR"
 
 # exit on error
@@ -48,11 +45,16 @@ echo "Starting test"
 # pos_run COMMMAND_ID -- COMMAND
 echo "waiting for vpp setup"
 pos_sync
+
 echo "running loadgen"
-pos_run l2_bridging_0_load -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --lafile $LATENCYF --thfile $THROUGHPUTF
+
+jobname="l2_bridging_0_load"
+latencyfile="/tmp/$jobname.histogram.csv"
+throughputfile="/tmp/$jobname.throughput.csv"
+
+pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --lafile $latencyfile --thfile $throughputfile
 
 sleep 30
-# pos r
 
 # wait for test done signal
 pos_sync
@@ -64,7 +66,7 @@ pos_kill l2_bridging_0_load
 
 echo "uploading csv files..."
 sleep 10 # wait until moongen did actually stop and write the files
-pos_upload $LATENCYF
-pos_upload $THROUGHPUTF
+pos_upload $latencyfile
+pos_upload $throughputfile
 
 echo "all done"
