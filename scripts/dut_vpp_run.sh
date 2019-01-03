@@ -35,6 +35,7 @@ echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
 # set clean up vpp
+pkill -f vpp
 rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
 modprobe uio_pci_generic
 
@@ -45,24 +46,48 @@ echo 'Done setting up'
 pos_sync
 echo 'sync done'
 
-echo "Starting test"
+for i in {0..5}
+do
+	echo "Starting bridging test $i"
 
-# run libmoon in background using pos_run
+	# pos_run COMMMAND_ID -- COMMAND
+	# TODO:
+	# pos_run vpp-cleanup -- ${GITDIR}/scripts/vpp_tests/cleanup.sh
+	# pos_sync
+	pos_run l2_bridging_${i}_setup -- ${GITDIR}/scripts/vpp_tests/l2-bridging.sh ${i}
+	pos_sync # vpp is set up
+	# pos_run l2_bridging_0_whiteboxing -- ${GITDIR}/scripts/vpp_tests/whiteboxinfo.sh 10
+
+	# moongen is now running tests
+
+	# wait for test done signal
+	pos_sync # moongen test done
+	echo "Stopped test"
+
+	# kill the process started with pos_run
+	# command/stdout/stderr are uploaded automatically
+	pos_kill l2_bridging_0_setup
+done
+
+echo "Starting xconnect test"
+
 # pos_run COMMMAND_ID -- COMMAND
+# TODO:
 # pos_run vpp-cleanup -- ${GITDIR}/scripts/vpp_tests/cleanup.sh
 # pos_sync
-pos_run l2_bridging_0_setup -- ${GITDIR}/scripts/vpp_tests/l2-bridging.sh 0
-pos_sync
+pos_run l2_xconnect_setup -- ${GITDIR}/scripts/vpp_tests/l2-xconnect.sh
+pos_sync # vpp is set up
 # pos_run l2_bridging_0_whiteboxing -- ${GITDIR}/scripts/vpp_tests/whiteboxinfo.sh 10
 
-# pos r
+# moongen is now running tests
 
 # wait for test done signal
-pos_sync
+pos_sync # moongen test done
 echo "Stopped test"
 
 # kill the process started with pos_run
 # command/stdout/stderr are uploaded automatically
-pos_kill l2_bridging_0_setup
+pos_kill l2_xconnect_setup
+
 
 echo "all done"

@@ -39,34 +39,43 @@ echo 'Done setting up'
 pos_sync
 echo 'sync done'
 
-echo "Starting test"
+# $1: jobname
+function l2-throughput-lua () {
+	echo "Starting test"
 
-# run libmoon in background using pos_run
-# pos_run COMMMAND_ID -- COMMAND
-echo "waiting for vpp setup"
-pos_sync
+	# pos_run COMMMAND_ID -- COMMAND
+	echo "waiting for vpp setup"
+	pos_sync # vvp is set up
 
-echo "running loadgen"
+	echo "running loadgen"
 
-jobname="l2_bridging_0_load"
-latencyfile="/tmp/$jobname.histogram.csv"
-throughputfile="/tmp/$jobname.throughput.csv"
+	jobname=$1
+	latencyfile="/tmp/$jobname.histogram.csv"
+	throughputfile="/tmp/$jobname.throughput.csv"
 
-pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --lafile $latencyfile --thfile $throughputfile
+	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --lafile $latencyfile --thfile $throughputfile
 
-sleep 30
+	sleep 30
 
-# wait for test done signal
-pos_sync
-echo "Stopped test"
+	# kill the process started with pos_run
+	# command/stdout/stderr are uploaded automatically
+	pos_kill $jobname
 
-# kill the process started with pos_run
-# command/stdout/stderr are uploaded automatically
-pos_kill l2_bridging_0_load
+	echo "uploading csv files..."
+	sleep 10 # wait until moongen did actually stop and write the files
+	pos_upload $latencyfile
+	pos_upload $throughputfile
 
-echo "uploading csv files..."
-sleep 10 # wait until moongen did actually stop and write the files
-pos_upload $latencyfile
-pos_upload $throughputfile
+	# wait for test done signal
+	pos_sync # moongen test done
+	echo "Stopped test"
+}
+
+for i in {0..5}
+do
+	l2-throughput-lua "l2_bridging_${i}_load"
+done
+
+l2-throughput-lua "l2_xconnect_load"
 
 echo "all done"
