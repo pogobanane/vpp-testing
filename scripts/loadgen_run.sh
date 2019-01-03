@@ -77,12 +77,12 @@ function l2-throughput () {
 	l2-throughput-rate $1 10000
 }
 
-for i in {0..5}
-do
-	l2-throughput "l2_bridging_${i}_load"
-done
+#for i in {0..5}
+#do
+#	l2-throughput "l2_bridging_${i}_load"
+#done
 
-l2-throughput "l2_xconnect_load"
+#l2-throughput "l2_xconnect_load"
 
 l2-throughput-rate "l2_bridging_7000mbit" 7000
 l2-throughput-rate "l2_bridging_6800mbit" 6800
