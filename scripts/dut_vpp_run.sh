@@ -2,6 +2,7 @@
 # expects a dut_test*.yaml
 # expects the ba-okelmann git to be checked out at ~/ba-okelmann
 GITDIR="/root/ba-okelmann"
+# changing only this will probably not work
 BINDIR="${GITDIR}/vpp/build-root/install-vpp_debug-native/vpp/bin"
 cd "$GITDIR"
 
@@ -36,7 +37,7 @@ echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_
 
 # set clean up vpp
 function cleanup_vpp () {
-	pkill -f vpp
+	pkill -f "vpp/build-root/install-vpp-native/vpp/bin/vpp"
 	rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
 	modprobe uio_pci_generic
 }
