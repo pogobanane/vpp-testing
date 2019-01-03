@@ -2,4 +2,4 @@
 
 checkout Moongen. It's build.sh will take care of downloading submodules.
 
-checkout some vpp release like v19.01-rc0
+ceck out vpp release v18.10-rc2

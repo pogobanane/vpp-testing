@@ -45,7 +45,7 @@ function master(args)
 		txDev:getTxQueue(0):setRate(args.rate - (args.size + 4) * 8 / 1000)
 	end
 	mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.size, args.flows)
-	mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.size, args.flows)
+	mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.size, args.flows, rxDev:getRxQueue(0))
 	mg.waitForTasks()
 end
 
@@ -89,26 +89,30 @@ end
 
 -- exits on error!
 function waitWarmup(rxQueue, timeout)
-	local bufs = memory.bufArray()
+	local bufs = memory.bufArray(128)
 
 	log:info("waiting for first successful packet...")
-	local rx = rxQueue:tryRecv(bufs, timeout)
-	bufs:free(rx)
+	local rx = rxQueue:tryRecv(bufs, 10000000)
+	bufs:freeAll()
 	if rx <= 0 then
 		log:error("no packet could be received!")
-	else 
+	else
 		log:info("first packet received")
 	end
 	return rx
+end
 
-function timerSlave(txQueue, rxQueue, size, flows)
+function timerSlave(txQueue, rxQueue, size, flows, rxWarmupQueue)
 	if size < 84 then
 		log:warn("Packet size %d is smaller than minimum timestamp size 84. Timestamped packets will be larger than load packets.", size)
 		size = 84
 	end
+
+	waitWarmup(rxWarmupQueue, 10000)
+	log:info("timing")
+
 	local timestamper = ts:newUdpTimestamper(txQueue, rxQueue)
 	local hist = hist:new()
-	waitWarmup(rxQueue, 10000)
 	mg.sleepMillis(1000) -- ensure that the load task is running
 	local counter = 0
 	local rateLimit = timer:new(0.001)
@@ -128,4 +132,3 @@ function timerSlave(txQueue, rxQueue, size, flows)
 	hist:print()
 	hist:save("histogram.csv")
 end
-
