@@ -1,0 +1,6 @@
+statistics/*.aux
+statistics/*.log
+statistics/*.nav
+statistics/*.out
+statistics/*.snm
+statistics/*.toc
