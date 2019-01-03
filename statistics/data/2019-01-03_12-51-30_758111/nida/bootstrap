@@ -1,0 +1,182 @@
+#!/usr/bin/env python
+
+'''
+Bootstrap the host for the experiment scripts.
+Sets environment variables and deploys postools.
+The resulting variables in /etc/environment are all double quoted strings.
+'''
+
+import logging
+logging.basicConfig(level='DEBUG',
+                    format='[%(name)s] [%(levelname)s] %(message)s')
+import json
+import socket
+from time import time
+from datetime import datetime
+import argparse
+import subprocess
+import tarfile
+import ssl
+
+try:
+    # For Python 3.0 and later
+    from urllib.request import urlopen
+except ImportError:
+    # Fall back to Python 2's urllib2
+    from urllib2 import urlopen
+
+# posd uses self-signed certificate, so don't verify it
+SSL_CONTEXT = ssl._create_unverified_context()
+
+def get_time():
+    '''
+    current time
+    '''
+
+    return datetime.fromtimestamp(time()).strftime('%Y-%m-%d %H:%M:%S')
+
+
+def parse_cmdline():
+    '''
+    read /proc/cmdline
+    '''
+
+    # FIXME remove start
+    with open('/proc/cmdline') as handle:
+        cmdline = handle.read()
+    args = cmdline.split()
+    args = [arg for arg in args if arg.find('=') >= 0]
+    args = dict((k, str(v)) for k, v in (arg.split('=', 1) for arg in args))
+    return args
+    # FIXME remove end
+
+
+def get_allocation_data(pos_server, hostname):
+    '''
+    retrieve the allocation data for this node
+    '''
+
+    url = '{}/allocations/get/{}'.format(pos_server, hostname)
+    text = urlopen(url, context=SSL_CONTEXT).read().decode('utf-8')
+    return json.loads(text)
+
+
+def append_to_environment(args, alloc, hostname):
+    '''
+    append pos variables to environment
+    '''
+
+    with open('/etc/environment', 'w') as handle:
+        handle.write('\n'.join(['='.join(arg) for arg in args.items()]))
+        # also add per node/global variables
+        # python wrapper pos_get_variable should be preferred
+        handle.write('\n')
+        handle.write('\n'.join(['='.join(list(map(str, tup))) for tup in
+                                alloc['variables']['global'].items()]))
+        handle.write('\n')
+        handle.write('\n'.join(['='.join(list(map(str, tup))) for tup in
+                                alloc['variables'][hostname].items()]))
+        handle.write('\n')
+
+
+def write_profile(args):
+    '''
+    write args to profile
+    '''
+
+    # FIXME the following call should also suffice but does NOT
+    with open('/etc/profile.d/variables.sh', 'w') as handle:
+        handle.write('\n'.join(['='.join(arg) for arg in args.items()]))
+
+
+def write_variables(alloc, pos_server, hostname):
+    '''
+    store pos variables locally
+    '''
+
+    # save json data
+    alloc.update({'hostname':hostname})
+    alloc.update({'pos_server':pos_server})
+    with open('/tmp/pos_variables.json', 'w') as handle:
+        json.dump(alloc, handle, indent=2, sort_keys=True)
+
+
+def deploy_postools(pos_server, postools_archive):
+    '''
+    download and install postools
+    '''
+
+    postools_data = urlopen('{}/files/{}'.format(pos_server,
+                                                 postools_archive),
+                            context=SSL_CONTEXT)
+    postools_tar = postools_data.read()
+    postools_file = '/tmp/' + postools_archive
+
+    with open(postools_file, 'wb') as handle:
+        handle.write(postools_tar)
+
+    pwd = '/usr/local/postools'
+
+    postools = tarfile.open(postools_file)
+    postools.extractall(path=pwd)
+
+    subprocess.check_call(
+        ['/usr/bin/python', 'setup.py', 'build', '--force'], cwd=pwd)
+    subprocess.check_call(
+        ['/usr/bin/python', 'setup.py', 'install', '--force'], cwd=pwd)
+    try:
+        subprocess.check_call(
+            ['/usr/bin/python3', 'setup.py', 'build', '--force'], cwd=pwd)
+        subprocess.check_call(
+            ['/usr/bin/python3', 'setup.py', 'install', '--force'], cwd=pwd)
+    except subprocess.CalledProcessError:
+        logging.warning('Unable to install python3 postools')
+
+
+def bootstrap(pos_server, postools_archive):
+    '''
+    perform a pos bootstrap
+    '''
+
+    logging.debug("pos_server: %s", pos_server)
+
+    # extract second experiment variable
+    hostname = socket.gethostname()
+
+    logging.info("Start bootstrapping host: %s", get_time())
+
+    args = parse_cmdline()
+    alloc = get_allocation_data(pos_server, hostname)
+
+    # extract environment variables from pos
+    result_folder = alloc['result_folder']
+    args['RESULT_FOLDER'] = result_folder
+    args['NODE_ID'] = hostname
+
+    append_to_environment(args, alloc, hostname)
+    write_profile(args)
+
+    write_variables(alloc, pos_server, hostname)
+
+    logging.info("Finished setting up variables: %s", get_time())
+
+    deploy_postools(pos_server, postools_archive)
+
+    logging.info("Finished setting up postools: %s", get_time())
+
+
+def main():
+    '''
+    Main function: argparser and bootstrap invocation
+    '''
+
+    parser = argparse.ArgumentParser(description="Bootstrap a host.")
+    parser.add_argument("pos_server", help="address of the pos server")
+    parser.add_argument("postools_archive", help="postools archive to deploy")
+    args = parser.parse_args()
+
+    bootstrap(args.pos_server, args.postools_archive)
+
+
+if __name__ == '__main__':
+    main()
