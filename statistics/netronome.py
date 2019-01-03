@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# needs python-pmw package
 # coding: utf-8
 
 # In[ ]:
@@ -6,7 +7,7 @@
 
 from __future__ import print_function
 
-get_ipython().run_line_magic('matplotlib', 'inline')
+#get_ipython().run_line_magic('matplotlib', 'inline')
 
 import os
 import codecs
@@ -17,6 +18,7 @@ from tqdm import tqdm
 from tabulate import tabulate
 import matplotlib.pyplot as plt
 from matplotlib2tikz import get_tikz_code
+import csv
 
 
 # In[2]:
@@ -29,7 +31,7 @@ sns.set(style="ticks")
 
 
 hmac = ''
-DIRS = ['/Users/gallenmu/mkdir/2018-07-27_20-14-52/rapla']
+DIRS = ['/home/peter/dev/ba/ba-okelmann/statistics/data/2019-01-03_12-51-30_758111/nida/']
 
 #hmac = 'hmac_'
 #DIRS = ['/Users/gallenmu/mkdir/2018-07-29_18-13-41/rapla']
@@ -40,19 +42,18 @@ fthroughput = []
 
 for d in DIRS:
     files = os.listdir(d)
-    flatency_ = filter(lambda x: x.startswith('latency'), files)
+    flatency_ = filter(lambda x: x.endswith('histogram.csv'), files)
     flatency.extend(map(lambda x: os.path.join(d, x), flatency_))
-    fthroughput_ = filter(lambda x: x.startswith('throughput'), files)
+    fthroughput_ = filter(lambda x: x.endswith('throughput.csv'), files)
     fthroughput.extend(map(lambda x: os.path.join(d, x), fthroughput_))
-
 
 # In[3]:
 
-
+"""
 hmac = ''
 flatency = ['~/dev/ba/ba-okelmann/statistics/aaaa.csv']
 fthroughput = []
-
+"""
 
 # In[4]:
 
@@ -74,7 +75,7 @@ tikz_footer = r"""
 \end{document}
 """
 
-
+"""
 # ## Throughput
 
 # In[9]:
@@ -211,81 +212,103 @@ for psize, dfg in dfthr_.groupby(["psize"]):
 
 # In[ ]:
 
+"""
+
+def parse_throughput(csvfile):
+    print("penis")
+    with open(csvfile, ) as f:
+        reader = csv.reader(f)
+        next(reader) # skip header line
+        tx = next(reader)
+        rx = next(reader)
+        print("{0:.2f}".format(float(rx[2])))
+        ret = "tx: %.2fmpps, %.2fstdDev; rx: %.2fmpps, %.2fstdDev" % (float(tx[1]), float(tx[2]), float(rx[1]), float(rx[2]))
+        print(ret)
+        return ret
+    return "err"
 
 
+def latency_csv2tex(latfile, throughfile):
+
+    # ## Latency
+
+    # In[13]:
+
+    flatency = [latfile]
+    dflat = []
+    for fname in tqdm(flatency, ncols=0):
+       
+        s = fname.split('.')
+        t = s[0].split('/')
+        u = t[len(t)-1].split('-')
+        for e in u:
+            if 'rate' in e:
+                rate = int(e.replace('rate', ''))
+            elif 'pktsz' in e:
+                psize = int(e.replace('pktsz', ''))
+                    
+        df = pd.read_csv(fname, names=["latency", "weight"])
+        #df['rate'] = rate
+        #df['psize'] = psize
+          
+        dflat.append(df)
+        
+    dflat = pd.concat(dflat)
+    dflat.reset_index(drop=True, inplace=True)
 
 
-# ## Latency
-
-# In[13]:
+    # In[14]:
 
 
-dflat = []
-for fname in tqdm(flatency, ncols=0):
-   
-    s = fname.split('.')
-    t = s[0].split('/')
-    u = t[len(t)-1].split('-')
-    for e in u:
-        if 'rate' in e:
-            rate = int(e.replace('rate', ''))
-        elif 'pktsz' in e:
-            psize = int(e.replace('pktsz', ''))
-                
-    df = pd.read_csv(fname, names=["latency", "weight"])
-    #df['rate'] = rate
-    #df['psize'] = psize
-      
-    dflat.append(df)
-    
-dflat = pd.concat(dflat)
-dflat.reset_index(drop=True, inplace=True)
+    dflat.head()
 
 
-# In[14]:
+    # In[42]:
 
 
-dflat.head()
-
-
-# In[42]:
-
-
-#for (psize, rate), dfg in dflat.groupby(["psize", "rate"]):
-    
-    #print(rate)
-    #print(psize)
-    #print(dfg)
-    
-    #latencies = dfg['latency'].tolist()
-    #weights = dfg['weight'].tolist()
+    #for (psize, rate), dfg in dflat.groupby(["psize", "rate"]):
+        
+        #print(rate)
+        #print(psize)
+        #print(dfg)
+        
+        #latencies = dfg['latency'].tolist()
+        #weights = dfg['weight'].tolist()
     latencies = dflat['latency'].tolist()
     weights = dflat['weight'].tolist()
 
     rate = -1
     psize = -1
-    
+
     fig = plt.figure()
 
-    plt.hist(latencies, weights=weights, bins=400)
-    plt.title('Rate {} Mbit/s - Packet size: {} B'.format(rate, psize))
+    plt.hist(latencies, weights=weights, bins=100)
+    #plt.title('Rate {} Mbit/s - Packet size: {} B'.format(rate, psize))
+    plt.title("{}: \n{}".format(os.path.basename(latfile), parse_throughput(throughfile)))
     #plt.legend(loc=0)
     plt.ylabel("Number of events")
     plt.xlabel("Processing latency (ns)")
     fig.tight_layout()
     plt.grid(True)
-    
-    outf = '/home/pogobanane/dev/ba/ba-okelmann/statistics/'+hmac+'aaaaaa.tex'
-    with codecs.open(outf, "w", encoding="utf8") as f:
+
+    outf = '{}.tex'.format(latfile)
+    with codecs.open(outf, "w+", encoding="utf8") as f:
         f.write(tikz_header)
         f.write(get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm"))
         f.write(tikz_footer)
-    
-    plt.show()
 
-
-# In[ ]:
-
+    #plt.show()
+    plt.draw()
+    plt.pause(0.001)
 
 
 
+for i in range(0, len(flatency)):
+
+    #outf = '{}.tex'.format(flatency[i])
+    #with codecs.open(outf, "w+", encoding="utf8") as f:
+    #    f.write(tikz_header)
+    #tex = 
+    latency_csv2tex(flatency[i], fthroughput[i])
+
+input("Press [enter] to continue.")
