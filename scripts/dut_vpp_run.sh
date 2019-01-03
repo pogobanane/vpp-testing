@@ -35,9 +35,11 @@ echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
 # set clean up vpp
-pkill -f vpp
-rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
-modprobe uio_pci_generic
+function cleanup_vpp () {
+	pkill -f vpp
+	rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
+	modprobe uio_pci_generic
+}
 
 # load some variables
 # VPP_CONFIG=$(pos_get_variable vpp/config)
@@ -51,8 +53,7 @@ do
 	echo "Starting bridging test $i"
 
 	# pos_run COMMMAND_ID -- COMMAND
-	# TODO:
-	# pos_run vpp-cleanup -- ${GITDIR}/scripts/vpp_tests/cleanup.sh
+	cleanup_vpp
 	# pos_sync
 	pos_run l2_bridging_${i}_setup -- ${GITDIR}/scripts/vpp_tests/l2-bridging.sh ${i}
 	pos_sync # vpp is set up
@@ -72,8 +73,7 @@ done
 echo "Starting xconnect test"
 
 # pos_run COMMMAND_ID -- COMMAND
-# TODO:
-# pos_run vpp-cleanup -- ${GITDIR}/scripts/vpp_tests/cleanup.sh
+cleanup_vpp
 # pos_sync
 pos_run l2_xconnect_setup -- ${GITDIR}/scripts/vpp_tests/l2-xconnect.sh
 pos_sync # vpp is set up
