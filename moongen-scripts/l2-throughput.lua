@@ -83,6 +83,46 @@ local function fillEthPacket(buf, eth_src, eth_dst)
   }
 end
 
+function sendPoisson(bufs, txQueue, txCtr, rxCtr, pktSize, rate)
+  while mg.running() do
+    bufs:alloc(pktSize)
+    for _, buf in ipairs(bufs) do
+      -- this script uses Mpps instead of Mbit (like the other scripts)
+      buf:setDelay(poissonDelay(10^10 / 8 / (rate * 10^6) - pktSize - 24))
+      --buf:setRate(rate)
+    end
+    txCtr:updateWithSize(txQueue:sendWithDelay(bufs), pktSize)
+    rxCtr:update()
+  end
+end
+
+function sendSimple(bufs, txQueue, txCtr, rxCtr, pktSize)
+  while mg.running() do
+    bufs:alloc(pktSize)
+    txQueue:send(bufs)
+    txCtr:update()
+    rxCtr:update()
+  end
+end
+
+function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseMac, flows)
+  local counter = 0
+  local baseMacNr = parseMacAddress(baseMac, 1)
+  while mg.running() do
+    bufs:alloc(pktSize)
+    for _, buf in ipairs(bufs) do
+      local pkt = buf:getEthernetPacket()
+      pkt.eth.dst:set(baseMacNr + counter)
+      counter = incAndWrap(counter, flows)
+    end
+    -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
+    bufs:offloadUdpChecksums()
+    txQueue:send(bufs)
+    txCtr:update()
+    rxCtr:update()
+  end
+end
+
 function loadSlave(txQueue, rxDev, eth_src, eth_dst, pktSize, file)
   local mem = memory.createMemPool(function(buf)
     fillEthPacket(buf, eth_src, eth_dst)
@@ -92,12 +132,7 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, pktSize, file)
 	local rxCtr = stats:newDevRxCounter(rxDev, "plain")
 	-- local txCtrF = stats:newDevTxCounter(txQueue, "csv", "txthrouhput.csv")
 	-- local rxCtrF = stats:newDevRxCounter(rxDev, "csv", "rxthroughput.csv")
-  while mg.running() do
-    bufs:alloc(pktSize)
-    txQueue:send(bufs)
-    txCtr:update()
-    rxCtr:update()
-  end
+  sendSimple(bufs, txQueue, txCtr, rxCtr, pktSize)
   txCtr:finalize()
   rxCtr:finalize()
   logThroughput(txCtr, rxCtr, file)
