@@ -33,9 +33,27 @@ vppctl -s localhost:5002
 vpp unix interactive
 
 # for v18.04-rc2
+----------------
 rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
 modprobe uio_pci_generic
 ./vpp/build-root/install-vpp-native/vpp/bin/vpp unix interactive plugin_path ./vpp/build-root/install-vpp-native/vpp/lib64/vpp_plugins
+# for debian vms:
+----------
+append vfio_pci ids=8086:100e to /etc/initramfs-tools/modules
+update-initramfs -u
+apt install dpdk-igb-uio-dkms
+modprobe uio
+modprobe igb_uio
+# didnt work nvm
+# with vagrant using libvirt
+---------------------------
+install vagrant on host
+vagrant plugin install vagrant-libvirt
+vagrant plugin install vagrant-mutate
+vagrant box add puppetlabs/ubuntu-16.04-64-nocm --provider=virtualbox
+vagrant mutate puppetlabs/ubuntu-16.04-64-nocm libvirt
+
+
 
 # pos results end up in
 /srv/testbed/results/manual_test_okelmann
