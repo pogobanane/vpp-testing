@@ -1,7 +1,7 @@
-[submodule "vpp"]
-	path = vpp
-	url = https://gerrit.fd.io/r/vpp
-	ignore = all
 [submodule "MoonGen"]
 	path = MoonGen
 	url = https://github.com/emmericp/MoonGen.git
+[submodule "vpp-benchplug"]
+	path = vpp
+	url = https://gitlab.pogobanane.de/pogobanane/vpp-benchplug.git
+	ignore = all
