@@ -1,3 +1,7 @@
 [submodule "MoonGen"]
 	path = MoonGen
 	url = https://github.com/emmericp/MoonGen.git
+[submodule "vpp"]
+	path = vpp
+	url = https://gitlab.pogobanane.de/pogobanane/vpp-benchplug.git
+	branch = stable/1810
