@@ -51,10 +51,12 @@ function l2-throughput-rate () {
 	echo "running loadgen"
 
 	jobname=$1
-	latencyfile="/tmp/$jobname.histogram.csv"
+	historyfilefile="/tmp/$jobname.histogram.csv"
 	throughputfile="/tmp/$jobname.throughput.csv"
+	latencyfile="/tmp/$jobname.latency.csv"
 
-	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --lafile $latencyfile --thfile $throughputfile --rate $2
+
+	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --hifile $historyfile --thfile $throughputfile --lafile $latencyfile --rate $2
 
 	sleep 30
 
@@ -64,8 +66,9 @@ function l2-throughput-rate () {
 
 	echo "uploading csv files..."
 	sleep 10 # wait until moongen did actually stop and write the files
-	pos_upload $latencyfile
+	pos_upload $historyfile
 	pos_upload $throughputfile
+	pos_upload $latencyfile
 
 	# wait for test done signal
 	pos_sync # moongen test done

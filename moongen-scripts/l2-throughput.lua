@@ -15,8 +15,9 @@ function configure(parser)
   parser:option("-d --ethDst", "Target eth addr."):default("00:11:22:33:44:56"):convert(tostring)
   parser:option("-s --pktSize", "Packet size."):default(60):convert(tonumber)
   parser:option("-r --rate", "Transmit rate in Mbit/s."):default(10000):convert(tonumber)
-  parser:option("-l --lafile", "Filename for the latency histogram."):default("histogram.csv")
+  parser:option("-h --hifile", "Filename for the latency histogram."):default("histogram.csv")
   parser:option("-t --thfile", "Filename for the throughput csv file."):default("throuput.csv")
+  parser:option("-l --lafile", "Filename for latency summery file."):default("latency.csv")
 end
 
 function master(args)
@@ -31,7 +32,7 @@ function master(args)
   txWarmup(recTask, txDev:getTxQueue(0), args.ethSrc, args.ethDst, args.pktSize)
   mg.waitForTasks()
   mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.ethSrc, args.ethDst, args.pktSize, args.thfile)
-  mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.lafile)
+  mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.hifile, args.lafile)
   mg.waitForTasks()
 end
 
@@ -51,6 +52,14 @@ function logThroughput(txCtr, rxCtr, file)
     rxCtr.wireMbit.avg,
     rxCtr.total, rxCtr.totalBytes
   ))
+  file:close()
+end
+
+function logLatency(hist, file)
+  log:info("Saving latency to '%s'"):format(file)
+  file = io.open(file, "w+")
+  file:write("samples,average_ns,stdDev_ns,quartile_25th,quartile_50th,quartile_75th\n")
+  file:write(("%f,%f,%f,%f,%f,%f\n"):format(hist.numSamples, hist.avg, hist.stdDev, unpack(hist.quarts)))
   file:close()
 end
 
@@ -94,7 +103,7 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, pktSize, file)
   logThroughput(txCtr, rxCtr, file)
 end
 
-function timerSlave(txQueue, rxQueue, ethDst, histfile)
+function timerSlave(txQueue, rxQueue, ethDst, histfile, lafile)
 	local timestamper = ts:newTimestamper(txQueue, rxQueue)
 	local hist = hist:new()
 	mg.sleepMillis(1000) -- ensure that the load task is running
@@ -103,6 +112,7 @@ function timerSlave(txQueue, rxQueue, ethDst, histfile)
 	end
 	hist:print()
 	hist:save(histfile)
+  logLatency(hist, lafile)
 end
 
 -- recTask is only usable in master thread
