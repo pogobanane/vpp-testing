@@ -35,6 +35,10 @@ echo 1 >   /sys/devices/system/cpu/intel_pstate/no_turbo
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_perf_pct
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
+# read vars
+INT_SRC=`pos_get_variable -r vpp/int_scr`
+INT_DST=`pos_get_variable -r vpp/int_dst`
+
 # set clean up vpp
 function cleanup_vpp () {
 	pkill vpp_main
@@ -50,7 +54,7 @@ function add_macs () {
 	for i in $(seq $1 $upper)
 	do
 		mac=`printf "%x" $i | sed 's/./&:/10;s/./&:/8;s/./&:/6;s/./&:/4;s/./&:/2'`
-		addmac="l2fib add $mac 1 TenGigabitEthernet5/0/1"
+		addmac="l2fib add $mac 1 $INT_DST"
 		echo "$addmac" | socat - UNIX-CONNECT:/tmp/vpptesting_cli
 	done
 }
@@ -64,13 +68,14 @@ echo 'sync done'
 
 # $1: jobname
 # $2: command
+# $3: additional args for command
 function moon-gen () {
 	echo "Starting bridging test $1"
 
 	# pos_run COMMMAND_ID -- COMMAND
 	cleanup_vpp
 	# pos_sync
-	pos_run $1 -- $2
+	pos_run $1 -- $2 $INT_SRC $INT_DST $3
 	pos_sync # vpp is set up
 	# pos_run l2_bridging_0_whiteboxing -- ${GITDIR}/scripts/vpp_tests/whiteboxinfo.sh 10
 
@@ -87,21 +92,21 @@ function moon-gen () {
 
 for i in {0..5}
 do
-	moon-gen "l2_bridging_${i}_setup" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh ${i}"
+	moon-gen "l2_bridging_${i}_setup" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
 done
 
 moon-gen "l2_xconnect_setup" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
 
-vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh 0"
-moon-gen "l2_bridging_6800mbit" "$vppcmd"
-moon-gen "l2_bridging_7000mbit" "$vppcmd"
-moon-gen "l2_bridging_6600mbit" "$vppcmd"
-moon-gen "l2_bridging_6400mbit" "$vppcmd"
-moon-gen "l2_bridging_6000mbit" "$vppcmd"
-moon-gen "l2_bridging_5000mbit" "$vppcmd"
-moon-gen "l2_bridging_4000mbit" "$vppcmd"
-moon-gen "l2_bridging_2000mbit" "$vppcmd"
-moon-gen "l2_bridging_1000mbit" "$vppcmd"
-moon-gen "l2_bridging_0500mbit" "$vppcmd"
+vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
+moon-gen "l2_bridging_6800mbit" "$vppcmd" "0"
+moon-gen "l2_bridging_7000mbit" "$vppcmd" "0"
+moon-gen "l2_bridging_6600mbit" "$vppcmd" "0"
+moon-gen "l2_bridging_6400mbit" "$vppcmd" "0"
+moon-gen "l2_bridging_6000mbit" "$vppcmd" "0"
+moon-gen "l2_bridging_5000mbit" "$vppcmd" "0"
+moon-gen "l2_bridging_4000mbit" "$vppcmd" "0"
+moon-gen "l2_bridging_2000mbit" "$vppcmd" "0"
+moon-gen "l2_bridging_1000mbit" "$vppcmd" "0"
+moon-gen "l2_bridging_0500mbit" "$vppcmd" "0"
 
 echo "all done"

@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # expects to be run from the ba-okelmann project root
-# expects $1: bdcreators[$1]
+# expects $3: bdcreators[$3]
 
+# expects $1: INT_SRC; $2: INT_DST
 source scripts/vpp_tests/functions.sh
 
 bdid=1 # bridge-domain-id
@@ -17,7 +18,7 @@ bdcreators=( "create bridge-domain $bdid learn 0"
 exec="set int state $INT_SRC up
 set int state $INT_DST up
 
-${bdcreators[$1]}
+${bdcreators[$3]}
 
 set int l2 bridge $INT_SRC $bdid
 set int l2 bridge $INT_DST $bdid

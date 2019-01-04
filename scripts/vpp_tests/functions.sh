@@ -2,8 +2,9 @@
 
 # expects to be run from the ba-okelmann project root
 
-INT_SRC="TenGigabitEthernet5/0/0"
-INT_DST="TenGigabitEthernet5/0/1"
+# expects $1: INT_SRC; $2: INT_DST
+INT_SRC="$1"
+INT_DST="$2"
 
 MAC_SRC="00:11:22:33:44:55"
 MAC_DST="00:11:22:33:44:56"
