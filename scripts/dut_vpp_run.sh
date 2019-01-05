@@ -39,9 +39,11 @@ echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_
 INT_SRC=`pos_get_variable -r vpp/int_scr`
 INT_DST=`pos_get_variable -r vpp/int_dst`
 
+VPP_PNAME="vpp_main"
+
 # set clean up vpp
 function cleanup_vpp () {
-	pkill vpp_main
+	pkill $VPP_PNAME
 	rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
 	modprobe uio_pci_generic
 }
@@ -66,23 +68,93 @@ echo 'Done setting up'
 pos_sync
 echo 'sync done'
 
+# this function is blocking!
+# $1: filename for perf-stat.csv
+# $2: filename for perf-record.data
+# $3: time to collect (in sec).
+function perf-collect () {
+	# TODO: 
+	# numastat
+	# sudo perf stat -x, -o perfstat.out thunar
+	hwevents="branch-instructions,\
+branch-misses,\
+cache-misses,\
+cache-references,\
+cpu-cycles,\
+instructions,\
+ref-cycles,\
+idle-cycles-frontend"
+	cacheevents="L1-dcache-load-misses,\
+L1-dcache-loads,\
+L1-dcache-prefetch-misses,\
+L1-dcache-store-misses,\
+L1-dcache-stores,\
+L1-icache-load-misses,\
+LLC-load-misses,\
+LLC-loads,\
+LLC-prefetch-misses,\
+LLC-prefetches,\
+LLC-store-misses,\
+LLC-stores,\
+branch-load-misses,\
+branch-loads,\
+dTLB-load-misses,\
+dTLB-loads,\
+dTLB-store-misses,\
+dTLB-stores,\
+iTLB-load-misses,\
+node-load-misses,\
+node-loads,\
+node-prefetch-misses,\
+node-prefetches,\
+node-store-misses,\
+node-stores"
+
+	vpp_pid=`pgrep $VPP_PNAME`
+
+	perf stat -x";" -e "$hwevents,$cacheevents" -o "$1" -t $vpp_pid sleep $3 &
+	perf record -o "$2" -t $vpp_pid sleep $3 &
+	wait
+}
+
+# $1: filename for vpp output like vpp-stats
+function vpp-collect () {
+	echo "show err" | socat - UNIX-CONNECT:/tmp/vpptesting_cli | tail -n +1 > $1
+}
+
 # $1: jobname
 # $2: command
 # $3: additional args for command
 function vpp-test () {
+	jobname=$1
+	perfstatfile="/tmp/$jobname.perfstat.csv"
+	perfdatafile="/tmp/$jobname.perfrecord.data"
+	vppfile="/tmp/$jobname.vpp.out"
+
 	echo "Starting bridging test $1"
 
 	# pos_run COMMMAND_ID -- COMMAND
 	cleanup_vpp
 	# pos_sync
-	pos_run $1 -- $2 $INT_SRC $INT_DST $3
-	pos_sync # vpp is set up
+	pos_run $jobname -- $2 $INT_SRC $INT_DST $3
+	pos_sync #s1 vpp is set up
 	# pos_run l2_bridging_0_whiteboxing -- ${GITDIR}/scripts/vpp_tests/whiteboxinfo.sh 10
 
-	# moongen is now running tests
+	pos_sync #s21: moogen should be generating load now
+	
+	perf-collect "$perfstatfile" "$perfdatafile" 10
+
+	pos_sync #s31: vpp side live data collection done
+	pos_sync #s32: moongen is now terminating
+	
+	echo "collecting vpp info and upload files..."
+	vpp-collect "$vppfile"
+	pos_upload $perfdatafile
+	pos_upload $perfstatfile
+	pos_upload $vppfile
 
 	# wait for test done signal
-	pos_sync # moongen test done
+	pos_sync #s42: test end
 	echo "Stopped test"
 
 	# kill the process started with pos_run

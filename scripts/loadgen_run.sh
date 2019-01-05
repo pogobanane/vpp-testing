@@ -47,7 +47,7 @@ function l2-throughput-complex () {
 
 	# pos_run COMMMAND_ID -- COMMAND
 	echo "waiting for vpp setup"
-	pos_sync # vvp is set up
+	pos_sync #s1: vvp is set up
 
 	echo "running loadgen"
 
@@ -59,11 +59,15 @@ function l2-throughput-complex () {
 
 	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --hifile $historyfile --thfile $throughputfile --lafile $latencyfile --rate $2 --macs $3
 
-	sleep 30
+	sleep 20
+	pos_sync #s21: moogen should be generating load now
+	pos_sync #s31: vpp side live data collection done
 
 	# kill the process started with pos_run
 	# command/stdout/stderr are uploaded automatically
 	pos_kill $jobname
+
+	pos_sync #s32: moongen is now terminating
 
 	echo "uploading csv files..."
 	sleep 10 # wait until moongen did actually stop and write the files
@@ -72,7 +76,7 @@ function l2-throughput-complex () {
 	pos_upload $latencyfile
 
 	# wait for test done signal
-	pos_sync # moongen test done
+	pos_sync #s42: test done
 	echo "Stopped test"
 }
 

@@ -4,6 +4,9 @@
 # exit on error
 set -e
 
+# deps for some scripts/vpp-tests
+apt-get -y install socat linux-tools
+
 ## build vpp
 
 #apt-get install git
