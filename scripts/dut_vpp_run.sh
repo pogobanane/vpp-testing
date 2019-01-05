@@ -115,8 +115,6 @@ vpp-test "l2_multimac_1000" 1000
 vpp-test "l2_multimac_10000" 10000
 vpp-test "l2_multimac_100000" 100000
 vpp-test "l2_multimac_1000000" 1000000
-vpp-test "l2_multimac_2000000" 2000000
-vpp-test "l2_multimac_3000000" 3000000
-vpp-test "l2_multimac_4000000" 4000000
+vpp-test "l2_multimac_10000000" 10000000
 
 echo "all done"
