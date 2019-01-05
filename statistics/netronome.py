@@ -307,7 +307,7 @@ def latency_csv2tex(latfile, throughfile):
 
     fig = plt.figure()
 
-    plt.hist(latencies, weights=weights, bins=100)
+    plt.hist(latencies, weights=weights, bins=400)
     #plt.title('Rate {} Mbit/s - Packet size: {} B'.format(rate, psize))
     plt.title("{}: \n{}".format(tex_escape(os.path.basename(latfile)), tex_escape(parse_throughput(throughfile))))
     #plt.legend(loc=0)
