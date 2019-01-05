@@ -41,7 +41,8 @@ echo 'sync done'
 
 # $1: jobname
 # $2: rate in mbit/s
-function l2-throughput-rate () {
+# $3: mac flows
+function l2-throughput-complex () {
 	echo "Starting test"
 
 	# pos_run COMMMAND_ID -- COMMAND
@@ -56,7 +57,7 @@ function l2-throughput-rate () {
 	latencyfile="/tmp/$jobname.latency.csv"
 
 
-	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --hifile $historyfile --thfile $throughputfile --lafile $latencyfile --rate $2
+	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --hifile $historyfile --thfile $throughputfile --lafile $latencyfile --rate $2 --rate $3
 
 	sleep 30
 
@@ -76,9 +77,22 @@ function l2-throughput-rate () {
 }
 
 # $1: jobname
-function l2-throughput () {
-	l2-throughput-rate $1 10000
+# $2: rate in mbit/s
+function l2-throughput-rate () {
+	l2-throughput-complex $1 $2 0
 }
+
+# $1: jobname
+# $2: number of different macs to use
+function l2-throughput-flows () {
+	l2-throughput-complex $1 10000 $2
+}
+
+# $1: jobname
+function l2-throughput () {
+	l2-throughput-complex $1 10000 0
+}
+
 
 for i in {0..5}
 do
@@ -98,10 +112,10 @@ l2-throughput-rate "l2_bridging_2000mbit" 2000
 l2-throughput-rate "l2_bridging_1000mbit" 1000
 l2-throughput-rate "l2_bridging_0500mbit" 500
 
-l2-throughput-rate "l2_multimac_100" 1000
-l2-throughput-rate "l2_multimac_1000" 1000
-l2-throughput-rate "l2_multimac_10000" 1000
-l2-throughput-rate "l2_multimac_100000" 1000
-l2-throughput-rate "l2_multimac_1000000" 1000
+l2-throughput-flows "l2_multimac_100" 1000
+l2-throughput-flows "l2_multimac_1000" 1000
+l2-throughput-flows "l2_multimac_10000" 1000
+l2-throughput-flows "l2_multimac_100000" 1000
+l2-throughput-flows "l2_multimac_1000000" 1000
 
 echo "all done"
