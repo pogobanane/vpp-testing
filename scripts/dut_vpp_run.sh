@@ -69,7 +69,7 @@ echo 'sync done'
 # $1: jobname
 # $2: command
 # $3: additional args for command
-function moon-gen () {
+function vpp-test () {
 	echo "Starting bridging test $1"
 
 	# pos_run COMMMAND_ID -- COMMAND
@@ -92,28 +92,28 @@ function moon-gen () {
 
 for i in {0..5}
 do
-	moon-gen "l2_bridging_${i}_setup" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
+	vpp-test "l2_bridging_${i}_setup" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
 done
 
-moon-gen "l2_xconnect_setup" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
+vpp-test "l2_xconnect_setup" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
 
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
-moon-gen "l2_bridging_6800mbit" "$vppcmd" "0"
-moon-gen "l2_bridging_7000mbit" "$vppcmd" "0"
-moon-gen "l2_bridging_6600mbit" "$vppcmd" "0"
-moon-gen "l2_bridging_6400mbit" "$vppcmd" "0"
-moon-gen "l2_bridging_6000mbit" "$vppcmd" "0"
-moon-gen "l2_bridging_5000mbit" "$vppcmd" "0"
-moon-gen "l2_bridging_4000mbit" "$vppcmd" "0"
-moon-gen "l2_bridging_2000mbit" "$vppcmd" "0"
-moon-gen "l2_bridging_1000mbit" "$vppcmd" "0"
-moon-gen "l2_bridging_0500mbit" "$vppcmd" "0"
+vpp-test "l2_bridging_6800mbit" "$vppcmd" "0"
+vpp-test "l2_bridging_7000mbit" "$vppcmd" "0"
+vpp-test "l2_bridging_6600mbit" "$vppcmd" "0"
+vpp-test "l2_bridging_6400mbit" "$vppcmd" "0"
+vpp-test "l2_bridging_6000mbit" "$vppcmd" "0"
+vpp-test "l2_bridging_5000mbit" "$vppcmd" "0"
+vpp-test "l2_bridging_4000mbit" "$vppcmd" "0"
+vpp-test "l2_bridging_2000mbit" "$vppcmd" "0"
+vpp-test "l2_bridging_1000mbit" "$vppcmd" "0"
+vpp-test "l2_bridging_0500mbit" "$vppcmd" "0"
 
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
-moon-gen "l2_multimac_100" 100
-moon-gen "l2_multimac_1000" 1000
-moon-gen "l2_multimac_10000" 10000
-moon-gen "l2_multimac_100000" 100000
-moon-gen "l2_multimac_1000000" 1000000
+vpp-test "l2_multimac_100" 100
+vpp-test "l2_multimac_1000" 1000
+vpp-test "l2_multimac_10000" 10000
+vpp-test "l2_multimac_100000" 100000
+vpp-test "l2_multimac_1000000" 1000000
 
 echo "all done"
