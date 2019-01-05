@@ -7,7 +7,7 @@ INT_SRC="$1"
 INT_DST="$2"
 
 MAC_SRC="00:11:22:33:44:55"
-MAC_DST="00:11:22:33:44:56"
+MAC_DST="20:00:00:00:00:00"
 
 VPP_CLI_LISTEN="/tmp/vpptesting_cli"
 VPP_CONF="/tmp/vpptesting_startup.conf"
