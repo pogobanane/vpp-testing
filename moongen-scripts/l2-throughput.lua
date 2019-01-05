@@ -15,7 +15,7 @@ function configure(parser)
   parser:option("-d --ethDst", "Target eth addr."):default("20:00:00:00:00:00"):convert(tostring)
   parser:option("-s --pktSize", "Packet size."):default(60):convert(tonumber)
   parser:option("-r --rate", "Transmit rate in Mbit/s."):default(10000):convert(tonumber)
-  parser:option("-m --macs", "Send to (ethDst...ethDst+macs)."):default(0):convet(tonumber)
+  parser:option("-m --macs", "Send to (ethDst...ethDst+macs)."):default(0):convert(tonumber)
   parser:option("-h --hifile", "Filename for the latency histogram."):default("histogram.csv")
   parser:option("-t --thfile", "Filename for the throughput csv file."):default("throuput.csv")
   parser:option("-l --lafile", "Filename for latency summery file."):default("latency.csv")
@@ -106,6 +106,29 @@ function sendSimple(bufs, txQueue, txCtr, rxCtr, pktSize)
   end
 end
 
+-- unfinished
+-- bufs: getudppacket fills!
+-- multiple flows from devices or to devices?
+-- to deviecs -> have to fill arps for them
+-- from devices -> overhead from arp filling
+function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseIP, flows)
+  local counter = 0
+  local baseIpNr = parseIPAddress(baseIP)
+  while mg.running() do
+    bufs:alloc(pktSize)
+    for _, buf in ipairs(bufs) do
+      local pkt = buf:getUdpPacket()
+      pkt.ip4.dst:set(baseMacNr + counter)
+      counter = incAndWrap(counter, flows) -- starts to increment the leftmost byte to test subnets
+    end
+    -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
+    bufs:offloadUdpChecksums()
+    txQueue:send(bufs)
+    txCtr:update()
+    rxCtr:update()
+  end
+end
+
 function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseMac, flows)
   local counter = 0
   local baseMacNr = parseMacAddress(baseMac, 1)
@@ -114,7 +137,8 @@ function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseMac, flows)
     for _, buf in ipairs(bufs) do
       local pkt = buf:getEthernetPacket()
       pkt.eth.dst:set(baseMacNr + counter)
-      counter = incAndWrap(counter, flows)
+      counter++
+      counter %= flows
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
     bufs:offloadUdpChecksums()
