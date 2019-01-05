@@ -1,6 +1,7 @@
+# vpp: omanyte: Intel 82599, moongen: omastar: 10-Gigabit X540-AT2
 moongen:
-        tx: 2
-        rx: 3
+        tx: 3
+        rx: 2
 
 cpu-freq: 100
 

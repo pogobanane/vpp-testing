@@ -1,0 +1,11 @@
+# vpp: cesis, moongen: nida
+moongen:
+        tx: 2
+        rx: 3
+
+cpu-freq: 100
+
+vpp:
+        config: '/root/ba-okelmann/vpp-configs/simple1.conf'
+        int_src: 'TenGigabitEthernet5/0/0'
+        int_dst: 'TenGigabitEthernet5/0/1'
