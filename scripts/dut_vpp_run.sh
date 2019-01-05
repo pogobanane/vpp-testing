@@ -109,4 +109,11 @@ moon-gen "l2_bridging_2000mbit" "$vppcmd" "0"
 moon-gen "l2_bridging_1000mbit" "$vppcmd" "0"
 moon-gen "l2_bridging_0500mbit" "$vppcmd" "0"
 
+vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
+moon-gen "l2_multimac_100" 100
+moon-gen "l2_multimac_1000" 1000
+moon-gen "l2_multimac_10000" 10000
+moon-gen "l2_multimac_100000" 100000
+moon-gen "l2_multimac_1000000" 1000000
+
 echo "all done"

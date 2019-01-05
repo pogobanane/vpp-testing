@@ -98,4 +98,10 @@ l2-throughput-rate "l2_bridging_2000mbit" 2000
 l2-throughput-rate "l2_bridging_1000mbit" 1000
 l2-throughput-rate "l2_bridging_0500mbit" 500
 
+l2-throughput-rate "l2_multimac_100" 1000
+l2-throughput-rate "l2_multimac_1000" 1000
+l2-throughput-rate "l2_multimac_10000" 1000
+l2-throughput-rate "l2_multimac_100000" 1000
+l2-throughput-rate "l2_multimac_1000000" 1000
+
 echo "all done"
