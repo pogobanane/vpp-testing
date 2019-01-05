@@ -24,7 +24,7 @@ set int l2 bridge $INT_SRC $bdid
 set int l2 bridge $INT_DST $bdid
 
 l2fib add $MAC_SRC $bdid $INT_SRC
-benchplugaddbd1 add count $3 mac 20:00:00:00:00:00 int $INT_DST
+benchplugaddbd1 add count $3 mac $MAC_DST int $INT_DST
 "
 
 test_vpp_with "$config_1worker" "$exec"
