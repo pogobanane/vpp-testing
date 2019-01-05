@@ -119,7 +119,7 @@ function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseIP, flows)
     for _, buf in ipairs(bufs) do
       local pkt = buf:getUdpPacket()
       pkt.ip4.dst:set(baseMacNr + counter)
-      counter = incAndWrap(counter, flows) -- starts to increment the leftmost byte to test subnets
+      counter = incAndWrap(counter, flows) -- starts to increment the leftmost byte to test subnets when flows is not max value but valueCount
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
     bufs:offloadUdpChecksums()
@@ -137,8 +137,7 @@ function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseMac, flows)
     for _, buf in ipairs(bufs) do
       local pkt = buf:getEthernetPacket()
       pkt.eth.dst:set(baseMacNr + counter)
-      counter++
-      counter %= flows
+      counter = incAndWrap(counter, flows) -- starts to increment the leftmost byte
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
     bufs:offloadUdpChecksums()
