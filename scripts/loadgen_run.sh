@@ -117,5 +117,8 @@ l2-throughput-flows "l2_multimac_1000" 1000
 l2-throughput-flows "l2_multimac_10000" 1000
 l2-throughput-flows "l2_multimac_100000" 1000
 l2-throughput-flows "l2_multimac_1000000" 1000
+l2-throughput-flows "l2_multimac_2000000" 1000
+l2-throughput-flows "l2_multimac_3000000" 1000
+l2-throughput-flows "l2_multimac_4000000" 1000
 
 echo "all done"
