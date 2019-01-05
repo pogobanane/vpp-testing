@@ -57,7 +57,7 @@ function l2-throughput-complex () {
 	latencyfile="/tmp/$jobname.latency.csv"
 
 
-	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --hifile $historyfile --thfile $throughputfile --lafile $latencyfile --rate $2 --rate $3
+	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --hifile $historyfile --thfile $throughputfile --lafile $latencyfile --rate $2 --macs $3
 
 	sleep 30
 
