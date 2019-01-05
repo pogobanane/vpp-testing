@@ -56,10 +56,10 @@ function logThroughput(txCtr, rxCtr, file)
 end
 
 function logLatency(hist, file)
-  log:info("Saving latency to '%s'"):format(file)
+  log:info(("Saving latency to '%s'"):format(file))
   file = io.open(file, "w+")
   file:write("samples,average_ns,stdDev_ns,quartile_25th,quartile_50th,quartile_75th\n")
-  file:write(("%f,%f,%f,%f,%f,%f\n"):format(hist.numSamples, hist.avg, hist.stdDev, unpack(hist.quarts)))
+  file:write(("%u,%f,%f,%f,%f,%f\n"):format(hist.numSamples, hist.avg, hist.stdDev, unpack(hist.quarts)))
   file:close()
 end
 
