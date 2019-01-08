@@ -35,6 +35,9 @@ echo 1 >   /sys/devices/system/cpu/intel_pstate/no_turbo
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_perf_pct
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
+$TX_DEV=`pos_get_variable -r moongen/tx`
+$RX_DEV=`pos_get_variable -r moongen/rx`
+
 echo 'Done setting up'
 pos_sync
 echo 'sync done'
@@ -57,7 +60,7 @@ function l2-throughput-complex () {
 	latencyfile="/tmp/$jobname.latency.csv"
 
 
-	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua 2 3 --hifile $historyfile --thfile $throughputfile --lafile $latencyfile --rate $2 --macs $3
+	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua $TX_DEV $RX_DEV --hifile $historyfile --thfile $throughputfile --lafile $latencyfile --rate $2 --macs $3
 
 	sleep 20
 	pos_sync #s21: moogen should be generating load now
