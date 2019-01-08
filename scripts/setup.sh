@@ -44,10 +44,6 @@ echo "set images to debian stretch"
 pos nodes image "$DUT" debian-stretch
 pos nodes image "$LOADGEN" debian-stretch
 
-echo "load pos vars"
-pos allocations variables "$DUT" scripts/dut_test1.yaml
-pos allocations variables "$LOADGEN" scripts/dut_test1.yaml
-
 echo "reboot experiment hosts..."
 # run reset blocking in background and wait for processes to end before continuing
 pos nodes reset "$DUT" &
