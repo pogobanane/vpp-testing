@@ -55,7 +55,7 @@ function l2-throughput-complex () {
 	echo "running loadgen"
 
 	jobname=$1
-	historyfilefile="/tmp/$jobname.histogram.csv"
+	historyfile="/tmp/$jobname.histogram.csv"
 	throughputfile="/tmp/$jobname.throughput.csv"
 	latencyfile="/tmp/$jobname.latency.csv"
 
