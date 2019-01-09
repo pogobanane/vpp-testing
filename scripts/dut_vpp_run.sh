@@ -184,11 +184,11 @@ vpp-test "l2_bridging_1000mbit" "$vppcmd" "0"
 vpp-test "l2_bridging_0500mbit" "$vppcmd" "0"
 
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
-vpp-test "l2_multimac_100" 100
-vpp-test "l2_multimac_1000" 1000
-vpp-test "l2_multimac_10000" 10000
-vpp-test "l2_multimac_100000" 100000
-vpp-test "l2_multimac_1000000" 1000000
-vpp-test "l2_multimac_10000000" 10000000
+vpp-test "l2_multimac_100" "$vppcmd" 100
+vpp-test "l2_multimac_1000" "$vppcmd" 1000
+vpp-test "l2_multimac_10000" "$vppcmd" 10000
+vpp-test "l2_multimac_100000" "$vppcmd" 100000
+vpp-test "l2_multimac_1000000" "$vppcmd" 1000000
+vpp-test "l2_multimac_10000000" "$vppcmd" 10000000
 
 echo "all done"
