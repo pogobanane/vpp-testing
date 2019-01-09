@@ -32,7 +32,7 @@ sns.set(style="ticks")
 
 
 hmac = ''
-DIRS = ['/home/peter/dev/ba/ba-okelmann/statistics/data/2019-01-03_12-51-30_758111/nida/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-09_12-47-14_285989/nida/']
 
 #hmac = 'hmac_'
 #DIRS = ['/Users/gallenmu/mkdir/2018-07-29_18-13-41/rapla']
@@ -45,8 +45,10 @@ for d in DIRS:
     files = os.listdir(d)
     flatency_ = filter(lambda x: x.endswith('histogram.csv'), files)
     flatency.extend(map(lambda x: os.path.join(d, x), flatency_))
+    sorted(flatency)
     fthroughput_ = filter(lambda x: x.endswith('throughput.csv'), files)
     fthroughput.extend(map(lambda x: os.path.join(d, x), fthroughput_))
+    sorted(fthroughput)
 
 # In[3]:
 
