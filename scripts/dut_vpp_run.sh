@@ -36,7 +36,7 @@ echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
 # read vars
-INT_SRC=`pos_get_variable -r vpp/int_scr`
+INT_SRC=`pos_get_variable -r vpp/int_src`
 INT_DST=`pos_get_variable -r vpp/int_dst`
 
 VPP_PNAME="vpp_main"
