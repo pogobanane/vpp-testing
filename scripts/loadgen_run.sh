@@ -35,8 +35,8 @@ echo 1 >   /sys/devices/system/cpu/intel_pstate/no_turbo
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_perf_pct
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
-$TX_DEV=`pos_get_variable -r moongen/tx`
-$RX_DEV=`pos_get_variable -r moongen/rx`
+TX_DEV=`pos_get_variable -r moongen/tx`
+RX_DEV=`pos_get_variable -r moongen/rx`
 
 echo 'Done setting up'
 pos_sync
