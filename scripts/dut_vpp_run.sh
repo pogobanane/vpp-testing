@@ -43,8 +43,10 @@ VPP_PNAME="vpp_main"
 
 # set clean up vpp
 function cleanup_vpp () {
+	set +e # ingore the follwing 2 possible errors
 	pkill $VPP_PNAME
 	rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
+	set -e
 	modprobe uio_pci_generic
 }
 
