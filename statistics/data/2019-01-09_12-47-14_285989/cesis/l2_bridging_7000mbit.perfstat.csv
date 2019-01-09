@@ -1,0 +1,36 @@
+# started on Wed Jan  9 14:50:12 2019
+
+4058769;;branch-instructions;4879951;100.00;;
+95903;;branch-misses;11589596;100.00;2.36;of all branches
+514;;cache-misses;18038264;100.00;0.361;of all cache refs
+142529;;cache-references;21095197;81.57;;
+55916586;;cpu-cycles;20711002;64.12;;
+140300244;;instructions;30483534;72.45;2.51;insn per cycle
+;;;;;0.29;stalled cycles per insn
+96996571;;ref-cycles;43842378;79.09;;
+41062713;;idle-cycles-frontend;55248829;81.06;73.44;frontend cycles idle
+590712;;L1-dcache-load-misses;56448119;75.78;0.75;of all L1-dcache hits
+78558105;;L1-dcache-loads;28570348;29.54;;
+435917;;L1-dcache-prefetch-misses;30663920;29.16;;
+343485;;L1-dcache-store-misses;14746741;13.23;;
+32640413;;L1-dcache-stores;7271004;6.47;;
+480050;;L1-icache-load-misses;944474;0.84;;
+<not counted>;;LLC-load-misses;0;0.00;;
+<not counted>;;LLC-loads;0;100.00;;
+<not counted>;;LLC-prefetch-misses;0;100.00;;
+<not counted>;;LLC-prefetches;0;100.00;;
+<not counted>;;LLC-store-misses;0;100.00;;
+<not counted>;;LLC-stores;0;100.00;;
+<not counted>;;branch-load-misses;0;100.00;;
+<not counted>;;branch-loads;0;100.00;;
+<not counted>;;dTLB-load-misses;0;100.00;;
+<not counted>;;dTLB-loads;0;100.00;;
+<not counted>;;dTLB-store-misses;0;100.00;;
+<not counted>;;dTLB-stores;0;100.00;;
+<not counted>;;iTLB-load-misses;0;100.00;;
+<not counted>;;node-load-misses;0;100.00;;
+<not counted>;;node-loads;0;100.00;;
+<not counted>;;node-prefetch-misses;0;100.00;;
+<not counted>;;node-prefetches;0;100.00;;
+<not counted>;;node-store-misses;0;100.00;;
+<not counted>;;node-stores;0;100.00;;

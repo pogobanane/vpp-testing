@@ -1,0 +1,2 @@
+samples,average_ns,stdDev_ns,quartile_25th,quartile_50th,quartile_75th
+9859,837836.661832,101201.609080,833204.000000,841363.000000,868216.000000
