@@ -81,23 +81,23 @@ function perf-collect () {
 	hwevents="branch-instructions,\
 branch-misses,\
 cache-misses,\
-cache-references,\
-cpu-cycles,\
-instructions,\
 ref-cycles,\
+cache-references"
+	unused="cpu-cycles,\
+instructions,\
 idle-cycles-frontend"
 	cacheevents="L1-dcache-load-misses,\
 L1-dcache-loads,\
-L1-dcache-prefetch-misses,\
 L1-dcache-store-misses,\
 L1-dcache-stores,\
-L1-icache-load-misses,\
 LLC-load-misses,\
 LLC-loads,\
 LLC-store-misses,\
 LLC-stores,\
 branch-load-misses,\
-branch-loads,\
+branch-loads"
+	unused="L1-dcache-prefetch-misses,\
+L1-icache-load-misses,\
 dTLB-load-misses,\
 dTLB-loads,\
 dTLB-store-misses,\
@@ -157,22 +157,22 @@ function vpp-test () {
 
 for i in {0..5}
 do
-	vpp-test "l2_bridging_${i}_setup" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
+	vpp-test "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
 done
 
 vpp-test "l2_xconnect_setup" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
 
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
-vpp-test "l2_bridging_6800mbit" "$vppcmd" "0"
-vpp-test "l2_bridging_7000mbit" "$vppcmd" "0"
-vpp-test "l2_bridging_6600mbit" "$vppcmd" "0"
-vpp-test "l2_bridging_6400mbit" "$vppcmd" "0"
-vpp-test "l2_bridging_6000mbit" "$vppcmd" "0"
-vpp-test "l2_bridging_5000mbit" "$vppcmd" "0"
-vpp-test "l2_bridging_4000mbit" "$vppcmd" "0"
-vpp-test "l2_bridging_2000mbit" "$vppcmd" "0"
-vpp-test "l2_bridging_1000mbit" "$vppcmd" "0"
-vpp-test "l2_bridging_0500mbit" "$vppcmd" "0"
+vpp-test "l2_bridging_mbit6800" "$vppcmd" "0"
+vpp-test "l2_bridging_mbit7000" "$vppcmd" "0"
+vpp-test "l2_bridging_mbit6600" "$vppcmd" "0"
+vpp-test "l2_bridging_mbit6400" "$vppcmd" "0"
+vpp-test "l2_bridging_mbit6000" "$vppcmd" "0"
+vpp-test "l2_bridging_mbit5000" "$vppcmd" "0"
+vpp-test "l2_bridging_mbit4000" "$vppcmd" "0"
+vpp-test "l2_bridging_mbit2000" "$vppcmd" "0"
+vpp-test "l2_bridging_mbit1000" "$vppcmd" "0"
+vpp-test "l2_bridging_mbit0500" "$vppcmd" "0"
 
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
 vpp-test "l2_multimac_100" "$vppcmd" 100

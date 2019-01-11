@@ -103,7 +103,7 @@ function l2-throughput () {
 
 for i in {0..5}
 do
-	l2-throughput "l2_bridging_${i}_load"
+	l2-throughput "l2_bridging_cnf${i}"
 done
 
 l2-throughput "l2_xconnect_load"
