@@ -108,16 +108,30 @@ done
 
 l2-throughput "l2_xconnect_load"
 
-l2-throughput-rate "l2_bridging_7000mbit" 7000
-l2-throughput-rate "l2_bridging_6800mbit" 6800
-l2-throughput-rate "l2_bridging_6600mbit" 6600
-l2-throughput-rate "l2_bridging_6400mbit" 6400
-l2-throughput-rate "l2_bridging_6000mbit" 6000
-l2-throughput-rate "l2_bridging_5000mbit" 5000
-l2-throughput-rate "l2_bridging_4000mbit" 4000
-l2-throughput-rate "l2_bridging_2000mbit" 2000
-l2-throughput-rate "l2_bridging_1000mbit" 1000
-l2-throughput-rate "l2_bridging_0500mbit" 500
+l2-throughput-rate "l2_bridging_mbit5000" 5000
+l2-throughput-rate "l2_bridging_mbit4950" 4950
+l2-throughput-rate "l2_bridging_mbit4900" 4900
+l2-throughput-rate "l2_bridging_mbit4850" 4850
+l2-throughput-rate "l2_bridging_mbit4800" 4800
+l2-throughput-rate "l2_bridging_mbit4750" 4750
+l2-throughput-rate "l2_bridging_mbit4700" 4700
+l2-throughput-rate "l2_bridging_mbit4650" 4650
+l2-throughput-rate "l2_bridging_mbit4600" 4600
+l2-throughput-rate "l2_bridging_mbit4550" 4550
+l2-throughput-rate "l2_bridging_mbit4500" 4500
+l2-throughput-rate "l2_bridging_mbit4450" 4450
+l2-throughput-rate "l2_bridging_mbit4400" 4400
+l2-throughput-rate "l2_bridging_mbit4350" 4350
+l2-throughput-rate "l2_bridging_mbit4300" 4300
+l2-throughput-rate "l2_bridging_mbit4250" 4250
+l2-throughput-rate "l2_bridging_mbit4200" 4200
+l2-throughput-rate "l2_bridging_mbit4150" 4150
+l2-throughput-rate "l2_bridging_mbit4100" 4100
+l2-throughput-rate "l2_bridging_mbit4050" 4050
+l2-throughput-rate "l2_bridging_mbit4000" 4000
+l2-throughput-rate "l2_bridging_mbit2000" 2000
+l2-throughput-rate "l2_bridging_mbit1000" 1000
+l2-throughput-rate "l2_bridging_mbit0500" 500
 
 l2-throughput-flows "l2_multimac_100" 1000
 l2-throughput-flows "l2_multimac_1000" 1000
