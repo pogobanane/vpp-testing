@@ -32,7 +32,7 @@ sns.set(style="ticks")
 
 
 hmac = ''
-DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-09_12-47-14_285989/nida/']
+DIRS = ['/home/peter/dev/ba/ba-okelmann/statistics/data/2019-01-09_12-47-14_285989/nida/']
 
 #hmac = 'hmac_'
 #DIRS = ['/Users/gallenmu/mkdir/2018-07-29_18-13-41/rapla']
@@ -254,6 +254,37 @@ def parse_throughput(csvfile):
         return ret
     return "err"
 
+# pasted from https://stackoverflow.com/questions/21844024/weighted-percentile-using-numpy?noredirect=1
+def weighted_quantile(values, quantiles, sample_weight=None, values_sorted=False, old_style=False):
+    """ Very close to numpy.percentile, but supports weights.
+    NOTE: quantiles should be in [0, 1]!
+    :param values: numpy.array with data
+    :param quantiles: array-like with many quantiles needed
+    :param sample_weight: array-like of the same length as `array`
+    :param values_sorted: bool, if True, then will avoid sorting of initial array
+    :param old_style: if True, will correct output to be consistent with numpy.percentile.
+    :return: numpy.array with computed quantiles.
+    """
+    values = np.array(values)
+    quantiles = np.array(quantiles)
+    if sample_weight is None:
+        sample_weight = np.ones(len(values))
+    sample_weight = np.array(sample_weight)
+    assert np.all(quantiles >= 0) and np.all(quantiles <= 1), 'quantiles should be in [0, 1]'
+
+    if not values_sorted:
+        sorter = np.argsort(values)
+        values = values[sorter]
+        sample_weight = sample_weight[sorter]
+
+    weighted_quantiles = np.cumsum(sample_weight) - 0.5 * sample_weight
+    if old_style:
+        # To be convenient with np.percentile
+        weighted_quantiles -= weighted_quantiles[0]
+        weighted_quantiles /= weighted_quantiles[-1]
+    else:
+        weighted_quantiles /= np.sum(sample_weight)
+    return np.interp(quantiles, weighted_quantiles, values)
 
 def latency_csv2tex(latfile, throughfile):
 
@@ -318,26 +349,33 @@ def latency_csv2tex(latfile, throughfile):
     fig.tight_layout()
     plt.grid(True)
 
-    return get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm")
+    quantiles = weighted_quantile(latencies, [0.0, 0.25, 0.5, 0.75, 0.90, 0.99, 0.999], sample_weight=weights, values_sorted=True)
+    quartilestr = "{}{:10.0f}{:10.0f}{:10.0f}{:10.0f}{:10.0f}{:10.0f}{:10.0f}".format(os.path.basename(latfile).ljust(40), quantiles[0], quantiles[1], quantiles[2], quantiles[3], quantiles[4], quantiles[5], quantiles[6])
+    print(quartilestr)
+
+    return (get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm"), quartilestr)
 
     #plt.show()
     #plt.draw()
     #plt.pause(0.001)
 
-
-
+txtoutstr = ""
 outf = "netronome.tex"
 with codecs.open(outf, "w+", encoding="utf8") as f:
     f.write(tikz_header)
     for i in range(0, len(flatency)):
 
         #outf = '{}.tex'.format(flatency[i])
-        
-        f.write(latency_csv2tex(flatency[i], fthroughput[i]))
+        tex, txt = latency_csv2tex(flatency[i], fthroughput[i])
+        txtoutstr += txt + "\n"
+        f.write(tex)
         f.write("\n\n\n")
 
     f.write(tikz_footer)
 
-
+outf = "netrotxt.txt"
+with codecs.open(outf, "w+", encoding="utf8") as f:
+    f.write("{}{}{}{}{}{}{}{}\n".format("job".ljust(40), ".0".rjust(10), ".25".rjust(10), ".50".rjust(10), ".75".rjust(10), ".90".rjust(10), ".99".rjust(10), ".999".rjust(10)))
+    f.write(txtoutstr)
 
 # pdflatex netronome.tex
