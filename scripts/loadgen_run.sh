@@ -79,7 +79,7 @@ function l2-throughput-complex () {
 	pos_upload $historyfile
 	pos_upload $throughputfile
 	pos_upload $latencyfile
-	LAST_THROUGHPUT=`cat $throughputfile | head -n 2 | tail -n 1 | awk -F "\"*,\"*" '{print $2}'`
+	LAST_THROUGHPUT=`cat $throughputfile | head -n 2 | tail -n 1 | awk -F "\"*,\"*" '{print $4}'`
 	LAST_THROUGHPUT=`printf "%.0f" $LAST_THROUGHPUT"` # float2int
 
 	# wait for test done signal
