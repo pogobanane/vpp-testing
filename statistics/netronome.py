@@ -350,7 +350,8 @@ def latency_csv2tex(latfile, throughfile):
     plt.grid(True)
 
     quantiles = weighted_quantile(latencies, [0.0, 0.25, 0.5, 0.75, 0.90, 0.99, 0.999], sample_weight=weights, values_sorted=True)
-    quartilestr = "{}{:10.0f}{:10.0f}{:10.0f}{:10.0f}{:10.0f}{:10.0f}{:10.0f}".format(os.path.basename(latfile).ljust(40), quantiles[0], quantiles[1], quantiles[2], quantiles[3], quantiles[4], quantiles[5], quantiles[6])
+    quantiles = list(map(lambda u: (u / 1000), quantiles))
+    quartilestr = "{}{:10.2f}{:10.2f}{:10.2f}{:10.2f}{:10.2f}{:10.2f}{:10.2f}".format(os.path.basename(latfile).ljust(40), quantiles[0], quantiles[1], quantiles[2], quantiles[3], quantiles[4], quantiles[5], quantiles[6])
     print(quartilestr)
 
     return (get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm"), quartilestr)
@@ -375,7 +376,7 @@ with codecs.open(outf, "w+", encoding="utf8") as f:
 
 outf = "netrotxt.txt"
 with codecs.open(outf, "w+", encoding="utf8") as f:
-    f.write("{}{}{}{}{}{}{}{}\n".format("job".ljust(40), ".0".rjust(10), ".25".rjust(10), ".50".rjust(10), ".75".rjust(10), ".90".rjust(10), ".99".rjust(10), ".999".rjust(10)))
+    f.write("{}{}{}{}{}{}{}{}\n".format("job -> microseconds".ljust(40), ".0".rjust(10), ".25".rjust(10), ".50".rjust(10), ".75".rjust(10), ".90".rjust(10), ".99".rjust(10), ".999".rjust(10)))
     f.write(txtoutstr)
 
 # pdflatex netronome.tex
