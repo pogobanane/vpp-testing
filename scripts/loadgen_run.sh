@@ -4,6 +4,8 @@
 GITDIR="/root/ba-okelmann"
 BINDIR="${GITDIR}/MoonGen/build"
 
+LAST_THROUGHPUT=0.0
+
 cd "$GITDIR"
 
 # exit on error
@@ -77,6 +79,8 @@ function l2-throughput-complex () {
 	pos_upload $historyfile
 	pos_upload $throughputfile
 	pos_upload $latencyfile
+	LAST_THROUGHPUT=`cat $throughputfile | head -n 2 | tail -n 1 | awk -F "\"*,\"*" '{print $2}'`
+	LAST_THROUGHPUT=`printf "%.0f" $LAST_THROUGHPUT"` # float2int
 
 	# wait for test done signal
 	pos_sync #s42: test done
@@ -108,30 +112,21 @@ done
 
 l2-throughput "l2_xconnect_load"
 
+# measure max TODO: higher?
 l2-throughput-rate "l2_bridging_mbit5000" 5000
-l2-throughput-rate "l2_bridging_mbit4950" 4950
-l2-throughput-rate "l2_bridging_mbit4900" 4900
-l2-throughput-rate "l2_bridging_mbit4850" 4850
-l2-throughput-rate "l2_bridging_mbit4800" 4800
-l2-throughput-rate "l2_bridging_mbit4750" 4750
-l2-throughput-rate "l2_bridging_mbit4700" 4700
-l2-throughput-rate "l2_bridging_mbit4650" 4650
-l2-throughput-rate "l2_bridging_mbit4600" 4600
-l2-throughput-rate "l2_bridging_mbit4550" 4550
-l2-throughput-rate "l2_bridging_mbit4500" 4500
-l2-throughput-rate "l2_bridging_mbit4450" 4450
-l2-throughput-rate "l2_bridging_mbit4400" 4400
-l2-throughput-rate "l2_bridging_mbit4350" 4350
-l2-throughput-rate "l2_bridging_mbit4300" 4300
-l2-throughput-rate "l2_bridging_mbit4250" 4250
-l2-throughput-rate "l2_bridging_mbit4200" 4200
-l2-throughput-rate "l2_bridging_mbit4150" 4150
-l2-throughput-rate "l2_bridging_mbit4100" 4100
-l2-throughput-rate "l2_bridging_mbit4050" 4050
-l2-throughput-rate "l2_bridging_mbit4000" 4000
-l2-throughput-rate "l2_bridging_mbit2000" 2000
-l2-throughput-rate "l2_bridging_mbit1000" 1000
-l2-throughput-rate "l2_bridging_mbit0500" 500
+# measure around max with high resolution
+base=$(($LAST_THROUGHPUT - 10))
+for offset in {0..20}
+do
+	i=$((base+offset))
+	l2-throughput-rate "l2_bridging_mbit$i" $i
+done
+# measure everything with low resolution
+for s in {1..18}
+do
+	i=$((s*300))
+	l2-throughput-rate "l2_bridging_mbit$i" $i
+done
 
 l2-throughput-flows "l2_multimac_100" 1000
 l2-throughput-flows "l2_multimac_1000" 1000

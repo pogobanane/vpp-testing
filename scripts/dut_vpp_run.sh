@@ -163,30 +163,19 @@ done
 vpp-test "l2_xconnect_setup" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
 
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
+# measure max
 vpp-test "l2_bridging_mbit5000" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4950" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4900" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4850" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4800" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4750" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4700" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4650" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4600" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4550" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4500" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4450" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4400" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4350" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4300" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4250" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4200" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4150" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4100" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4050" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit4000" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit2000" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit1000" "$vppcmd" "0"
-vpp-test "l2_bridging_mbit0500" "$vppcmd" "0"
+# measure around max with high resolution
+for i in {0..20}
+do
+	vpp-test "l2_bridging_mbitNr$i" "$vppcmd" "0"
+done
+# measure everything with low resolution
+for s in {1..18}
+do
+	i=$((s*300))
+	vpp-test "l2_bridging_mbit$i" "$vppcmd" "0"
+done
 
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
 vpp-test "l2_multimac_100" "$vppcmd" 100
