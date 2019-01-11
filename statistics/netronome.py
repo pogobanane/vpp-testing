@@ -45,10 +45,10 @@ for d in DIRS:
     files = os.listdir(d)
     flatency_ = filter(lambda x: x.endswith('histogram.csv'), files)
     flatency.extend(map(lambda x: os.path.join(d, x), flatency_))
-    sorted(flatency)
+    flatency = sorted(flatency)
     fthroughput_ = filter(lambda x: x.endswith('throughput.csv'), files)
     fthroughput.extend(map(lambda x: os.path.join(d, x), fthroughput_))
-    sorted(fthroughput)
+    fthroughput = sorted(fthroughput)
 
 # In[3]:
 
