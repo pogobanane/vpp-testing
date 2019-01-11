@@ -135,9 +135,9 @@ function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseMac, flows)
   while mg.running() do
     bufs:alloc(pktSize)
     for _, buf in ipairs(bufs) do
-      local pkt = buf:getEthernetPacket()
+      local pkt = buf:getEthernetPacket() -- getRawPacket.payload. 
       pkt.eth.dst:set(baseMacNr + counter)
-      counter = incAndWrap(counter, flows) -- starts to increment the leftmost byte
+      counter = incAndWrap(counter, flows) -- starts to increment the leftmost byte TODO: *2
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
     bufs:offloadUdpChecksums()

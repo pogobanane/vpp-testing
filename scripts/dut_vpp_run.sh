@@ -94,8 +94,6 @@ L1-dcache-stores,\
 L1-icache-load-misses,\
 LLC-load-misses,\
 LLC-loads,\
-LLC-prefetch-misses,\
-LLC-prefetches,\
 LLC-store-misses,\
 LLC-stores,\
 branch-load-misses,\
@@ -103,14 +101,7 @@ branch-loads,\
 dTLB-load-misses,\
 dTLB-loads,\
 dTLB-store-misses,\
-dTLB-stores,\
-iTLB-load-misses,\
-node-load-misses,\
-node-loads,\
-node-prefetch-misses,\
-node-prefetches,\
-node-store-misses,\
-node-stores"
+dTLB-stores"
 
 	vpp_pid=`pgrep $VPP_PNAME`
 
