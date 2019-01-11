@@ -79,7 +79,7 @@ function l2-throughput-complex () {
 	pos_upload $historyfile
 	pos_upload $throughputfile
 	pos_upload $latencyfile
-	LAST_THROUGHPUT=`cat $throughputfile | head -n 2 | tail -n 1 | awk -F "\"*,\"*" '{print $4}'`
+	LAST_THROUGHPUT=`cat $throughputfile | head -n 3 | tail -n 1 | awk -F "\"*,\"*" '{print $4}'`
 	LAST_THROUGHPUT=`printf "%.0f" $LAST_THROUGHPUT` # float2int
 
 	# wait for test done signal
@@ -119,7 +119,7 @@ base=$(($LAST_THROUGHPUT - 10))
 for offset in {0..20}
 do
 	i=$((base+offset))
-	l2-throughput-rate "l2_bridging_mbit$i" $i
+	l2-throughput-rate "l2_bridging_mbit${i}hires" $i
 done
 # measure everything with low resolution
 for s in {1..18}

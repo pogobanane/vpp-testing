@@ -168,7 +168,7 @@ vpp-test "l2_bridging_mbit5000" "$vppcmd" "0"
 # measure around max with high resolution
 for i in {0..20}
 do
-	vpp-test "l2_bridging_mbitNr$i" "$vppcmd" "0"
+	vpp-test "l2_bridging_mbit${i}hires" "$vppcmd" "0"
 done
 # measure everything with low resolution
 for s in {1..18}
