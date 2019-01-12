@@ -155,6 +155,25 @@ function vpp-test () {
 	pos_kill $1
 }
 
+# $1: jobname
+# $2: cmd to run
+# $3: arg for cmd
+function vpp-find-sweetspot () {
+	jobname="$1"
+	cmd="$2"
+	cmdarg="$3"
+	# Try to find max_throughput
+	vpp-test "${jobname}_mbit9000" "$cmd" "$cmdarg"
+	for i in {0..10}
+	do
+		istr=`printf "%04g" $i`
+		vpp-test "${jobname}_mbit${istr}hires" "$cmd" "$cmdarg"
+	done
+
+	# final test
+	vpp-test "${jobname}_mbit0000_final" "$cmd" "$cmdarg"
+}
+
 # for i in {0..5}
 # do
 # 	vpp-test "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
@@ -162,49 +181,15 @@ function vpp-test () {
 
 # vpp-test "l2_xconnect_setup" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
 
-# Try to find max_throughput
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
-vpp-test "l2_bridging_mbit5000" "$vppcmd" "0"
-for i in {0..10}
-do
-	istr=`printf "%04g" $i`
-	vpp-test "l2_bridging_mbit${istr}hires" "$vppcmd" "0"
-done
+vpp-find-sweetspot "l2_bridging" "$vppcmd" "0"
 
-# final test
-vpp-test "l2_bridging_mbit0000_final" "$vppcmd" "0"
-
-# Try to find max_throughput
-vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
-vpp-test "l2_bridging_mbit5000_1" "$vppcmd" "0"
-for i in {0..10}
-do
-	istr=`printf "%04g" $i`
-	vpp-test "l2_bridging_mbit${istr}hires1" "$vppcmd" "0"
-done
-
-# final test
-vpp-test "l2_bridging_mbit0000_final1" "$vppcmd" "0"
-
-# Try to find max_throughput
-vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
-vpp-test "l2_bridging_mbit5000_2" "$vppcmd" "0"
-for i in {0..10}
-do
-	istr=`printf "%04g" $i`
-	vpp-test "l2_bridging_mbit${istr}hires2" "$vppcmd" "0"
-done
-
-# final test
-vpp-test "l2_bridging_mbit0000_final2" "$vppcmd" "0"
-
-
-# measure everything with low resolution
-for s in {1..18}
-do
-	i=`printf "%04g" $((s*300))`
-	vpp-test "l2_bridging_mbit$i" "$vppcmd" "0"
-done
+# # measure everything with low resolution
+# for s in {1..18}
+# do
+# 	i=`printf "%04g" $((s*300))`
+# 	vpp-test "l2_bridging_mbit$i" "$vppcmd" "0"
+# done
 
 # vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
 # vpp-test "l2_multimac_100" "$vppcmd" 100

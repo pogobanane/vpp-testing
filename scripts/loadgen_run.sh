@@ -109,6 +109,35 @@ function l2-throughput () {
 	l2-throughput-complex $1 10000 0
 }
 
+# finds the sweet spot with lowest latency and highest throughput
+# $1: jobname
+function l2-throughput-sweetspot () {
+	jobname=$1
+	# Try to find max_throughput
+	max_throughput=0
+	# fill LAST_THROUGHPUT (this is without framing so < 10Gbit. Therefore 9000 is sufficient for 10G links)
+	l2-throughput-rate "${jobname}_mbit9000" 9000
+	base=$(($LAST_THROUGHPUT - 50))
+	for offset in {0..10}
+	do
+		i=$((base+offset*10))
+		istr=`printf "%04g" $i`
+		# hi resolution testing around LAST_THROUGHPUT
+		l2-throughput-rate "${jobname}_mbit${istr}hires" $i
+		if [ $LAST_LATENCY -ge 325000 ]
+		then
+			# $i is too much throughput
+			if [ $max_throughput -eq 0 ]
+			then
+				# set only if no max was found yet
+				max_throughput=$((i-10))
+			fi
+		fi
+	done
+
+	# final test
+	l2-throughput-rate "${jobname}_mbit${max_throughput}_final" $max_throughput
+}
 
 # for i in {0..5}
 # do
@@ -117,88 +146,14 @@ function l2-throughput () {
 
 # l2-throughput "l2_xconnect_load"
 
-# Try to find max_throughput
-max_throughput=0
-# fill LAST_THROUGHPUT TODO: higher?
-l2-throughput-rate "l2_bridging_mbit5000" 5000
-base=$(($LAST_THROUGHPUT - 50))
-for offset in {0..10}
-do
-	i=$((base+offset*10))
-	istr=`printf "%04g" $i`
-	# hi resolution testing around LAST_THROUGHPUT
-	l2-throughput-rate "l2_bridging_mbit${istr}hires" $i
-	if [ $LAST_LATENCY -ge 325000 ]
-	then
-		# $i is too much throughput
-		if [ $max_throughput -eq 0 ]
-		then
-			# set only if no max was found yet
-			max_throughput=$((i-10))
-		fi
-	fi
-done
+l2-throughput-sweetspot "l2_bridging"
 
-# final test
-l2-throughput-rate "l2_bridging_mbit${max_throughput}_final" $max_throughput
-
-# Try to find max_throughput
-max_throughput=0
-# fill LAST_THROUGHPUT TODO: higher?
-l2-throughput-rate "l2_bridging_mbit5000_1" 5000
-base=$(($LAST_THROUGHPUT - 100))
-for offset in {0..10}
-do
-	i=$((base+offset*10))
-	istr=`printf "%04g" $i`
-	# hi resolution testing around LAST_THROUGHPUT
-	l2-throughput-rate "l2_bridging_mbit${istr}hires1" $i
-	if [ $LAST_LATENCY -ge 325000 ]
-	then
-		# $i is too much throughput
-		if [ $max_throughput -eq 0 ]
-		then
-			# set only if no max was found yet
-			max_throughput=$((i-10))
-		fi
-	fi
-done
-
-# final test
-l2-throughput-rate "l2_bridging_mbit${max_throughput}_final1" $max_throughput
-
-# Try to find max_throughput
-max_throughput=0
-# fill LAST_THROUGHPUT TODO: higher?
-l2-throughput-rate "l2_bridging_mbit5000_2" 5000
-base=$(($LAST_THROUGHPUT - 100))
-for offset in {0..10}
-do
-	i=$((base+offset*10))
-	istr=`printf "%04g" $i`
-	# hi resolution testing around LAST_THROUGHPUT
-	l2-throughput-rate "l2_bridging_mbit${istr}hires2" $i
-	if [ $LAST_LATENCY -ge 325000 ]
-	then
-		# $i is too much throughput
-		if [ $max_throughput -eq 0 ]
-		then
-			# set only if no max was found yet
-			max_throughput=$((i-10))
-		fi
-	fi
-done
-
-# final test
-l2-throughput-rate "l2_bridging_mbit${max_throughput}_final2" $max_throughput
-
-
-# measure everything with low resolution
-for s in {1..18}
-do
-	i=`printf "%04g" $((s*300))`
-	l2-throughput-rate "l2_bridging_mbit$i" $i
-done
+# # measure everything with low resolution
+# for s in {1..18}
+# do
+# 	i=`printf "%04g" $((s*300))`
+# 	l2-throughput-rate "l2_bridging_mbit$i" $i
+# done
 
 # l2-throughput-flows "l2_multimac_100" 1000
 # l2-throughput-flows "l2_multimac_1000" 1000
