@@ -128,7 +128,7 @@ do
 	istr=`printf "%04g" $i`
 	# hi resolution testing around LAST_THROUGHPUT
 	l2-throughput-rate "l2_bridging_mbit${istr}hires" $i
-	if [ $LAST_LATENCY -ge 325 ]
+	if [ $LAST_LATENCY -ge 325000 ]
 	then
 		# $i is too much throughput
 		if [ $max_throughput -eq 0 ]
