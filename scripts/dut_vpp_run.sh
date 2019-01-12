@@ -162,15 +162,18 @@ function vpp-test () {
 
 # vpp-test "l2_xconnect_setup" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
 
+# Try to find max_throughput
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
-# measure max
 vpp-test "l2_bridging_mbit5000" "$vppcmd" "0"
-# measure around max with high resolution
 for j in {0..10}
 do
-	i=`printf "%04g" $((base+offset*10))`
-	vpp-test "l2_bridging_mbit${i}hires" "$vppcmd" "0"
+	istr=`printf "%04g" $((base+offset*10))`
+	vpp-test "l2_bridging_mbit${istr}hires" "$vppcmd" "0"
 done
+
+# final test
+vpp-test "l2_bridging_mbit0000_final" "$vppcmd" "0"
+
 # # measure everything with low resolution
 # for s in {1..18}
 # do

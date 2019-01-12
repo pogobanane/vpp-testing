@@ -4,7 +4,9 @@
 GITDIR="/root/ba-okelmann"
 BINDIR="${GITDIR}/MoonGen/build"
 
-LAST_THROUGHPUT=0.0
+LAST_THROUGHPUT=0.0 # as int
+
+LAST_LATENCY=0 # 75th quartile of latency in ns as int
 
 cd "$GITDIR"
 
@@ -81,6 +83,9 @@ function l2-throughput-complex () {
 	pos_upload $latencyfile
 	LAST_THROUGHPUT=`cat $throughputfile | head -n 3 | tail -n 1 | awk -F "\"*,\"*" '{print $4}'`
 	LAST_THROUGHPUT=`printf "%.0f" $LAST_THROUGHPUT` # float2int
+	LAST_LATENCY=`cat $latencyfile | head -n 2 | tail -n 1 | awk -F "\"*,\"*" '{print $6}'`
+	LAST_LATENCY=`printf "%.0f" $LAST_LATENCY` # float2int
+
 
 	# wait for test done signal
 	pos_sync #s42: test done
@@ -112,15 +117,31 @@ function l2-throughput () {
 
 # l2-throughput "l2_xconnect_load"
 
-# measure max TODO: higher?
+# Try to find max_throughput
+max_throughput=0
+# fill LAST_THROUGHPUT TODO: higher?
 l2-throughput-rate "l2_bridging_mbit5000" 5000
-# measure around max with high resolution
 base=$(($LAST_THROUGHPUT - 100))
 for offset in {0..10}
 do
-	i=`printf "%04g" $((base+offset*10))`
-	l2-throughput-rate "l2_bridging_mbit${i}hires" $i
+	i=$((base+offset*10))
+	istr=`printf "%04g" $i`
+	# hi resolution testing around LAST_THROUGHPUT
+	l2-throughput-rate "l2_bridging_mbit${istr}hires" $i
+	if [ $LAST_LATENCY -ge 325 ]
+	then
+		# $i is too much throughput
+		if [ $max_throughput -ne 0 ]
+		then
+			# set only if no max was found yet
+			max_throughput=$((i-10))
+		fi
+	fi
 done
+
+# final test
+l2-throughput-rate "l2_bridging_mbit${max_throughput}_final" $max_throughput
+
 # # measure everything with low resolution
 # for s in {1..18}
 # do
