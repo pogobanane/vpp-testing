@@ -166,7 +166,7 @@ vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
 # measure max
 vpp-test "l2_bridging_mbit5000" "$vppcmd" "0"
 # measure around max with high resolution
-for i in {0..50}
+for i in {0..10}
 do
 	vpp-test "l2_bridging_mbit${i}hires" "$vppcmd" "0"
 done

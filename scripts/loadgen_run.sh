@@ -116,9 +116,9 @@ function l2-throughput () {
 l2-throughput-rate "l2_bridging_mbit5000" 5000
 # measure around max with high resolution
 base=$(($LAST_THROUGHPUT - 100))
-for offset in {0..50}
+for offset in {0..10}
 do
-	i=`printf "%04g" $((base+offset*2))`
+	i=`printf "%04g" $((base+offset*10))`
 	l2-throughput-rate "l2_bridging_mbit${i}hires" $i
 done
 # # measure everything with low resolution
