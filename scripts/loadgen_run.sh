@@ -131,7 +131,7 @@ do
 	if [ $LAST_LATENCY -ge 325 ]
 	then
 		# $i is too much throughput
-		if [ $max_throughput -ne 0 ]
+		if [ $max_throughput -eq 0 ]
 		then
 			# set only if no max was found yet
 			max_throughput=$((i-10))
