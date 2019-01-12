@@ -155,34 +155,34 @@ function vpp-test () {
 	pos_kill $1
 }
 
-for i in {0..5}
-do
-	vpp-test "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
-done
+# for i in {0..5}
+# do
+# 	vpp-test "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
+# done
 
-vpp-test "l2_xconnect_setup" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
+# vpp-test "l2_xconnect_setup" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
 
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
 # measure max
 vpp-test "l2_bridging_mbit5000" "$vppcmd" "0"
 # measure around max with high resolution
-for i in {0..20}
+for i in {0..50}
 do
 	vpp-test "l2_bridging_mbit${i}hires" "$vppcmd" "0"
 done
-# measure everything with low resolution
-for s in {1..18}
-do
-	i=`printf "%04g" $((s*300))`
-	vpp-test "l2_bridging_mbit$i" "$vppcmd" "0"
-done
+# # measure everything with low resolution
+# for s in {1..18}
+# do
+# 	i=`printf "%04g" $((s*300))`
+# 	vpp-test "l2_bridging_mbit$i" "$vppcmd" "0"
+# done
 
-vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
-vpp-test "l2_multimac_100" "$vppcmd" 100
-vpp-test "l2_multimac_1000" "$vppcmd" 1000
-vpp-test "l2_multimac_10000" "$vppcmd" 10000
-vpp-test "l2_multimac_100000" "$vppcmd" 100000
-vpp-test "l2_multimac_1000000" "$vppcmd" 1000000
-vpp-test "l2_multimac_10000000" "$vppcmd" 10000000
+# vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
+# vpp-test "l2_multimac_100" "$vppcmd" 100
+# vpp-test "l2_multimac_1000" "$vppcmd" 1000
+# vpp-test "l2_multimac_10000" "$vppcmd" 10000
+# vpp-test "l2_multimac_100000" "$vppcmd" 100000
+# vpp-test "l2_multimac_1000000" "$vppcmd" 1000000
+# vpp-test "l2_multimac_10000000" "$vppcmd" 10000000
 
 echo "all done"

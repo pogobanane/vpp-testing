@@ -105,34 +105,34 @@ function l2-throughput () {
 }
 
 
-for i in {0..5}
-do
-	l2-throughput "l2_bridging_cnf${i}"
-done
+# for i in {0..5}
+# do
+# 	l2-throughput "l2_bridging_cnf${i}"
+# done
 
-l2-throughput "l2_xconnect_load"
+# l2-throughput "l2_xconnect_load"
 
 # measure max TODO: higher?
 l2-throughput-rate "l2_bridging_mbit5000" 5000
 # measure around max with high resolution
-base=$(($LAST_THROUGHPUT - 200))
-for offset in {0..200}
+base=$(($LAST_THROUGHPUT - 100))
+for offset in {0..50}
 do
 	i=`printf "%04g" $((base+offset*2))`
 	l2-throughput-rate "l2_bridging_mbit${i}hires" $i
 done
-# measure everything with low resolution
-for s in {1..18}
-do
-	i=`printf "%04g" $((s*300))`
-	l2-throughput-rate "l2_bridging_mbit$i" $i
-done
+# # measure everything with low resolution
+# for s in {1..18}
+# do
+# 	i=`printf "%04g" $((s*300))`
+# 	l2-throughput-rate "l2_bridging_mbit$i" $i
+# done
 
-l2-throughput-flows "l2_multimac_100" 1000
-l2-throughput-flows "l2_multimac_1000" 1000
-l2-throughput-flows "l2_multimac_10000" 1000
-l2-throughput-flows "l2_multimac_100000" 1000
-l2-throughput-flows "l2_multimac_1000000" 1000
-l2-throughput-flows "l2_multimac_10000000" 1000
+# l2-throughput-flows "l2_multimac_100" 1000
+# l2-throughput-flows "l2_multimac_1000" 1000
+# l2-throughput-flows "l2_multimac_10000" 1000
+# l2-throughput-flows "l2_multimac_100000" 1000
+# l2-throughput-flows "l2_multimac_1000000" 1000
+# l2-throughput-flows "l2_multimac_10000000" 1000
 
 echo "all done"
