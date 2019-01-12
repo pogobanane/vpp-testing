@@ -84,7 +84,7 @@ function l2-throughput-complex () {
 
 	# wait for test done signal
 	pos_sync #s42: test done
-	echo "Stopped test"
+	echo "Stopped test" # ~46s
 }
 
 # $1: jobname
@@ -115,16 +115,16 @@ l2-throughput "l2_xconnect_load"
 # measure max TODO: higher?
 l2-throughput-rate "l2_bridging_mbit5000" 5000
 # measure around max with high resolution
-base=$(($LAST_THROUGHPUT - 10))
-for offset in {0..20}
+base=$(($LAST_THROUGHPUT - 200))
+for offset in {0..200}
 do
-	i=$((base+offset))
+	i=`printf "%04g" $((base+offset*2))`
 	l2-throughput-rate "l2_bridging_mbit${i}hires" $i
 done
 # measure everything with low resolution
 for s in {1..18}
 do
-	i=$((s*300))
+	i=`printf "%04g" $((s*300))`
 	l2-throughput-rate "l2_bridging_mbit$i" $i
 done
 

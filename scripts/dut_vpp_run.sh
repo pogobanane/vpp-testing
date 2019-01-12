@@ -148,7 +148,7 @@ function vpp-test () {
 
 	# wait for test done signal
 	pos_sync #s42: test end
-	echo "Stopped test"
+	echo "Stopped test" # ~46s
 
 	# kill the process started with pos_run
 	# command/stdout/stderr are uploaded automatically
@@ -173,7 +173,7 @@ done
 # measure everything with low resolution
 for s in {1..18}
 do
-	i=$((s*300))
+	i=`printf "%04g" $((s*300))`
 	vpp-test "l2_bridging_mbit$i" "$vppcmd" "0"
 done
 
