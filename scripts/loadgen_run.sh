@@ -142,29 +142,25 @@ function l2-throughput-sweetspot () {
 	l2-throughput-complex "${spjobname}_mbit${max_throughput}_final" $max_throughput $macs
 }
 
-# for i in {0..5}
-# do
-# 	l2-throughput-sweetspot "l2_bridging_cnf${i}" 0
-# done
+for i in {0..5}
+do
+	l2-throughput-sweetspot "l2_bridging_cnf${i}" 0
+done
 
-l2-throughput-sweetspot "l2_bridging_cnf${i}" 0
+l2-throughput-sweetspot "l2_xconnect" 0
 
-# l2-throughput "l2_xconnect_load"
+# measure everything with low resolution
+for s in {1..18}
+do
+	i=`printf "%04g" $((s*300))`
+	l2-throughput-rate "l2_bridging_mbit$i" $i
+done
 
-# l2-throughput-sweetspot "l2_bridging" 0
-
-# # measure everything with low resolution
-# for s in {1..18}
-# do
-# 	i=`printf "%04g" $((s*300))`
-# 	l2-throughput-rate "l2_bridging_mbit$i" $i
-# done
-
-# l2-throughput-flows "l2_multimac_100" 1000
-# l2-throughput-flows "l2_multimac_1000" 1000
-# l2-throughput-flows "l2_multimac_10000" 1000
-# l2-throughput-flows "l2_multimac_100000" 1000
-# l2-throughput-flows "l2_multimac_1000000" 1000
-# l2-throughput-flows "l2_multimac_10000000" 1000
+l2-throughput-sweetspot "l2_multimac_00000100" 100
+l2-throughput-sweetspot "l2_multimac_00001000" 1000
+l2-throughput-sweetspot "l2_multimac_00010000" 10000
+l2-throughput-sweetspot "l2_multimac_00100000" 100000
+l2-throughput-sweetspot "l2_multimac_01000000" 1000000
+l2-throughput-sweetspot "l2_multimac_10000000" 10000000
 
 echo "all done"

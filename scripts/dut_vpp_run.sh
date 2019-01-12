@@ -155,6 +155,7 @@ function vpp-test () {
 	pos_kill $1
 }
 
+# does 12 test runs!
 # $1: jobname
 # $2: cmd to run
 # $3: arg for cmd
@@ -174,31 +175,26 @@ function vpp-find-sweetspot () {
 	vpp-test "${spjobname}_mbit0000_final" "$cmd" "$cmdarg"
 }
 
-# for i in {0..5}
-# do
-# 	vpp-find-sweetspot "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
-# done
+for i in {0..5}
+do
+	vpp-find-sweetspot "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
+done
 
-vpp-find-sweetspot "l2_bridging" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "0"
+vpp-find-sweetspot "l2_xconnect" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
 
-# vpp-find-sweetspot "l2_xconnect_setup" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
+# measure everything with low resolution
+for s in {1..18}
+do
+	i=`printf "%04g" $((s*300))`
+	vpp-test "l2_bridging_mbit$i" "$vppcmd" "0"
+done
 
-#vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
-#vpp-find-sweetspot "l2_bridging" "$vppcmd" "0"
-
-# # measure everything with low resolution
-# for s in {1..18}
-# do
-# 	i=`printf "%04g" $((s*300))`
-# 	vpp-test "l2_bridging_mbit$i" "$vppcmd" "0"
-# done
-
-# vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
-# vpp-test "l2_multimac_100" "$vppcmd" 100
-# vpp-test "l2_multimac_1000" "$vppcmd" 1000
-# vpp-test "l2_multimac_10000" "$vppcmd" 10000
-# vpp-test "l2_multimac_100000" "$vppcmd" 100000
-# vpp-test "l2_multimac_1000000" "$vppcmd" 1000000
-# vpp-test "l2_multimac_10000000" "$vppcmd" 10000000
+vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
+vpp-find-sweetspot "l2_multimac_00000100" "$vppcmd" 100
+vpp-find-sweetspot "l2_multimac_00001000" "$vppcmd" 1000
+vpp-find-sweetspot "l2_multimac_00010000" "$vppcmd" 10000
+vpp-find-sweetspot "l2_multimac_00100000" "$vppcmd" 100000
+vpp-find-sweetspot "l2_multimac_01000000" "$vppcmd" 1000000
+vpp-find-sweetspot "l2_multimac_10000000" "$vppcmd" 10000000
 
 echo "all done"
