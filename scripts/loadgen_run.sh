@@ -121,7 +121,7 @@ function l2-throughput () {
 max_throughput=0
 # fill LAST_THROUGHPUT TODO: higher?
 l2-throughput-rate "l2_bridging_mbit5000" 5000
-base=$(($LAST_THROUGHPUT - 100))
+base=$(($LAST_THROUGHPUT - 50))
 for offset in {0..10}
 do
 	i=$((base+offset*10))
