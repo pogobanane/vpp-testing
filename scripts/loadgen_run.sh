@@ -114,19 +114,19 @@ function l2-throughput () {
 # $1: jobname
 # $2: number of different macs to use
 function l2-throughput-sweetspot () {
-	jobname=$1
+	spjobname=$1
 	macs=$2
 	# Try to find max_throughput
 	max_throughput=0
 	# fill LAST_THROUGHPUT (this is without framing so < 10Gbit. Therefore 9000 is sufficient for 10G links)
-	l2-throughput-complex "${jobname}_mbit9000" 9000 $macs
+	l2-throughput-complex "${spjobname}_mbit9000" 9000 $macs
 	base=$(($LAST_THROUGHPUT - 50))
 	for offset in {0..10}
 	do
 		i=$((base+offset*10))
 		istr=`printf "%04g" $i`
 		# hi resolution testing around LAST_THROUGHPUT
-		l2-throughput-complex "${jobname}_mbit${istr}hires" $i $macs
+		l2-throughput-complex "${spjobname}_mbit${istr}hires" $i $macs
 		if [ $LAST_LATENCY -ge 325000 ]
 		then
 			# $i is too much throughput
@@ -139,7 +139,7 @@ function l2-throughput-sweetspot () {
 	done
 
 	# final test
-	l2-throughput-complex "${jobname}_mbit${max_throughput}_final" $max_throughput $macs
+	l2-throughput-complex "${spjobname}_mbit${max_throughput}_final" $max_throughput $macs
 }
 
 # for i in {0..5}

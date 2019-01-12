@@ -159,19 +159,19 @@ function vpp-test () {
 # $2: cmd to run
 # $3: arg for cmd
 function vpp-find-sweetspot () {
-	jobname="$1"
+	spjobname="$1"
 	cmd="$2"
 	cmdarg="$3"
 	# Try to find max_throughput
-	vpp-test "${jobname}_mbit9000" "$cmd" "$cmdarg"
+	vpp-test "${spjobname}_mbit9000" "$cmd" "$cmdarg"
 	for i in {0..10}
 	do
 		istr=`printf "%04g" $i`
-		vpp-test "${jobname}_mbit${istr}hires" "$cmd" "$cmdarg"
+		vpp-test "${spjobname}_mbit${istr}hires" "$cmd" "$cmdarg"
 	done
 
 	# final test
-	vpp-test "${jobname}_mbit0000_final" "$cmd" "$cmdarg"
+	vpp-test "${spjobname}_mbit0000_final" "$cmd" "$cmdarg"
 }
 
 # for i in {0..5}
