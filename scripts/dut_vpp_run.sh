@@ -165,9 +165,9 @@ function vpp-test () {
 # Try to find max_throughput
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
 vpp-test "l2_bridging_mbit5000" "$vppcmd" "0"
-for j in {0..10}
+for i in {0..10}
 do
-	istr=`printf "%04g" $((base+offset*10))`
+	istr=`printf "%04g" $i`
 	vpp-test "l2_bridging_mbit${istr}hires" "$vppcmd" "0"
 done
 
