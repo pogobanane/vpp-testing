@@ -174,12 +174,37 @@ done
 # final test
 vpp-test "l2_bridging_mbit0000_final" "$vppcmd" "0"
 
-# # measure everything with low resolution
-# for s in {1..18}
-# do
-# 	i=`printf "%04g" $((s*300))`
-# 	vpp-test "l2_bridging_mbit$i" "$vppcmd" "0"
-# done
+# Try to find max_throughput
+vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
+vpp-test "l2_bridging_mbit5000_1" "$vppcmd" "0"
+for i in {0..10}
+do
+	istr=`printf "%04g" $i`
+	vpp-test "l2_bridging_mbit${istr}hires1" "$vppcmd" "0"
+done
+
+# final test
+vpp-test "l2_bridging_mbit0000_final1" "$vppcmd" "0"
+
+# Try to find max_throughput
+vppcmd="${GITDIR}/scripts/vpp_tests/l2-bridging.sh"
+vpp-test "l2_bridging_mbit5000_2" "$vppcmd" "0"
+for i in {0..10}
+do
+	istr=`printf "%04g" $i`
+	vpp-test "l2_bridging_mbit${istr}hires2" "$vppcmd" "0"
+done
+
+# final test
+vpp-test "l2_bridging_mbit0000_final2" "$vppcmd" "0"
+
+
+# measure everything with low resolution
+for s in {1..18}
+do
+	i=`printf "%04g" $((s*300))`
+	vpp-test "l2_bridging_mbit$i" "$vppcmd" "0"
+done
 
 # vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
 # vpp-test "l2_multimac_100" "$vppcmd" 100
