@@ -142,10 +142,12 @@ function l2-throughput-sweetspot () {
 	l2-throughput-complex "${jobname}_mbit${max_throughput}_final" $max_throughput $macs
 }
 
-for i in {0..5}
-do
-	l2-throughput-sweetspot "l2_bridging_cnf${i}" 0
-done
+# for i in {0..5}
+# do
+# 	l2-throughput-sweetspot "l2_bridging_cnf${i}" 0
+# done
+
+l2-throughput-sweetspot "l2_bridging_cnf${i}" 0
 
 # l2-throughput "l2_xconnect_load"
 

@@ -174,10 +174,12 @@ function vpp-find-sweetspot () {
 	vpp-test "${jobname}_mbit0000_final" "$cmd" "$cmdarg"
 }
 
-for i in {0..5}
-do
-	vpp-find-sweetspot "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
-done
+# for i in {0..5}
+# do
+# 	vpp-find-sweetspot "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
+# done
+
+vpp-find-sweetspot "l2_bridging" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "0"
 
 # vpp-find-sweetspot "l2_xconnect_setup" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
 
