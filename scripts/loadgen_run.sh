@@ -109,21 +109,24 @@ function l2-throughput () {
 	l2-throughput-complex $1 10000 0
 }
 
+# does 12 test runs!
 # finds the sweet spot with lowest latency and highest throughput
 # $1: jobname
+# $2: number of different macs to use
 function l2-throughput-sweetspot () {
 	jobname=$1
+	macs=$2
 	# Try to find max_throughput
 	max_throughput=0
 	# fill LAST_THROUGHPUT (this is without framing so < 10Gbit. Therefore 9000 is sufficient for 10G links)
-	l2-throughput-rate "${jobname}_mbit9000" 9000
+	l2-throughput-complex "${jobname}_mbit9000" 9000 $macs
 	base=$(($LAST_THROUGHPUT - 50))
 	for offset in {0..10}
 	do
 		i=$((base+offset*10))
 		istr=`printf "%04g" $i`
 		# hi resolution testing around LAST_THROUGHPUT
-		l2-throughput-rate "${jobname}_mbit${istr}hires" $i
+		l2-throughput-complex "${jobname}_mbit${istr}hires" $i $macs
 		if [ $LAST_LATENCY -ge 325000 ]
 		then
 			# $i is too much throughput
@@ -136,17 +139,17 @@ function l2-throughput-sweetspot () {
 	done
 
 	# final test
-	l2-throughput-rate "${jobname}_mbit${max_throughput}_final" $max_throughput
+	l2-throughput-complex "${jobname}_mbit${max_throughput}_final" $max_throughput $macs
 }
 
-# for i in {0..5}
-# do
-# 	l2-throughput "l2_bridging_cnf${i}"
-# done
+for i in {0..5}
+do
+	l2-throughput-sweetspot "l2_bridging_cnf${i}" 0
+done
 
 # l2-throughput "l2_xconnect_load"
 
-l2-throughput-sweetspot "l2_bridging"
+# l2-throughput-sweetspot "l2_bridging" 0
 
 # # measure everything with low resolution
 # for s in {1..18}
