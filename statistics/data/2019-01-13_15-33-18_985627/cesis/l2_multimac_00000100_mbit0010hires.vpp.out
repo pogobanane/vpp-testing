@@ -1,0 +1,7 @@
+ÿü"ÿþ"ÿûÿýÿûÿþÿýÿúÿðÿýÿúÿðshow err
+   Count                    Node                  Reason
+ 125492762                l2-output               L2 output packets
+ 125492762                l2-input                L2 input packets
+  62735940                l2-flood                L2 flood packets
+         2     TenGigabitEthernet5/0/1-output     interface is down
+vpp# 

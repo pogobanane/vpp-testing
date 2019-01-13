@@ -1,0 +1,5 @@
+ÿü"ÿþ"ÿûÿýÿûÿþÿýÿúÿðÿýÿúÿðshow err
+   Count                    Node                  Reason
+  73780149                l2-output               L2 output packets
+  73780149                l2-input                L2 input packets
+vpp# 

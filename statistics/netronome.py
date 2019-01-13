@@ -18,6 +18,7 @@ from tqdm import tqdm
 from tabulate import tabulate
 import matplotlib.pyplot as plt
 from matplotlib2tikz import get_tikz_code
+import matplotlib.ticker as tick
 import csv
 import re
 
@@ -32,7 +33,7 @@ sns.set(style="ticks")
 
 
 hmac = ''
-DIRS = ['/home/peter/dev/ba/ba-okelmann/statistics/data/2019-01-09_12-47-14_285989/nida/']
+DIRS = ['/home/peter/dev/ba/ba-okelmann/statistics/data/2019-01-13_15-33-18_985627/nida/']
 
 #hmac = 'hmac_'
 #DIRS = ['/Users/gallenmu/mkdir/2018-07-29_18-13-41/rapla']
@@ -286,11 +287,8 @@ def weighted_quantile(values, quantiles, sample_weight=None, values_sorted=False
         weighted_quantiles /= np.sum(sample_weight)
     return np.interp(quantiles, weighted_quantiles, values)
 
-def latency_csv2tex(latfile, throughfile):
-
-    # ## Latency
-
-    # In[13]:
+def parse_histogramfile(latfile):
+        # In[13]:
 
     flatency = [latfile]
     dflat = []
@@ -334,12 +332,72 @@ def latency_csv2tex(latfile, throughfile):
         #weights = dfg['weight'].tolist()
     latencies = dflat['latency'].tolist()
     weights = dflat['weight'].tolist()
+    return latencies, weights
+
+
+def latency_per_throughput(fileprefix):
+    rates = []
+    q0 = []
+    q25 = []
+    q5 = []
+    q75 = []
+    q90 = []
+    q99 = []
+    q999 = []
+    for latfile in flatency: 
+        filename = os.path.basename(latfile)
+        if fileprefix in filename and not "mbit9000" in filename:
+            rate = int(filename.split(fileprefix)[1][0:4])
+            # rate = int(filename[16:20]) # * 1000 / (64*8) # kbit / packetSize(byte) * 8bit
+            latencies, weights = parse_histogramfile(latfile)
+            quantiles = weighted_quantile(latencies, [0.0, 0.25, 0.5, 0.75, 0.90, 0.99, 0.999], sample_weight=weights, values_sorted=True)
+            quantiles = list(map(lambda u: (u / 1000), quantiles))
+            rates.append(int(rate))
+            q0.append(quantiles[0])
+            q25.append(quantiles[1])
+            q5.append(quantiles[2])
+            q75.append(quantiles[3])
+            q90.append(quantiles[4])
+            q99.append(quantiles[5])
+            q999.append(quantiles[6])
+
+    fig = plt.figure()
+    axes = plt.gca()
+    axes.set_ylim([0,150])
+    plt.plot(rates, q0)
+    plt.plot(rates, q25)
+    plt.plot(rates, q5)
+    plt.plot(rates, q75)
+    plt.plot(rates, q90)
+    plt.plot(rates, q99)
+    plt.plot(rates, q999)
+    plt.title(tex_escape("{}*".format(fileprefix)))
+    plt.ylabel("latency (ys)")
+    plt.xlabel("throughput (kpps)")
+    fig.tight_layout()
+    plt.grid(True)
+
+    return get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm")
+
+
+def latency_csv2tex(latfile, throughfile):
+
+    # ## Latency
+
+    latencies, weights = parse_histogramfile(latfile)
 
     rate = -1
     psize = -1
 
     fig = plt.figure()
-
+    axes = plt.gca()
+    axes.set_xlim([0, 150000])
+    #y_formatter = tick.ScalarFormatter(useOffset=True)
+    #y_formatter.set_powerlimits((1,2))
+    #axes.yaxis.set_major_formatter(y_formatter)
+    #axes.yaxis.set_major_formatter(tick.FuncFormatter(lambda x,y: str(x)))
+    axes.get_yaxis().get_major_formatter().set_powerlimits((3,3))
+    axes.get_xaxis().get_major_formatter().set_powerlimits((3,3))
     plt.hist(latencies, weights=weights, bins=400)
     #plt.title('Rate {} Mbit/s - Packet size: {} B'.format(rate, psize))
     plt.title("{}: \n{}".format(tex_escape(os.path.basename(latfile)), tex_escape(parse_throughput(throughfile))))
@@ -364,6 +422,26 @@ txtoutstr = ""
 outf = "netronome.tex"
 with codecs.open(outf, "w+", encoding="utf8") as f:
     f.write(tikz_header)
+    f.write(latency_per_throughput("l2_bridging_mbit"))
+    f.write("\n\n\n")
+    for i in range(0,6):
+        f.write(latency_per_throughput("l2_bridging_cnf{}_mbit".format(i)))
+        f.write("\n\n\n")
+    f.write(latency_per_throughput("l2_multimac_00000100_mbit"))
+    f.write("\n\n\n")
+    f.write(latency_per_throughput("l2_multimac_00001000_mbit"))
+    f.write("\n\n\n")
+    f.write(latency_per_throughput("l2_multimac_00010000_mbit"))
+    f.write("\n\n\n")
+    f.write(latency_per_throughput("l2_multimac_00100000_mbit"))
+    f.write("\n\n\n")
+    f.write(latency_per_throughput("l2_multimac_01000000_mbit"))
+    f.write("\n\n\n")
+    f.write(latency_per_throughput("l2_multimac_10000000_mbit"))
+    f.write("\n\n\n")
+    f.write(latency_per_throughput("l2_xconnect_mbit"))
+    f.write("\n\n\n")
+
     for i in range(0, len(flatency)):
 
         #outf = '{}.tex'.format(flatency[i])
@@ -378,5 +456,8 @@ outf = "netrotxt.txt"
 with codecs.open(outf, "w+", encoding="utf8") as f:
     f.write("{}{}{}{}{}{}{}{}\n".format("job -> microseconds".ljust(40), ".0".rjust(10), ".25".rjust(10), ".50".rjust(10), ".75".rjust(10), ".90".rjust(10), ".99".rjust(10), ".999".rjust(10)))
     f.write(txtoutstr)
+
+
+
 
 # pdflatex netronome.tex

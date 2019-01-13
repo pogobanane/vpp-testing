@@ -1,0 +1,7 @@
+ÿü"ÿþ"ÿûÿýÿûÿþÿýÿúÿðÿýÿúÿðshow err
+   Count                    Node                  Reason
+ 177832636                l2-output               L2 output packets
+ 177832636                l2-learn                L2 learn packets
+         1                l2-learn                L2 learn misses
+ 177832636                l2-input                L2 input packets
+vpp# 
