@@ -186,7 +186,7 @@ vpp-find-sweetspot "l2_xconnect" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
 for s in {1..18}
 do
 	i=`printf "%04g" $((s*300))`
-	vpp-test "l2_bridging_mbit$i" "$vppcmd" "0"
+	vpp-test "l2_bridging_mbit$i" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "0"
 done
 
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
