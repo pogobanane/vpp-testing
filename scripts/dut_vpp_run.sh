@@ -174,7 +174,7 @@ function vpp-find-sweetspot () {
 
 	# Try to find max_throughput
 	vpp-test "${spjobname}_mbit9000" "$cmd" "$cmdarg"
-	for i in {0..10}
+	for i in {0..15}
 	do
 		istr=`printf "%04g" $i`
 		vpp-test "${spjobname}_mbit${istr}hires" "$cmd" "$cmdarg"
