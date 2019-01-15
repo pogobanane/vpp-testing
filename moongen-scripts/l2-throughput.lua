@@ -12,7 +12,7 @@ function configure(parser)
   parser:argument("txDev", "Device to send from."):convert(tonumber)
   parser:argument("rxDev", "Device to recieve from."):convert(tonumber)
   parser:option("--ethSrc", "Source eth addr."):default("00:11:22:33:44:55"):convert(tostring)
-  parser:option("-d --ethDst", "Target eth addr."):default("40:00:00:00:00:00"):convert(tostring)
+  parser:option("-d --ethDst", "Target eth addr. (network BO if using --macs)"):default("00:00:00:00:00:00"):convert(tostring)
   parser:option("-s --pktSize", "Packet size."):default(60):convert(tonumber)
   parser:option("-r --rate", "Transmit rate in Mbit/s."):default(10000):convert(tonumber)
   parser:option("-m --macs", "Send to (ethDst...ethDst+macs)."):default(0):convert(tonumber)
@@ -135,9 +135,15 @@ function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseMac, flows)
   while mg.running() do
     bufs:alloc(pktSize)
     for _, buf in ipairs(bufs) do
-      local pkt = buf:getRawPacket()
-      pkt.eth.dst:set((baseMacNr + counter) * 2) -- leave multicast bit to 0
-      counter = incAndWrap(counter, flows) -- starts to increment the leftmost
+      local pkt = buf:getRawPacket().payload
+      local addr = (baseMacNr + counter) * 2
+      pkt.uint8[5] = bit.band(addr, 0xFF)
+      pkt.uint8[4] = bit.band(bit.rshift(addr, 8), 0xFF)
+      pkt.uint8[3] = bit.band(bit.rshift(addr, 16), 0xFF)
+      pkt.uint8[2] = bit.band(bit.rshift(addr, 24), 0xFF)
+      pkt.uint8[1] = bit.band(bit.rshift(addr + 0ULL, 32ULL), 0xFF)
+      pkt.uint8[0] = bit.band(bit.rshift(addr + 0ULL, 40ULL), 0xFF)
+      counter = (counter + 1) % flows
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
     bufs:offloadUdpChecksums()
