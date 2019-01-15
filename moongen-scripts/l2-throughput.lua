@@ -111,7 +111,7 @@ end
 -- multiple flows from devices or to devices?
 -- to deviecs -> have to fill arps for them
 -- from devices -> overhead from arp filling
-function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseIP, flows)
+function sendIPs(bufs, txQueue, txCtr, rxCtr, pktSize, baseIP, flows)
   local counter = 0
   local baseIpNr = parseIPAddress(baseIP)
   while mg.running() do
@@ -135,9 +135,9 @@ function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseMac, flows)
   while mg.running() do
     bufs:alloc(pktSize)
     for _, buf in ipairs(bufs) do
-      local pkt = buf:getEthernetPacket() -- getRawPacket.payload. 
-      pkt.eth.dst:set(baseMacNr + counter)
-      counter = incAndWrap(counter, flows) -- starts to increment the leftmost byte TODO: *2
+      local pkt = buf:getRawPacket()
+      pkt.eth.dst:set((baseMacNr + counter) * 2) -- leave multicast bit to 0
+      counter = incAndWrap(counter, flows) -- starts to increment the leftmost
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
     bufs:offloadUdpChecksums()
