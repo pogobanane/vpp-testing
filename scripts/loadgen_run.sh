@@ -148,7 +148,8 @@ function l2-throughput-sweetspot () {
 	done
 
 	# final test
-	l2-throughput-complex "${spjobname}_mbit${max_throughput}_final" $max_throughput $macs
+	istr=`printf "%04g" $max_throughput`
+	l2-throughput-complex "${spjobname}_mbit${istr}_final" $max_throughput $macs
 }
 
 for i in {0..5}
