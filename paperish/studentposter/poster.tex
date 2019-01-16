@@ -1,0 +1,192 @@
+\documentclass[a1paper,fontsize=24.88pt,twoside=false,english,DIV=calc,NET]{scrartcl}
+
+% size should not be changed unless explicitely instructed otherwise
+\usepackage{geometry}
+\geometry{paperwidth=600mm, paperheight=800mm, left=35mm,right=35mm, top=35mm, bottom=35mm} % I8 framesize
+
+% sizes
+
+\newcommand{\headervspace}{26mm} % A1/I8
+\newcommand{\logoheight}{26mm} % A1/I8
+
+\usepackage{posterstyle}
+
+% ===============================================================
+% Font settings
+% ===============================================================
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\fontfamily{phv}\selectfont
+\renewcommand{\rmdefault}{lhv}
+\renewcommand{\seriesdefault}{m}
+\renewcommand{\shapedefault}{n}
+\DeclareSymbolFont{operators}{OT1}{cmbr}{m}{n}
+\DeclareSymbolFont{letters}{OML}{cmbrm}{m}{it}
+\DeclareSymbolFont{symbols}{OMS}{cmbrs}{m}{n}
+% ===============================================================
+
+% Type and title of your work, please adhere to the following format:
+% {Bachelor' Thesis | Master's Thesis | Interdisciplinary Project | Guided Research}: title,
+\def\titletext{Bachelor's Thesis: Full thesis title}
+
+% Adapt font size to fit in a single line
+\newcommand{\titlefontsize}{\fontsize{36}{40}\selectfont} % A1/I8
+
+% Fill in the name of the persons
+\def\presenter{Your Name}
+\def\advisor{Sebastian Gallenmüller, Stephan Günther}
+\def\supervisor{Georg Carle}
+
+\begin{document}
+
+\TUMheader[TUMDarkerBlue]{\logoheight}
+
+\vspace{\headervspace}
+
+
+{{\titlefontsize \titletext \\}
+
+\vspace{-1.5ex}
+{{\fontsize{28}{32}\strut\selectfont Intermediate Talk\\}
+
+\vspace{.8\headervspace}
+
+\ssingletextbox{\footnotesize \textcolor{TUMDarkerBlue}{ {\textit{Presenter:} \presenter --- \textit{Advisors:} \advisor --- \textit{Supervisor:} \supervisor }  \hspace*{\fill} }}
+%\ssingletextbox{\footnotesize \textcolor{TUMDarkerBlue}{{} \hspace*{\fill}}}
+
+\doubletextbox{35ex}{General topic/Motivation}{
+	\footnotesize
+	\begin{center}
+		\begin{tikzpicture}
+			\node (nida) [server, minimum width=.1\textwidth] {};
+			\node (cesis) at ([yshift=-1ex] nida.south) [server, anchor=north, minimum width=.09\textwidth] {};
+			\node (tartu) at ([yshift=-1ex] cesis.south) [server, anchor=north, minimum width=.09\textwidth] {};
+			\node (klaipeda) at ([yshift=-1ex] tartu.south) [server, anchor=north, minimum width=.09\textwidth] {Test server};
+			
+			\node (nida2) at ([xshift=.5\textwidth] nida.east) [server, minimum width=.09\textwidth] {};
+			\node (cesis2) at ([xshift=.5\textwidth] cesis.east) [server, minimum width=.09\textwidth] {};
+			\node (tartu2) at ([xshift=.5\textwidth] tartu.east) [server, minimum width=.09\textwidth] {};
+			\node (klaipeda2) at ([xshift=.5\textwidth] klaipeda.east) [server, minimum width=.09\textwidth] {Test server};
+			
+			\node (cloud) at ([xshift=.15\textwidth, yshift=0cm] tartu.east) [anchor=west, server, minimum width=.15\textwidth, text width=.2\textwidth, align=center] {Management server};
+			
+			\draw[thick] (nida.east) -- (cloud.west);
+			\draw[thick] (cesis.east) -- (cloud.west);
+			\draw[thick] (tartu.east) -- (cloud.west);
+			\draw[thick] (klaipeda.east) -- (cloud.west);
+			
+			\draw[thick] (nida2.west) -- (cloud.east);
+			\draw[thick] (cesis2.west) -- (cloud.east);
+			\draw[thick] (tartu2.west) -- (cloud.east);
+			\draw[thick] (klaipeda2.west) -- (cloud.east);
+			
+			\draw[thick] (nida.south) -- (cesis.north);
+			\draw[thick] (tartu.south) -- (klaipeda.north);
+			\draw[thick] (nida2.south) -- (cesis2.north);
+			\draw[thick] (tartu2.south) -- (klaipeda2.north);
+		\end{tikzpicture}
+		
+		\vspace{5ex}
+		Baltikum testbed topology
+	\end{center}
+
+	\vspace{1ex}
+	\begin{itemize}
+		\setlength{\itemsep}{0pt}
+		\item Some important info about your general topic / Motivation
+		\item Maybe include a picture 
+	\end{itemize}
+}{Background}{
+	\footnotesize
+	\begin{itemize}
+		\item Important background for this work
+		\item may be some things about related work or important libraries/frameworks used
+	\end{itemize}
+}
+
+\vfill
+
+\doubletextbox{39ex}{Measurement setup}{	
+	\footnotesize
+	\begin{itemize}
+		\item How does your setup look like (maybe a figure)?
+		\item What are the relevant questions you try to answer with your measurement?
+		\item What do you measure?
+		\item How do you measure?
+	\end{itemize}
+}{Measurements}{
+	\footnotesize
+	\begin{center}
+		\includegraphics[width=12cm]{pics/happy.jpg}
+	\end{center}
+
+	\footnotesize
+	\begin{itemize}
+		\item Pictures and graphs show that
+	\end{itemize}
+
+}
+
+\vfill
+
+\doubletextbox{28ex}{Additional data}{
+
+	\footnotesize
+	MoonRoute achieves superior performance to a number of different software routers (tested with a single routing entry on the same hardware):
+
+	\vspace{5ex}
+	\centering
+	\begin{tabular}[]{ l r r r}
+		\footnotesize
+		Router                                      & Mpps & Relative \\
+		\midrule
+		MoonRoute                                   & 14.6 & 100\%    \\
+		FastClick (DPDK 2.2)~\cite{moongen-imc2015} & 10.4 & 72\%     \\
+		Click (DPDK 2.2)~\cite{moongen-imc2015}     & 4.3  & 29\%     \\
+		Linux 3.7                                   & 1.5  & 10\%
+	\end{tabular}
+
+}
+{Planned Schedule}{
+	\footnotesize
+	Short time schedule for the upcoming weeks:
+
+	\begin{itemize}
+		\item Official start date: October 15, 2010
+		\item Official end date: February 15, 2011
+		\item Weeks left: 8
+	\end{itemize}
+	
+	\textbf{Schedule}
+	\begin{itemize}
+		\item Week 1-4: Providing cookies for I8
+		\item Week 5-6: Perform additional measurements
+		\item Week 7: Writing thesis
+		\item Week 8: \textbf{Several} corrections passes
+		\item Week 9: Print and hand-in
+	\end{itemize}
+}
+
+\vfill 
+
+% This is the literature box.
+% There the most relevant papers related to the presented work are listed.
+\notitlesingletextbox{13ex}{
+	\nocite{moongen-imc2015}
+	\nocite{guenthergf}
+	\nocite{braun2010comparing}
+	\nocite{netgames}
+	%\nocite{ancs}%
+
+	\vspace{-1ex}  
+	\scriptsize
+	\begingroup
+		\renewcommand{\section}[2]{}%
+		\bibliography{lit}
+		\bibliographystyle{abbrv}
+	\endgroup
+}
+
+\vfill
+
+\end{document}
