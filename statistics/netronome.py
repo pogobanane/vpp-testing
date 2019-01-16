@@ -33,7 +33,7 @@ sns.set(style="ticks")
 
 
 hmac = ''
-DIRS = ['/home/peter/dev/ba/ba-okelmann/statistics/data/2019-01-14_10-12-27_458270/nida/']
+DIRS = ['/home/peter/dev/ba/ba-okelmann/statistics/data/2019-01-15_23-44-53_277861/nida/']
 
 #hmac = 'hmac_'
 #DIRS = ['/Users/gallenmu/mkdir/2018-07-29_18-13-41/rapla']
@@ -347,12 +347,12 @@ def latency_per_throughput(fileprefix):
     for latfile in flatency: 
         filename = os.path.basename(latfile)
         if fileprefix in filename and not "mbit9000" in filename:
-            rate = int(filename.split(fileprefix)[1][0:4])
+            rate = float(filename.split(fileprefix)[1][0:4]) / (64*8)
             # rate = int(filename[16:20]) # * 1000 / (64*8) # kbit / packetSize(byte) * 8bit
             latencies, weights = parse_histogramfile(latfile)
             quantiles = weighted_quantile(latencies, [0.0, 0.25, 0.5, 0.75, 0.90, 0.99, 0.999], sample_weight=weights, values_sorted=True)
             quantiles = list(map(lambda u: (u / 1000), quantiles))
-            rates.append(int(rate))
+            rates.append(rate)
             q0.append(quantiles[0])
             q25.append(quantiles[1])
             q5.append(quantiles[2])
@@ -364,6 +364,7 @@ def latency_per_throughput(fileprefix):
     fig = plt.figure()
     axes = plt.gca()
     axes.set_ylim([0,150])
+    axes.set_xlim([0.5, 12])
     plt.plot(rates, q0)
     plt.plot(rates, q25)
     plt.plot(rates, q5)
@@ -373,7 +374,7 @@ def latency_per_throughput(fileprefix):
     plt.plot(rates, q999)
     plt.title(tex_escape("{}*".format(fileprefix)))
     plt.ylabel("latency (ys)")
-    plt.xlabel("throughput (kpps)")
+    plt.xlabel("throughput (Mpps)")
     fig.tight_layout()
     plt.grid(True)
 
@@ -422,8 +423,6 @@ txtoutstr = ""
 outf = "netronome.tex"
 with codecs.open(outf, "w+", encoding="utf8") as f:
     f.write(tikz_header)
-    f.write(latency_per_throughput("l2_bridging_mbit"))
-    f.write("\n\n\n")
     for i in range(0,6):
         f.write(latency_per_throughput("l2_bridging_cnf{}_mbit".format(i)))
         f.write("\n\n\n")
