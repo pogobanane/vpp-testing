@@ -1,5 +1,6 @@
 \documentclass[a1paper,fontsize=24.88pt,twoside=false,english,DIV=calc,NET]{scrartcl}
 
+\usepackage{svg}
 % size should not be changed unless explicitely instructed otherwise
 \usepackage{geometry}
 \geometry{paperwidth=600mm, paperheight=800mm, left=35mm,right=35mm, top=35mm, bottom=35mm} % I8 framesize
@@ -27,15 +28,15 @@
 
 % Type and title of your work, please adhere to the following format:
 % {Bachelor' Thesis | Master's Thesis | Interdisciplinary Project | Guided Research}: title,
-\def\titletext{Bachelor's Thesis: Full thesis title}
+\def\titletext{Bachelor's Thesis: Performance-Analysis of VPP}
 
 % Adapt font size to fit in a single line
 \newcommand{\titlefontsize}{\fontsize{36}{40}\selectfont} % A1/I8
 
 % Fill in the name of the persons
-\def\presenter{Your Name}
-\def\advisor{Sebastian Gallenmüller, Stephan Günther}
-\def\supervisor{Georg Carle}
+\def\presenter{Peter Okelmann}
+\def\advisor{Paul Emmerich, Dominik Scholz}
+\def\supervisor{Prof. Dr.-Ing. Georg Carle}
 
 \begin{document}
 
@@ -54,77 +55,79 @@
 \ssingletextbox{\footnotesize \textcolor{TUMDarkerBlue}{ {\textit{Presenter:} \presenter --- \textit{Advisors:} \advisor --- \textit{Supervisor:} \supervisor }  \hspace*{\fill} }}
 %\ssingletextbox{\footnotesize \textcolor{TUMDarkerBlue}{{} \hspace*{\fill}}}
 
-\doubletextbox{35ex}{General topic/Motivation}{
+\doubletextbox{35ex}{VPP: a fast software router}{
 	\footnotesize
-	\begin{center}
-		\begin{tikzpicture}
-			\node (nida) [server, minimum width=.1\textwidth] {};
-			\node (cesis) at ([yshift=-1ex] nida.south) [server, anchor=north, minimum width=.09\textwidth] {};
-			\node (tartu) at ([yshift=-1ex] cesis.south) [server, anchor=north, minimum width=.09\textwidth] {};
-			\node (klaipeda) at ([yshift=-1ex] tartu.south) [server, anchor=north, minimum width=.09\textwidth] {Test server};
-			
-			\node (nida2) at ([xshift=.5\textwidth] nida.east) [server, minimum width=.09\textwidth] {};
-			\node (cesis2) at ([xshift=.5\textwidth] cesis.east) [server, minimum width=.09\textwidth] {};
-			\node (tartu2) at ([xshift=.5\textwidth] tartu.east) [server, minimum width=.09\textwidth] {};
-			\node (klaipeda2) at ([xshift=.5\textwidth] klaipeda.east) [server, minimum width=.09\textwidth] {Test server};
-			
-			\node (cloud) at ([xshift=.15\textwidth, yshift=0cm] tartu.east) [anchor=west, server, minimum width=.15\textwidth, text width=.2\textwidth, align=center] {Management server};
-			
-			\draw[thick] (nida.east) -- (cloud.west);
-			\draw[thick] (cesis.east) -- (cloud.west);
-			\draw[thick] (tartu.east) -- (cloud.west);
-			\draw[thick] (klaipeda.east) -- (cloud.west);
-			
-			\draw[thick] (nida2.west) -- (cloud.east);
-			\draw[thick] (cesis2.west) -- (cloud.east);
-			\draw[thick] (tartu2.west) -- (cloud.east);
-			\draw[thick] (klaipeda2.west) -- (cloud.east);
-			
-			\draw[thick] (nida.south) -- (cesis.north);
-			\draw[thick] (tartu.south) -- (klaipeda.north);
-			\draw[thick] (nida2.south) -- (cesis2.north);
-			\draw[thick] (tartu2.south) -- (klaipeda2.north);
-		\end{tikzpicture}
-		
-		\vspace{5ex}
-		Baltikum testbed topology
-	\end{center}
-
-	\vspace{1ex}
+	VPP (Vector Packet Processing) is a user-space software router. This approach combines many advantages:
 	\begin{itemize}
-		\setlength{\itemsep}{0pt}
-		\item Some important info about your general topic / Motivation
-		\item Maybe include a picture 
+		\item deployable to usual architechtures
+		\item fast user-space network interface drivers
+		\item can run in virtualized containers
 	\end{itemize}
-}{Background}{
-	\footnotesize
+	\vspace{2ex}
+
+	"It is the open source version of Cisco's Vector Packet Processing (VPP) technology."\cite{vppwiki:whatis} 
+	Now it is beeing developed by FD.io ("The Fast Data Project") which belongs to the Linux Foundation. 
+
+	Feature Highlights:
 	\begin{itemize}
-		\item Important background for this work
-		\item may be some things about related work or important libraries/frameworks used
+		\item vecorized processing of packets in badges
+		\item utilizes high-speed dpdk drivers
+		\item modular and extendable packet-processing graph
+		\item cpu-scalability
+	\end{itemize}
+}{Testing Methodology}{
+	\footnotesize
+	MoonGen\cite{moongen-imc2015} is scripted to generate testing load according to the following testing parameters:
+	\begin{itemize}
+		\item packet rate
+		\item packet size
+		\item traffic type (generic Ethernet, UDP)
+		\item traffic pattern (inter packet gaps)
+	\end{itemize}
+	\footnotesize
+	Gathered testing results:
+	\begin{itemize}
+		\item latency histogram
+		\item throughput
+		\item linux perf stats (cache misses...)
+		\item linux perf record (cpu-time spent per symbol)
+		\item internal vpp state information
+	\end{itemize}
+	\footnotesize
+	For tests to return meaningful results, the optimum of throughput to latency is beeing found by a script. This packet rate is then used for further tests. Otherwise the results are inaccurate, because of utilization of the packet buffer.  
+	\footnotesize
+	VPP properties to test:
+	\begin{itemize}
+		\item raw forwarding throughput
+		\item latency: cache and memory impact
+		\item packet processing graphs utilizing multiple cpu cores
+		\item testing specific processing nodes / router features
 	\end{itemize}
 }
 
 \vfill
 
-\doubletextbox{39ex}{Measurement setup}{	
+\doubletextbox{39ex}{Measurement setup}{
+	Background
 	\footnotesize
+	\begin{itemize}
+		\item Important background for this work
+		\item may be some things about related work or important libraries/frameworks used
+	\end{itemize}
+	\footnotesize
+	Measurment Setup:
 	\begin{itemize}
 		\item How does your setup look like (maybe a figure)?
 		\item What are the relevant questions you try to answer with your measurement?
 		\item What do you measure?
 		\item How do you measure?
 	\end{itemize}
-}{Measurements}{
+}{Benchmarking Setup}{
 	\footnotesize
 	\begin{center}
-		\includegraphics[width=12cm]{pics/happy.jpg}
+		\includegraphics[width=24cm]{pics/topology2.png}
+		% \includesvg[width=14cm]{../../../pics/topology}
 	\end{center}
-
-	\footnotesize
-	\begin{itemize}
-		\item Pictures and graphs show that
-	\end{itemize}
-
 }
 
 \vfill
