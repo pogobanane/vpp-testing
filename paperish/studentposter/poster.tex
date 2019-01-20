@@ -73,13 +73,13 @@
 	\end{itemize}
 	\vspace{2ex}
 
-	"It is the open source version of Cisco's Vector Packet Processing (VPP) technology"\cite{vppwiki:whatis} and is now beeing developed by FD.io ("The Fast Data Project") which belongs to the Linux Foundation. 
+	"It is the open source version of Cisco's Vector Packet Processing (VPP) technology" \cite{vppwiki:whatis} and is now beeing developed by FD.io ("The Fast Data Project") which belongs to the Linux Foundation. 
 
 	Feature Highlights:
 	\begin{itemize}
 		\item vecorized processing of packets in badges
 		\item utilizes high-speed dpdk drivers
-		\item modular and extendable packet-processing graph
+		\item modular and extendable packet-processing graph \cite{linguaglossa2017high}
 		\item cpu-scalability
 	\end{itemize}
 
@@ -99,8 +99,9 @@
 
 	\vspace{2ex}
 	\footnotesize
-	For tests to return meaningful latency results, the optimum of throughput to latency is beeing found by a script. This packet rate is then used for further tests. Otherwise the results are inaccurate, because of utilization of the packet buffer. 
+	For tests to return meaningful latency results, the optimum of throughput to latency is beeing found by a script. This packet rate is then used for further tests. Otherwise a worst case of latency is triggered, because because packet queues fill up. \cite{gallenmuller2015comparison} 
 
+	\vspace{5ex}
 	\footnotesize
 	VPP properties to test:
 	\begin{itemize}
@@ -115,7 +116,7 @@
 
 	\vspace{2ex}
 	\footnotesize
-	MoonGen\cite{moongen-imc2015} scripts can generate testing load according to the following testing parameters:
+	MoonGen \cite{moongen-imc2015} scripts can generate testing load according to the following testing parameters:
 	\begin{itemize}
 		\item packet rate
 		\item packet size
@@ -170,10 +171,6 @@
 % This is the literature box.
 % There the most relevant papers related to the presented work are listed.
 \notitlesingletextbox{13ex}{
-	\nocite{moongen-imc2015}
-	\nocite{guenthergf}
-	\nocite{braun2010comparing}
-	\nocite{netgames}
 	%\nocite{ancs}%
 
 	\vspace{-1ex}  
