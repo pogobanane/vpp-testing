@@ -1,5 +1,7 @@
 \documentclass[a1paper,fontsize=24.88pt,twoside=false,english,DIV=calc,NET]{scrartcl}
 
+\usepackage{wrapfig}
+
 \usepackage{svg}
 % size should not be changed unless explicitely instructed otherwise
 \usepackage{geometry}
@@ -41,6 +43,11 @@
 \begin{document}
 
 \TUMheader[TUMDarkerBlue]{\logoheight}
+
+\begin{wrapfigure}[10]{r}{3in}
+\centering
+\includegraphics[width=2in]{pics/logo_fdio.png}
+\end{wrapfigure}
 
 \vspace{\headervspace}
 
@@ -132,10 +139,26 @@
 
 \vfill
 
-\doubletextbox{28ex}{Additional data}{
+\doubletextbox{28ex}{l2 Throughput}{
 
 	\footnotesize
+
 	MoonRoute achieves superior performance to a number of different software routers (tested with a single routing entry on the same hardware):
+
+	\vspace{5ex}
+	\centering
+	\begin{tabular}[]{ l r r r}
+		\footnotesize
+		VPP config & max Mpps & good Mpps & Relative \\
+		\midrule
+		packet gen speed & 14.86 & 14.86 & 100\% \\
+		l2 xconnect & 10.4 & 10.1 & 68\% \\
+		l2 bridge: no features & 9.35 & 9.2 & 62\% \\
+		l2 bridge: mac-age & 8.62 & 8.6 & 58\% \\
+		l2 bridge: mac-learn & 8.51 & 8.3 & 56\% \\
+		l2 bridge: mac-learn, mac-age & 8.50 & 8.3 & 56\%
+	\end{tabular}
+
 
 	\vspace{5ex}
 	\centering
