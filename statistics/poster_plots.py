@@ -16,7 +16,64 @@ import csv
 import re
 
 hmac = ''
-DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-15_23-44-53_277861/nida/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-20_14-59-17_918478/nida/']
+
+USED = """
+l2_multimac_00000100_mbit4149hires.histogram.csv
+l2_multimac_00001000_mbit4103hires.histogram.csv
+l2_multimac_00005000_mbit4121_final.histogram.csv
+l2_multimac_00010000_mbit4104hires.histogram.csv
+l2_multimac_00015000_mbit4106hires.histogram.csv
+l2_multimac_00020000_mbit4093hires.histogram.csv
+l2_multimac_00025000_mbit4081hires.histogram.csv
+l2_multimac_00050000_mbit4114hires.histogram.csv
+l2_multimac_00075000_mbit4103hires.histogram.csv
+l2_multimac_00100000_mbit4120hires.histogram.csv
+l2_multimac_00125000_mbit4108hires.histogram.csv
+l2_multimac_00150000_mbit4100hires.histogram.csv
+l2_multimac_00175000_mbit4081hires.histogram.csv
+l2_multimac_00200000_mbit4110hires.histogram.csv
+l2_multimac_00225000_mbit4109hires.histogram.csv
+l2_multimac_00250000_mbit4112hires.histogram.csv
+l2_multimac_00275000_mbit3843hires.histogram.csv
+l2_multimac_00300000_mbit4121hires.histogram.csv
+l2_multimac_00325000_mbit4115hires.histogram.csv
+l2_multimac_00350000_mbit4120hires.histogram.csv
+l2_multimac_00375000_mbit4110hires.histogram.csv
+l2_multimac_00400000_mbit4112hires.histogram.csv
+l2_multimac_00425000_mbit4105hires.histogram.csv
+l2_multimac_00450000_mbit4096hires.histogram.csv
+l2_multimac_00475000_mbit4103hires.histogram.csv
+l2_multimac_00500000_mbit4093hires.histogram.csv
+"""
+USED = """
+l2_multimac_00000100_mbit4299hires.histogram.csv
+l2_multimac_00001000_mbit4153hires.histogram.csv
+l2_multimac_00005000_mbit4121hires.histogram.csv
+l2_multimac_00010000_mbit4104hires.histogram.csv
+l2_multimac_00015000_mbit4056hires.histogram.csv
+l2_multimac_00020000_mbit4093hires.histogram.csv
+l2_multimac_00025000_mbit4081hires.histogram.csv
+l2_multimac_00050000_mbit4064hires.histogram.csv
+l2_multimac_00075000_mbit4053hires.histogram.csv
+l2_multimac_00100000_mbit4020hires.histogram.csv
+l2_multimac_00125000_mbit4008hires.histogram.csv
+l2_multimac_00150000_mbit4000hires.histogram.csv
+l2_multimac_00175000_mbit3931hires.histogram.csv
+l2_multimac_00200000_mbit3960hires.histogram.csv
+l2_multimac_00225000_mbit3959hires.histogram.csv
+l2_multimac_00250000_mbit3962_final.histogram.csv
+l2_multimac_00275000_mbit3843hires.histogram.csv
+l2_multimac_00300000_mbit3921hires.histogram.csv
+l2_multimac_00325000_mbit3915hires.histogram.csv
+l2_multimac_00350000_mbit3970hires.histogram.csv
+l2_multimac_00375000_mbit3860hires.histogram.csv
+l2_multimac_00400000_mbit3912hires.histogram.csv
+l2_multimac_00425000_mbit3855hires.histogram.csv
+l2_multimac_00450000_mbit3846hires.histogram.csv
+l2_multimac_00475000_mbit3853hires.histogram.csv
+l2_multimac_00500000_mbit3793hires.histogram.csv
+"""
 
 #hmac = 'hmac_'
 #DIRS = ['/Users/gallenmu/mkdir/2018-07-29_18-13-41/rapla']
@@ -27,7 +84,7 @@ fthroughput = []
 
 for d in DIRS:
     files = os.listdir(d)
-    flatency_ = filter(lambda x: x.endswith('_final.histogram.csv'), files)
+    flatency_ = filter(lambda x: x.endswith('.histogram.csv'), files)
     flatency.extend(map(lambda x: os.path.join(d, x), flatency_))
     flatency = sorted(flatency)
 
@@ -145,7 +202,9 @@ def latency_per_throughput(fileprefix):
     q999 = []
     for latfile in flatency: 
         filename = os.path.basename(latfile)
-        if fileprefix in filename and not "mbit9000" in filename:
+        if fileprefix in filename and not "mbit9000" in filename and filename in USED:
+            print(filename)
+            print(filename.split(fileprefix)[1][0:8])
             macs = int(filename.split(fileprefix)[1][0:8])
             latencies, weights = parse_histogramfile(latfile)
             quantiles = weighted_quantile(latencies, [0.0, 0.25, 0.5, 0.75, 0.90, 0.99, 0.999], sample_weight=weights, values_sorted=True)

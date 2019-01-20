@@ -33,7 +33,7 @@ sns.set(style="ticks")
 
 
 hmac = ''
-DIRS = ['/home/peter/dev/ba/ba-okelmann/statistics/data/2019-01-15_23-44-53_277861/nida/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-20_14-59-17_918478/nida/']
 
 #hmac = 'hmac_'
 #DIRS = ['/Users/gallenmu/mkdir/2018-07-29_18-13-41/rapla']
@@ -380,6 +380,12 @@ def latency_per_throughput(fileprefix):
 
     return get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm")
 
+def latency_csv2txt(latfile, throughfile):
+    latencies, weights = parse_histogramfile(latfile)    
+    quantiles = weighted_quantile(latencies, [0.0, 0.25, 0.5, 0.75, 0.90, 0.99, 0.999], sample_weight=weights, values_sorted=True)
+    quantiles = list(map(lambda u: (u / 1000), quantiles))
+    quartilestr = "{}{:10.2f}{:10.2f}{:10.2f}{:10.2f}{:10.2f}{:10.2f}{:10.2f}".format(os.path.basename(latfile).ljust(60), quantiles[0], quantiles[1], quantiles[2], quantiles[3], quantiles[4], quantiles[5], quantiles[6])
+    return quartilestr
 
 def latency_csv2tex(latfile, throughfile):
 
@@ -421,38 +427,42 @@ def latency_csv2tex(latfile, throughfile):
 
 txtoutstr = ""
 outf = "netronome.tex"
-with codecs.open(outf, "w+", encoding="utf8") as f:
-    f.write(tikz_header)
-    for i in range(0,6):
-        f.write(latency_per_throughput("l2_bridging_cnf{}_mbit".format(i)))
-        f.write("\n\n\n")
-    f.write(latency_per_throughput("l2_multimac_00000100_mbit"))
-    f.write("\n\n\n")
-    f.write(latency_per_throughput("l2_multimac_00001000_mbit"))
-    f.write("\n\n\n")
-    f.write(latency_per_throughput("l2_multimac_00010000_mbit"))
-    f.write("\n\n\n")
-    f.write(latency_per_throughput("l2_multimac_00100000_mbit"))
-    f.write("\n\n\n")
-    f.write(latency_per_throughput("l2_multimac_01000000_mbit"))
-    f.write("\n\n\n")
-    f.write(latency_per_throughput("l2_multimac_10000000_mbit"))
-    f.write("\n\n\n")
-    f.write(latency_per_throughput("l2_xconnect_mbit"))
-    f.write("\n\n\n")
+# with codecs.open(outf, "w+", encoding="utf8") as f:
+#     f.write(tikz_header)
+#     for i in range(0,6):
+#         f.write(latency_per_throughput("l2_bridging_cnf{}_mbit".format(i)))
+#         f.write("\n\n\n")
+#     f.write(latency_per_throughput("l2_multimac_00000100_mbit"))
+#     f.write("\n\n\n")
+#     f.write(latency_per_throughput("l2_multimac_00001000_mbit"))
+#     f.write("\n\n\n")
+#     f.write(latency_per_throughput("l2_multimac_00010000_mbit"))
+#     f.write("\n\n\n")
+#     f.write(latency_per_throughput("l2_multimac_00100000_mbit"))
+#     f.write("\n\n\n")
+#     f.write(latency_per_throughput("l2_multimac_01000000_mbit"))
+#     f.write("\n\n\n")
+#     f.write(latency_per_throughput("l2_multimac_10000000_mbit"))
+#     f.write("\n\n\n")
+#     f.write(latency_per_throughput("l2_xconnect_mbit"))
+#     f.write("\n\n\n")
 
-    for i in range(0, len(flatency)):
+    # for i in range(0, len(flatency)):
 
-        #outf = '{}.tex'.format(flatency[i])
-        tex, txt = latency_csv2tex(flatency[i], fthroughput[i])
-        txtoutstr += txt + "\n"
-        f.write(tex)
-        f.write("\n\n\n")
+    #     #outf = '{}.tex'.format(flatency[i])
+    #     tex, txt = latency_csv2tex(flatency[i], fthroughput[i])
+    #     txtoutstr += txt + "\n"
+    #     f.write(tex)
+    #     f.write("\n\n\n")
 
-    f.write(tikz_footer)
+    # f.write(tikz_footer)
 
 outf = "netrotxt.txt"
 with codecs.open(outf, "w+", encoding="utf8") as f:
+    for i in range(0, len(flatency)):
+        #outf = '{}.tex'.format(flatency[i])
+        txt = latency_csv2txt(flatency[i], fthroughput[i])
+        txtoutstr += txt + "\n"
     f.write("{}{}{}{}{}{}{}{}\n".format("job -> microseconds".ljust(60), ".0".rjust(10), ".25".rjust(10), ".50".rjust(10), ".75".rjust(10), ".90".rjust(10), ".99".rjust(10), ".999".rjust(10)))
     f.write(txtoutstr)
 
