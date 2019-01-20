@@ -5,3 +5,14 @@ statistics/*.out
 statistics/*.snm
 statistics/*.toc
 paperish/studentposter/build/
+paperish/*/*.aux
+paperish/*/*.log
+paperish/*/*.nav
+paperish/*/*.out
+paperish/*/*.snm
+paperish/*/*.toc
+paperish/*/*.bbl
+paperish/*/*.blg
+paperish/*/*.fdb_latexmk
+paperish/*/*.fls
+paperish/*/*.synctex.gz
