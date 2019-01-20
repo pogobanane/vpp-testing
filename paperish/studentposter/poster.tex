@@ -63,17 +63,17 @@
 %\ssingletextbox{\footnotesize \textcolor{TUMDarkerBlue}{{} \hspace*{\fill}}}
 
 \doubletextbox{35ex}{VPP: a fast software router}{
+
 	\footnotesize
-	VPP (Vector Packet Processing) is a user-space software router. This approach combines many advantages:
+	VPP (Vector Packet Processing) is a user-space software router. It's approach combines many advantages:
 	\begin{itemize}
-		\item deployable to usual architechtures
-		\item fast user-space network interface drivers
+		\item deployable to mainstream architechtures
+		\item fast, user-space NIC drivers
 		\item can run in virtualized containers
 	\end{itemize}
 	\vspace{2ex}
 
-	"It is the open source version of Cisco's Vector Packet Processing (VPP) technology."\cite{vppwiki:whatis} 
-	Now it is beeing developed by FD.io ("The Fast Data Project") which belongs to the Linux Foundation. 
+	"It is the open source version of Cisco's Vector Packet Processing (VPP) technology"\cite{vppwiki:whatis} and is now beeing developed by FD.io ("The Fast Data Project") which belongs to the Linux Foundation. 
 
 	Feature Highlights:
 	\begin{itemize}
@@ -82,15 +82,18 @@
 		\item modular and extendable packet-processing graph
 		\item cpu-scalability
 	\end{itemize}
-}{Testing Methodology}{
+
+}{Testing Parameters}{
+
 	\footnotesize
-	MoonGen\cite{moongen-imc2015} is scripted to generate testing load according to the following testing parameters:
+	MoonGen\cite{moongen-imc2015} scripts can generate testing load according to the following testing parameters:
 	\begin{itemize}
 		\item packet rate
 		\item packet size
 		\item traffic type (generic Ethernet, UDP)
 		\item traffic pattern (inter packet gaps)
 	\end{itemize}
+
 	\footnotesize
 	Gathered testing results:
 	\begin{itemize}
@@ -100,8 +103,16 @@
 		\item linux perf record (cpu-time spent per symbol)
 		\item internal vpp state information
 	\end{itemize}
+
+}
+
+\vfill
+
+\doubletextbox{39ex}{Testing Methodology}{
+
 	\footnotesize
-	For tests to return meaningful results, the optimum of throughput to latency is beeing found by a script. This packet rate is then used for further tests. Otherwise the results are inaccurate, because of utilization of the packet buffer.  
+	For tests to return meaningful latency results, the optimum of throughput to latency is beeing found by a script. This packet rate is then used for further tests. Otherwise the results are inaccurate, because of utilization of the packet buffer. 
+
 	\footnotesize
 	VPP properties to test:
 	\begin{itemize}
@@ -109,32 +120,17 @@
 		\item latency: cache and memory impact
 		\item packet processing graphs utilizing multiple cpu cores
 		\item testing specific processing nodes / router features
+		\item TODO
 	\end{itemize}
-}
 
-\vfill
-
-\doubletextbox{39ex}{Measurement setup}{
-	Background
-	\footnotesize
-	\begin{itemize}
-		\item Important background for this work
-		\item may be some things about related work or important libraries/frameworks used
-	\end{itemize}
-	\footnotesize
-	Measurment Setup:
-	\begin{itemize}
-		\item How does your setup look like (maybe a figure)?
-		\item What are the relevant questions you try to answer with your measurement?
-		\item What do you measure?
-		\item How do you measure?
-	\end{itemize}
 }{Benchmarking Setup}{
+
 	\footnotesize
 	\begin{center}
-		\includegraphics[width=24cm]{pics/topology2.png}
+		\includegraphics[width=24cm]{pics/topology3.png}
 		% \includesvg[width=14cm]{../../../pics/topology}
 	\end{center}
+
 }
 
 \vfill
@@ -158,43 +154,13 @@
 		l2 bridge: mac-learn, mac-age & 8.50 & 8.3 & 56\%
 	\end{tabular}
 
-
-	\vspace{5ex}
-	\centering
-	\begin{tabular}[]{ l r r r}
-		\footnotesize
-		Router                                      & Mpps & Relative \\
-		\midrule
-		MoonRoute                                   & 14.6 & 100\%    \\
-		FastClick (DPDK 2.2)~\cite{moongen-imc2015} & 10.4 & 72\%     \\
-		Click (DPDK 2.2)~\cite{moongen-imc2015}     & 4.3  & 29\%     \\
-		Linux 3.7                                   & 1.5  & 10\%
-	\end{tabular}
-
 }
-{Planned Schedule}{
+{l2 Latencies per Flow}{
 
 	\vspace{-2ex}
 	\includegraphics[width=.95\linewidth]{../../statistics/latency_l2_multimac_}
 	% \includesvg[width=14cm]{../../../pics/topology}
 
-	\footnotesize
-	Short time schedule for the upcoming weeks:
-
-	\begin{itemize}
-		\item Official start date: October 15, 2010
-		\item Official end date: February 15, 2011
-		\item Weeks left: 8
-	\end{itemize}
-	
-	\textbf{Schedule}
-	\begin{itemize}
-		\item Week 1-4: Providing cookies for I8
-		\item Week 5-6: Perform additional measurements
-		\item Week 7: Writing thesis
-		\item Week 8: \textbf{Several} corrections passes
-		\item Week 9: Print and hand-in
-	\end{itemize}
 }
 
 \vfill 
