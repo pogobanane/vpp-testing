@@ -83,8 +83,37 @@
 		\item cpu-scalability
 	\end{itemize}
 
+}{Benchmarking Setup}{
+
+	\footnotesize
+	\begin{center}
+		\includegraphics[width=24cm]{pics/topology3.png}
+		% \includesvg[width=14cm]{../../../pics/topology}
+	\end{center}
+
+}
+
+\vfill
+
+\doubletextbox{39ex}{Testing Methodology}{
+
+	\vspace{2ex}
+	\footnotesize
+	For tests to return meaningful latency results, the optimum of throughput to latency is beeing found by a script. This packet rate is then used for further tests. Otherwise the results are inaccurate, because of utilization of the packet buffer. 
+
+	\footnotesize
+	VPP properties to test:
+	\begin{itemize}
+		\item raw forwarding throughput
+		\item latency: cache and memory impact
+		\item packet processing graphs utilizing multiple cpu cores
+		\item testing specific processing nodes / router features
+		\item TODO
+	\end{itemize}
+
 }{Testing Parameters}{
 
+	\vspace{2ex}
 	\footnotesize
 	MoonGen\cite{moongen-imc2015} scripts can generate testing load according to the following testing parameters:
 	\begin{itemize}
@@ -103,33 +132,6 @@
 		\item linux perf record (cpu-time spent per symbol)
 		\item internal vpp state information
 	\end{itemize}
-
-}
-
-\vfill
-
-\doubletextbox{39ex}{Testing Methodology}{
-
-	\footnotesize
-	For tests to return meaningful latency results, the optimum of throughput to latency is beeing found by a script. This packet rate is then used for further tests. Otherwise the results are inaccurate, because of utilization of the packet buffer. 
-
-	\footnotesize
-	VPP properties to test:
-	\begin{itemize}
-		\item raw forwarding throughput
-		\item latency: cache and memory impact
-		\item packet processing graphs utilizing multiple cpu cores
-		\item testing specific processing nodes / router features
-		\item TODO
-	\end{itemize}
-
-}{Benchmarking Setup}{
-
-	\footnotesize
-	\begin{center}
-		\includegraphics[width=24cm]{pics/topology3.png}
-		% \includesvg[width=14cm]{../../../pics/topology}
-	\end{center}
 
 }
 
