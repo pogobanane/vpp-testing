@@ -142,14 +142,13 @@
 \doubletextbox{28ex}{l2 Throughput}{
 
 	\footnotesize
-
-	MoonRoute achieves superior performance to a number of different software routers (tested with a single routing entry on the same hardware):
+	The following results are produced by sending non-ip ethernet packets to a single destination. VPP ran on an Intel E5-2640 @ 2.0GHz (cesis) with 10G networking results in the following numbers:
 
 	\vspace{5ex}
 	\centering
 	\begin{tabular}[]{ l r r r}
 		\footnotesize
-		VPP config & max Mpps & good Mpps & Relative \\
+		VPP config & max Mpps & stable Mpps & Relative \\
 		\midrule
 		packet gen speed & 14.86 & 14.86 & 100\% \\
 		l2 xconnect & 10.4 & 10.1 & 68\% \\
