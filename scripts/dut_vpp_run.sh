@@ -155,7 +155,7 @@ function vpp-test () {
 	pos_kill $1
 }
 
-# does 33 test runs!
+# does 9 test runs!
 # $1: jobname
 # $2: cmd to run
 # $3: arg for cmd
@@ -164,17 +164,17 @@ function vpp-find-sweetspot () {
 	cmd="$2"
 	cmdarg="$3"
 
-	# measure everything with low resolution
-	for s in {1..15}
-	do
-		i=$((s*400))
-		istr=`printf "%04g" $i`
-		vpp-test "${spjobname}_mbit$istr" "$cmd" "$cmdarg"
-	done
+	# # measure everything with low resolution
+	# for s in {1..15}
+	# do
+	# 	i=$((s*400))
+	# 	istr=`printf "%04g" $i`
+	# 	vpp-test "${spjobname}_mbit$istr" "$cmd" "$cmdarg"
+	# done
 
 	# Try to find max_throughput
 	vpp-test "${spjobname}_mbit9000" "$cmd" "$cmdarg"
-	for i in {0..15}
+	for i in {0..6}
 	do
 		istr=`printf "%04g" $i`
 		vpp-test "${spjobname}_mbit${istr}hires" "$cmd" "$cmdarg"
@@ -184,19 +184,25 @@ function vpp-find-sweetspot () {
 	vpp-test "${spjobname}_mbit0000_final" "$cmd" "$cmdarg"
 }
 
-for i in {0..5}
-do
-	vpp-find-sweetspot "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
-done
+# for i in {0..5}
+# do
+# 	vpp-find-sweetspot "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
+# done
 
-vpp-find-sweetspot "l2_xconnect" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
+# vpp-find-sweetspot "l2_xconnect" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
 
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
+for s in {1..40}
+do
+	i=$((s*25000))
+	istr=`printf "%08g" $i`
+	vpp-find-sweetspot "l2_multimac_$istr" "$vppcmd" $i
+done
 vpp-find-sweetspot "l2_multimac_00000100" "$vppcmd" 100
 vpp-find-sweetspot "l2_multimac_00001000" "$vppcmd" 1000
+vpp-find-sweetspot "l2_multimac_00005000" "$vppcmd" 5000
 vpp-find-sweetspot "l2_multimac_00010000" "$vppcmd" 10000
-vpp-find-sweetspot "l2_multimac_00100000" "$vppcmd" 100000
-vpp-find-sweetspot "l2_multimac_01000000" "$vppcmd" 1000000
-vpp-find-sweetspot "l2_multimac_10000000" "$vppcmd" 10000000
+vpp-find-sweetspot "l2_multimac_00015000" "$vppcmd" 15000
+vpp-find-sweetspot "l2_multimac_00020000" "$vppcmd" 20000
 
 echo "all done"
