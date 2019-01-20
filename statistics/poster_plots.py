@@ -87,6 +87,22 @@ for d in DIRS:
     flatency_ = filter(lambda x: x.endswith('.histogram.csv'), files)
     flatency.extend(map(lambda x: os.path.join(d, x), flatency_))
     flatency = sorted(flatency)
+    fthroughput_ = filter(lambda x: x.endswith('throughput.csv'), files)
+    fthroughput.extend(map(lambda x: os.path.join(d, x), fthroughput_))
+    fthroughput = sorted(fthroughput)
+
+def parse_throughput(csvfile):
+    print("penis")
+    with open(csvfile, ) as f:
+        reader = csv.reader(f)
+        next(reader) # skip header line
+        tx = next(reader)
+        rx = next(reader)
+        print("{0:.2f}".format(float(rx[2])))
+        ret = "tx: %.2fmpps, %.2fstdDev; rx: %.2fmpps, %.2fstdDev" % (float(tx[1]), float(tx[2]), float(rx[1]), float(rx[2]))
+        print(ret)
+        return float(tx[1]), float(tx[2]), float(rx[1]), float(rx[2])
+    return "err"
 
 # pasted from https://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates
 def tex_escape(text):
@@ -191,7 +207,7 @@ def parse_histogramfile(latfile):
     weights = dflat['weight'].tolist()
     return latencies, weights
 
-def latency_per_throughput(fileprefix):
+def latency_per_macs(fileprefix):
     macss = []
     q0 = []
     q25 = []
@@ -242,4 +258,33 @@ def latency_per_throughput(fileprefix):
     fig.savefig("latency_{}.pdf".format(fileprefix))
     plt.show()
 
-latency_per_throughput("l2_multimac_")
+def throughput_per_macs(fileprefix):
+    macss = []
+    throughputs = []
+    for throughfile in fthroughput: 
+        filename = os.path.basename(throughfile)
+        if fileprefix in filename and "mbit9000" in filename:
+            print(filename)
+            print(filename.split(fileprefix)[1][0:8])
+            macs = int(filename.split(fileprefix)[1][0:8])
+            n1,n2,throughput,n3 = parse_throughput(throughfile)
+            macss.append(macs)
+            throughputs.append(throughput)
+    print(macss)
+    print(throughputs)
+    fig = plt.figure(figsize=(7, 4), dpi=80)
+    axes = plt.gca()
+    #axes.set_ylim([0,150])
+    #axes.set_xlim([0.5, 12])
+    g0, = plt.plot(macss, throughputs, marker=".")
+    plt.title("{}*_final".format(fileprefix))
+    plt.ylabel("throughput (Mpps)")
+    plt.xlabel("mac flows")
+    fig.tight_layout()
+    #plt.grid(True)
+
+    #return get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm")
+    fig.savefig("throughput_{}.pdf".format(fileprefix))
+    plt.show()
+
+throughput_per_macs("l2_multimac_")
