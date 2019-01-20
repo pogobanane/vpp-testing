@@ -121,7 +121,7 @@ function l2-throughput-sweetspot () {
 	# for s in {1..15}
 	# do
 	# 	i=$((s*400))
-	# 	istr=`printf "%04g" $i`
+	# 	istr=`printf "%04i" $i`
 	# 	l2-throughput-complex "${spjobname}_mbit$istr" $i $macs
 	# done
 
@@ -133,7 +133,7 @@ function l2-throughput-sweetspot () {
 	for offset in {0..6}
 	do
 		i=$((base+offset*50))
-		istr=`printf "%04g" $i`
+		istr=`printf "%04i" $i`
 		# hi resolution testing around LAST_THROUGHPUT
 		l2-throughput-complex "${spjobname}_mbit${istr}hires" $i $macs
 		if [ $LAST_LATENCY -ge 325000 ]
@@ -148,7 +148,7 @@ function l2-throughput-sweetspot () {
 	done
 
 	# final test
-	istr=`printf "%04g" $max_throughput`
+	istr=`printf "%04i" $max_throughput`
 	l2-throughput-complex "${spjobname}_mbit${istr}_final" $max_throughput $macs
 }
 
@@ -162,7 +162,7 @@ function l2-throughput-sweetspot () {
 for s in {1..40}
 do
 	i=$((s*25000))
-	istr=`printf "%08g" $i`
+	istr=`printf "%08i" $i`
 	l2-throughput-sweetspot "l2_multimac_$istr" $i
 done
 l2-throughput-sweetspot "l2_multimac_00000100" 100

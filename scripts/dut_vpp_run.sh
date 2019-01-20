@@ -168,7 +168,7 @@ function vpp-find-sweetspot () {
 	# for s in {1..15}
 	# do
 	# 	i=$((s*400))
-	# 	istr=`printf "%04g" $i`
+	# 	istr=`printf "%04i" $i`
 	# 	vpp-test "${spjobname}_mbit$istr" "$cmd" "$cmdarg"
 	# done
 
@@ -176,7 +176,7 @@ function vpp-find-sweetspot () {
 	vpp-test "${spjobname}_mbit9000" "$cmd" "$cmdarg"
 	for i in {0..6}
 	do
-		istr=`printf "%04g" $i`
+		istr=`printf "%04i" $i`
 		vpp-test "${spjobname}_mbit${istr}hires" "$cmd" "$cmdarg"
 	done
 
@@ -195,7 +195,7 @@ vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
 for s in {1..40}
 do
 	i=$((s*25000))
-	istr=`printf "%08g" $i`
+	istr=`printf "%08i" $i`
 	vpp-find-sweetspot "l2_multimac_$istr" "$vppcmd" $i
 done
 vpp-find-sweetspot "l2_multimac_00000100" "$vppcmd" 100
