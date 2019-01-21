@@ -227,5 +227,6 @@ do
 	vpp-test "l2_throughmac_00010000_$run" "$vppcmd" 10000
 	vpp-test "l2_throughmac_00015000_$run" "$vppcmd" 15000
 	vpp-test "l2_throughmac_00020000_$run" "$vppcmd" 20000
+done
 
 echo "all done"
