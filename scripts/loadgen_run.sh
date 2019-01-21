@@ -187,12 +187,12 @@ do
 		istr=`printf "%08i" $i`
 		l2-throughput-complex "l2_throughmac_${istr}_$run" 9000 $i
 	done
-	l2-throughput-complex "l2_throughmac_00000100_$run" 100
-	l2-throughput-complex "l2_throughmac_00001000_$run" 1000
-	l2-throughput-complex "l2_throughmac_00005000_$run" 5000
-	l2-throughput-complex "l2_throughmac_00010000_$run" 10000
-	l2-throughput-complex "l2_throughmac_00015000_$run" 15000
-	l2-throughput-complex "l2_throughmac_00020000_$run" 20000
+	l2-throughput-complex "l2_throughmac_00000100_$run" 9000 100
+	l2-throughput-complex "l2_throughmac_00001000_$run" 9000 1000
+	l2-throughput-complex "l2_throughmac_00005000_$run" 9000 5000
+	l2-throughput-complex "l2_throughmac_00010000_$run" 9000 10000
+	l2-throughput-complex "l2_throughmac_00015000_$run" 9000 15000
+	l2-throughput-complex "l2_throughmac_00020000_$run" 9000 20000
 done
 
 echo "all done"
