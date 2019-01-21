@@ -152,6 +152,8 @@ function l2-throughput-sweetspot () {
 	l2-throughput-complex "${spjobname}_mbit${istr}_final" $max_throughput $macs
 }
 
+#### bridge config testing ####
+
 # for i in {0..5}
 # do
 # 	l2-throughput-sweetspot "l2_bridging_cnf${i}" 0
@@ -159,17 +161,38 @@ function l2-throughput-sweetspot () {
 
 # l2-throughput-sweetspot "l2_xconnect" 0
 
-for s in {1..40}
+#### multimac latency testing ####
+
+# for s in {1..40}
+# do
+# 	i=$((s*25000))
+# 	istr=`printf "%08i" $i`
+# 	l2-throughput-sweetspot "l2_multimac_$istr" $i
+# done
+# l2-throughput-sweetspot "l2_multimac_00000100" 100
+# l2-throughput-sweetspot "l2_multimac_00001000" 1000
+# l2-throughput-sweetspot "l2_multimac_00005000" 5000
+# l2-throughput-sweetspot "l2_multimac_00010000" 10000
+# l2-throughput-sweetspot "l2_multimac_00015000" 15000
+# l2-throughput-sweetspot "l2_multimac_00020000" 20000
+
+#### multimac throughput testing ####
+
+# 5 runs with 66 different l2fib sizes each = 330
+for run in {0..4}
 do
-	i=$((s*25000))
-	istr=`printf "%08i" $i`
-	l2-throughput-sweetspot "l2_multimac_$istr" $i
+	for s in {1..60}
+	do
+		i=$((s*25000))
+		istr=`printf "%08i" $i`
+		l2-throughput-complex "l2_throughmac_${istr}_$run" 9000 $i
+	done
+	l2-throughput-complex "l2_throughmac_00000100_$run" 100
+	l2-throughput-complex "l2_throughmac_00001000_$run" 1000
+	l2-throughput-complex "l2_throughmac_00005000_$run" 5000
+	l2-throughput-complex "l2_throughmac_00010000_$run" 10000
+	l2-throughput-complex "l2_throughmac_00015000_$run" 15000
+	l2-throughput-complex "l2_throughmac_00020000_$run" 20000
 done
-l2-throughput-sweetspot "l2_multimac_00000100" 100
-l2-throughput-sweetspot "l2_multimac_00001000" 1000
-l2-throughput-sweetspot "l2_multimac_00005000" 5000
-l2-throughput-sweetspot "l2_multimac_00010000" 10000
-l2-throughput-sweetspot "l2_multimac_00015000" 15000
-l2-throughput-sweetspot "l2_multimac_00020000" 20000
 
 echo "all done"
