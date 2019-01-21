@@ -71,10 +71,13 @@
 		\item fast, user-space NIC drivers
 		\item can run in virtualized containers
 	\end{itemize}
-	\vspace{2ex}
+	\vspace{1ex}
 
+	\footnotesize
 	"It is the open source version of Cisco's Vector Packet Processing (VPP) technology" \cite{vppwiki:whatis} and is now beeing developed by FD.io ("The Fast Data Project") which belongs to the Linux Foundation. 
 
+	\vspace{1ex}
+	\footnotesize
 	Feature Highlights:
 	\begin{itemize}
 		\item vecorized processing of packets in badges
@@ -99,7 +102,7 @@
 
 	\vspace{2ex}
 	\footnotesize
-	For tests to return meaningful latency results, the optimum of throughput to latency is beeing found by a script. This packet rate is then used for further tests. Otherwise a worst case of latency is triggered, because because packet queues fill up. \cite{gallenmuller2015comparison} 
+	For tests to return meaningful latency results, the optimum of throughput to latency is beeing found by a script. This packet rate is then used for further tests. Otherwise a worst case of latency is triggered, because packet queues fill up. \cite{gallenmuller2015comparison} 
 
 	\vspace{5ex}
 	\footnotesize
@@ -122,6 +125,7 @@
 		\item packet size
 		\item traffic type (generic Ethernet, UDP)
 		\item traffic pattern (inter packet gaps)
+		\item grant warmup time
 	\end{itemize}
 
 	\footnotesize
@@ -141,7 +145,7 @@
 \doubletextbox{28ex}{l2 Throughput}{
 
 	\footnotesize
-	The following results are produced by sending non-ip ethernet packets to a single destination. VPP ran on an Intel E5-2640 @ 2.0GHz (cesis) with 10G networking results in the following numbers:
+	The following results are produced by sending non-ip ethernet packets to a single destination. Running VPP on an Intel E5-2640 @ 2.0GHz (cesis) with 10G networking results in the following numbers:
 
 	\vspace{5ex}
 	\centering
@@ -161,7 +165,7 @@
 {l2 Latencies per Flow}{
 
 	\vspace{-2ex}
-	\includegraphics[width=.95\linewidth]{../../statistics/throughput_l2_multimac_}
+	\includegraphics[width=.95\linewidth]{../../statistics/throughput_l2_throughmac_}
 	% \includesvg[width=14cm]{../../../pics/topology}
 
 }

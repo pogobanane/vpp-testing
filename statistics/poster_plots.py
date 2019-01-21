@@ -16,7 +16,7 @@ import csv
 import re
 
 hmac = ''
-DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-20_14-59-17_918478/nida/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-21_16-40-17_545512/nida/']
 
 USED = """
 l2_multimac_00000100_mbit4149hires.histogram.csv
@@ -80,7 +80,7 @@ l2_multimac_00500000_mbit3793hires.histogram.csv
 
 flatency = []
 fthroughput = []
-
+fthroughmac = []
 
 for d in DIRS:
     files = os.listdir(d)
@@ -90,6 +90,10 @@ for d in DIRS:
     fthroughput_ = filter(lambda x: x.endswith('throughput.csv'), files)
     fthroughput.extend(map(lambda x: os.path.join(d, x), fthroughput_))
     fthroughput = sorted(fthroughput)
+    fthroughmac_ = filter(lambda x: x.startswith("l2_throughmac_"), files)
+    fthroughmac__ = filter(lambda x: x.endswith("throughput.csv"), fthroughmac_)
+    #for file in files:
+
 
 def parse_throughput(csvfile):
     print("penis")
@@ -262,24 +266,36 @@ def throughput_per_macs(fileprefix):
     macss = []
     throughputs = []
     for throughfile in fthroughput: 
-        filename = os.path.basename(throughfile)
-        if fileprefix in filename and "mbit9000" in filename:
-            print(filename)
-            print(filename.split(fileprefix)[1][0:8])
-            macs = int(filename.split(fileprefix)[1][0:8])
-            n1,n2,throughput,n3 = parse_throughput(throughfile)
-            macss.append(macs)
-            throughputs.append(throughput)
+            filename = os.path.basename(throughfile)
+            if fileprefix in filename and "_0." in filename:
+                macs = int(filename.split(fileprefix)[1][0:8])
+                runs = 5
+                s = 0
+                for run in range(0,runs):
+                    print(run)
+                    postfix = filename.split(fileprefix)[1]
+                    postfix = "{}{}{}".format(postfix[0:9], run, postfix[10:])
+                    nextfile = os.path.join(os.path.dirname(throughfile), "{}{}".format(fileprefix, postfix))
+                    print(nextfile)
+                    n1,n2,throughput,n3 = parse_throughput(nextfile)
+                    s += throughput
+                macss.append(macs)
+                throughputs.append(float(s) / runs)
     print(macss)
     print(throughputs)
     fig = plt.figure(figsize=(7, 4), dpi=80)
     axes = plt.gca()
     #axes.set_ylim([0,150])
     #axes.set_xlim([0.5, 12])
+    #axes.set_yscale('log')
+    plt.axvline(label="l2 cache", color="#f48024", x=16000)
+    plt.axvline(label="l2 cache", color="#f48024", x=1250000)
+    plt.text(37000, 8.4, "l2 cache")
+    plt.text(1270000, 8.4, "l3 cache")
     g0, = plt.plot(macss, throughputs, marker=".")
-    plt.title("{}*_final".format(fileprefix))
+    plt.title("sending to many destinations")
     plt.ylabel("throughput (Mpps)")
-    plt.xlabel("mac flows")
+    plt.xlabel("mac table entries")
     fig.tight_layout()
     #plt.grid(True)
 
@@ -287,4 +303,4 @@ def throughput_per_macs(fileprefix):
     fig.savefig("throughput_{}.pdf".format(fileprefix))
     plt.show()
 
-throughput_per_macs("l2_multimac_")
+throughput_per_macs("l2_throughmac_")
