@@ -16,7 +16,8 @@ import csv
 import re
 
 hmac = ''
-DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-21_16-40-17_545512/nida/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-21_16-40-17_545512/nida/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-21_16-40-17_545512/cesis/']
 
 USED = """
 l2_multimac_00000100_mbit4149hires.histogram.csv
@@ -80,20 +81,22 @@ l2_multimac_00500000_mbit3793hires.histogram.csv
 
 flatency = []
 fthroughput = []
-fthroughmac = []
+fstat = []
 
 for d in DIRS:
     files = os.listdir(d)
+
     flatency_ = filter(lambda x: x.endswith('.histogram.csv'), files)
     flatency.extend(map(lambda x: os.path.join(d, x), flatency_))
     flatency = sorted(flatency)
+
     fthroughput_ = filter(lambda x: x.endswith('throughput.csv'), files)
     fthroughput.extend(map(lambda x: os.path.join(d, x), fthroughput_))
     fthroughput = sorted(fthroughput)
-    fthroughmac_ = filter(lambda x: x.startswith("l2_throughmac_"), files)
-    fthroughmac__ = filter(lambda x: x.endswith("throughput.csv"), fthroughmac_)
-    #for file in files:
 
+    fstat_ = filter(lambda x: x.endswith('.perfstat.csv'), files)
+    fstat.extend(map(lambda x: os.path.join(d, x), fstat_))
+    fstat = sorted(fstat)
 
 def parse_throughput(csvfile):
     print("penis")
@@ -107,6 +110,20 @@ def parse_throughput(csvfile):
         print(ret)
         return float(tx[1]), float(tx[2]), float(rx[1]), float(rx[2])
     return "err"
+
+def parse_perfstats(statfile, key):
+    with open(statfile, "r") as f:
+        reader = csv.reader(f, delimiter=";")
+        for row in reader: 
+            if len(row) >= 2 and key in row[2]:
+                ret = 0
+                try:
+                    ret = float(row[0])
+                    return ret
+                except:
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    return -1.0
+    return -1.0
 
 # pasted from https://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates
 def tex_escape(text):
@@ -265,13 +282,16 @@ def latency_per_macs(fileprefix):
 def throughput_per_macs(fileprefix):
     macss = []
     throughputs = []
-    stddevs = []
+    through_stddevs = []
+    cachemisses = []
+    cachemisses_stddevs = []
     for throughfile in fthroughput: 
             filename = os.path.basename(throughfile)
             if fileprefix in filename and "_0." in filename:
                 macs = int(filename.split(fileprefix)[1][0:8])
                 runs = 5
                 runresults = []
+                runresults_cache = []
                 for run in range(0,runs):
                     print(run)
                     postfix = filename.split(fileprefix)[1]
@@ -279,25 +299,39 @@ def throughput_per_macs(fileprefix):
                     nextfile = os.path.join(os.path.dirname(throughfile), "{}{}".format(fileprefix, postfix))
                     print(nextfile)
                     n1,n2,throughput,n3 = parse_throughput(nextfile)
+                    statfile = nextfile[:-15]
+                    statfile = "{}{}".format(nextfile[:-15], ".perfstat.csv")
+                    print(statfile)
+                    statfilepath = next(filter(lambda x: x.endswith(os.path.basename(statfile)), fstat))
+                    misses = parse_perfstats(statfilepath, "LLC-load-misses")
                     runresults.append(throughput)
+                    runresults_cache.append(misses)
                 macss.append(macs)
-                throughputs.append(np.average(runresults))
-                stddevs.append(np.std(runresults))
+                through_avg = np.average(runresults)
+                throughputs.append(through_avg)
+                through_stddevs.append(np.std(runresults))
+                print(runresults_cache)
+                cachemisses.append(np.average(runresults_cache) / through_avg * 256 / 1000000)
+                cachemisses_stddevs.append(np.std(runresults_cache) / through_avg * 256 / 1000000)
     print(macss)
     print(throughputs)
+    print(cachemisses)
     fig = plt.figure(figsize=(7, 4), dpi=80)
     axes = plt.gca()
+    ax2 = axes.twinx()
     #axes.set_ylim([0,150])
     #axes.set_xlim([0.5, 12])
     #axes.set_yscale('log')
-    plt.axvline(label="l2 cache", color="#f48024", x=16000)
-    plt.axvline(label="l2 cache", color="#f48024", x=1250000)
-    plt.text(37000, 8.4, "l2 cache")
-    plt.text(1270000, 8.4, "l3 cache")
-    g0,n0,n1 = plt.errorbar(macss, throughputs, stddevs) #, linestyle="-", marker=".")
+    axes.axvline(label="l2 cache", color="#f48024", x=16000)
+    axes.axvline(label="l2 cache", color="#f48024", x=1250000)
+    axes.text(37000, 8.4, "l2 cache")
+    axes.text(1270000, 8.4, "l3 cache")
+    g1,n0,n1 = ax2.errorbar(macss, cachemisses, cachemisses_stddevs, elinewidth=0.5, color="#5fba7d")
+    g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs) #, linestyle="-", marker=".")
     plt.title("sending to many destinations")
-    plt.ylabel("throughput (Mpps)")
-    plt.xlabel("mac table entries")
+    axes.set_ylabel("throughput (Mpps)")
+    axes.set_xlabel("mac table entries")
+    ax2.set_ylabel("l3 cache misses / badge")
     fig.tight_layout()
     #plt.grid(True)
 
