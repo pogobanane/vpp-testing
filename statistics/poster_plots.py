@@ -324,7 +324,7 @@ def throughput_per_macs(fileprefix):
     #axes.set_yscale('log')
     axes.axvline(label="l2 cache", color="#f48024", x=16000)
     axes.axvline(label="l2 cache", color="#f48024", x=1250000)
-    axes.text(37000, 8.4, "l2 cache")
+    axes.text(37000, 8.4, "1/8 * l2 cache")
     axes.text(1270000, 8.4, "l3 cache")
     g1,n0,n1 = ax2.errorbar(macss, cachemisses, cachemisses_stddevs, elinewidth=0.5, color="#5fba7d")
     g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs, elinewidth=0.5) #, linestyle="-", marker=".")
