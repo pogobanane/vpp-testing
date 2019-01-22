@@ -265,12 +265,13 @@ def latency_per_macs(fileprefix):
 def throughput_per_macs(fileprefix):
     macss = []
     throughputs = []
+    stddevs = []
     for throughfile in fthroughput: 
             filename = os.path.basename(throughfile)
             if fileprefix in filename and "_0." in filename:
                 macs = int(filename.split(fileprefix)[1][0:8])
                 runs = 5
-                s = 0
+                runresults = []
                 for run in range(0,runs):
                     print(run)
                     postfix = filename.split(fileprefix)[1]
@@ -278,9 +279,10 @@ def throughput_per_macs(fileprefix):
                     nextfile = os.path.join(os.path.dirname(throughfile), "{}{}".format(fileprefix, postfix))
                     print(nextfile)
                     n1,n2,throughput,n3 = parse_throughput(nextfile)
-                    s += throughput
+                    runresults.append(throughput)
                 macss.append(macs)
-                throughputs.append(float(s) / runs)
+                throughputs.append(np.average(runresults))
+                stddevs.append(np.std(runresults))
     print(macss)
     print(throughputs)
     fig = plt.figure(figsize=(7, 4), dpi=80)
@@ -292,7 +294,7 @@ def throughput_per_macs(fileprefix):
     plt.axvline(label="l2 cache", color="#f48024", x=1250000)
     plt.text(37000, 8.4, "l2 cache")
     plt.text(1270000, 8.4, "l3 cache")
-    g0, = plt.plot(macss, throughputs, marker=".")
+    g0,n0,n1 = plt.errorbar(macss, throughputs, stddevs) #, linestyle="-", marker=".")
     plt.title("sending to many destinations")
     plt.ylabel("throughput (Mpps)")
     plt.xlabel("mac table entries")
