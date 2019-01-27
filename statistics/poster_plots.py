@@ -14,10 +14,17 @@ from matplotlib2tikz import get_tikz_code
 import matplotlib.ticker as tick
 import csv
 import re
+from scipy.ndimage.filters import gaussian_filter1d
 
 hmac = ''
-DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-21_16-40-17_545512/nida/',
-        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-21_16-40-17_545512/cesis/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-27_15-16-04_515943/nida/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-27_15-16-04_515943/cesis/']
+
+GREEN = "#3f9852"
+BLUE = "#3869b1"
+ORANGE = "#da7e30"
+RED = "#cc2428"
+PURPLE = "#6b4c9a"
 
 USED = """
 l2_multimac_00000100_mbit4149hires.histogram.csv
@@ -283,15 +290,18 @@ def throughput_per_macs(fileprefix):
     macss = []
     throughputs = []
     through_stddevs = []
-    cachemisses = []
-    cachemisses_stddevs = []
+    cachemisses1 = []
+    cachemisses1_stddevs = []
+    cachemisses3 = []
+    cachemisses3_stddevs = []
     for throughfile in fthroughput: 
             filename = os.path.basename(throughfile)
             if fileprefix in filename and "_0." in filename:
                 macs = int(filename.split(fileprefix)[1][0:8])
                 runs = 5
                 runresults = []
-                runresults_cache = []
+                runresults_cache1 = []
+                runresults_cache3 = []
                 for run in range(0,runs):
                     print(run)
                     postfix = filename.split(fileprefix)[1]
@@ -303,36 +313,54 @@ def throughput_per_macs(fileprefix):
                     statfile = "{}{}".format(nextfile[:-15], ".perfstat.csv")
                     print(statfile)
                     statfilepath = next(filter(lambda x: x.endswith(os.path.basename(statfile)), fstat))
-                    misses = parse_perfstats(statfilepath, "LLC-load-misses")
+                    misses1 = parse_perfstats(statfilepath, "L1-dcache-load-misses")
+                    misses3 = parse_perfstats(statfilepath, "LLC-load-misses")
                     runresults.append(throughput)
-                    runresults_cache.append(misses)
+                    runresults_cache1.append(misses1)
+                    runresults_cache3.append(misses3)
+
                 macss.append(macs)
                 through_avg = np.average(runresults)
                 throughputs.append(through_avg)
                 through_stddevs.append(np.std(runresults))
-                print(runresults_cache)
-                cachemisses.append(np.average(runresults_cache) / through_avg * 256 / 1000000)
-                cachemisses_stddevs.append(np.std(runresults_cache) / through_avg * 256 / 1000000)
+                print(runresults_cache1)
+                print(runresults_cache3)
+                cachemisses1.append(np.average(runresults_cache1) / through_avg * 256 / 1000000)
+                cachemisses1_stddevs.append(np.std(runresults_cache1) / through_avg * 256 / 1000000)
+                cachemisses3.append(np.average(runresults_cache3) / through_avg * 256 / 1000000)
+                cachemisses3_stddevs.append(np.std(runresults_cache3) / through_avg * 256 / 1000000)
     print(macss)
     print(throughputs)
-    print(cachemisses)
+    print(cachemisses1)
+    print(cachemisses3)
+    cachemisses1_smooth = gaussian_filter1d(cachemisses1, sigma=1)
+    cachemisses3_smooth = gaussian_filter1d(cachemisses3, sigma=1)
     fig = plt.figure(figsize=(7, 4), dpi=80)
     axes = plt.gca()
     ax2 = axes.twinx()
     #axes.set_ylim([0,150])
-    #axes.set_xlim([0.5, 12])
-    #axes.set_yscale('log')
-    axes.axvline(label="l2 cache", color="#f48024", x=16000)
-    axes.axvline(label="l2 cache", color="#f48024", x=1250000)
-    axes.text(37000, 8.4, "1/8 * l2 cache")
-    axes.text(1270000, 8.4, "l3 cache")
-    g1,n0,n1 = ax2.errorbar(macss, cachemisses, cachemisses_stddevs, elinewidth=0.5, color="#5fba7d")
-    g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs, elinewidth=0.5) #, linestyle="-", marker=".")
+    #axes.set_xlim([0, 10000000])
+    #axes.set_yscale("log")
+    ax2.set_yscale('log')
+    axes.set_xscale("log", basex=10)
+    axes.axvline(color="gray", x=2048)
+    axes.text(2048, 8.4, " l1 cache")
+    axes.axvline(color="gray", x=16384)
+    axes.text(16384, 8.4, " l2 cache")
+    axes.axvline(color="gray", x=2097152)
+    axes.text(2097152, 8.4, " l3 cache")
+
+    ax2.axhline(color="gray", linewidth=0.5, y=15)
+    g2,n0,n1 = ax2.errorbar(macss, cachemisses1, cachemisses1_stddevs, elinewidth=0.5, color=BLUE)
+    n2,n0,n1 = ax2.errorbar(macss, cachemisses1_smooth, elinewidth=0.5, color=BLUE, linestyle=":")
+    g1,n0,n1 = ax2.errorbar(macss, cachemisses3, cachemisses3_stddevs, elinewidth=0.5, color=ORANGE)
+    n2,n0,n1 = ax2.errorbar(macss, cachemisses3_smooth, elinewidth=0.5, color=ORANGE, linestyle=":")
+    g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs, elinewidth=0.5, color=GREEN) #, linestyle="-", marker=".")
     plt.title("sending to many destinations")
     axes.set_ylabel("throughput (Mpps)")
     axes.set_xlabel("mac table entries")
     ax2.set_ylabel("l3 cache misses per 256-packet vector")
-    plt.legend([g0,g1], ["throughput", "cache misses"], loc="upper center")
+    plt.legend([g0,g1, g2], ["throughput", "L3 cache misses", "L1 cache misses"], loc="center left")
     fig.tight_layout()
     #plt.grid(True)
 
