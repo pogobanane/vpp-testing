@@ -179,7 +179,7 @@ function l2-throughput-sweetspot () {
 #### multimac throughput testing ####
 
 # 5 runs with 47 different l2fib sizes each = 235
-for run in {0..4}
+for run in {0..14}
 do
 	for s in {1..47}
 	do

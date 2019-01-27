@@ -88,16 +88,18 @@ instructions,\
 idle-cycles-frontend"
 	cacheevents="L1-dcache-load-misses,\
 L1-dcache-loads,\
-L1-dcache-store-misses,\
-L1-dcache-stores,\
-LLC-load-misses,\
+L1-dcache-prefetch-misses,\
 LLC-loads,\
-LLC-store-misses,\
-LLC-stores,\
+LLC-load-misses,\
+LLC-prefetches,\
+LLC-prefetch-misses,\
 branch-load-misses,\
 branch-loads"
-	unused="L1-dcache-prefetch-misses,\
-L1-icache-load-misses,\
+	unused="L1-icache-load-misses,\
+L1-dcache-store-misses,\
+L1-dcache-stores,\
+LLC-store-misses,\
+LLC-stores,\
 dTLB-load-misses,\
 dTLB-loads,\
 dTLB-store-misses,\
@@ -213,7 +215,7 @@ function vpp-find-sweetspot () {
 
 # 5 runs with 47 different l2fib sizes each = 235
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
-for run in {0..4}
+for run in {0..14}
 do
 	for s in {1..47}
 	do

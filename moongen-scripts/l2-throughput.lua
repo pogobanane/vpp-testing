@@ -5,6 +5,7 @@ local ts     = require "timestamping"
 local stats  = require "stats"
 local hist   = require "histogram"
 local log    = require "log"
+local random = math.random
 
 
 function configure(parser)
@@ -130,20 +131,18 @@ function sendIPs(bufs, txQueue, txCtr, rxCtr, pktSize, baseIP, flows)
 end
 
 function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseMac, flows)
-  local counter = 0
   local baseMacNr = parseMacAddress(baseMac, 1)
   while mg.running() do
     bufs:alloc(pktSize)
     for _, buf in ipairs(bufs) do
       local pkt = buf:getRawPacket().payload
-      local addr = (baseMacNr + counter) * 2
+      local addr = (baseMacNr + random(0, flows)) * 2
       pkt.uint8[5] = bit.band(addr, 0xFF)
       pkt.uint8[4] = bit.band(bit.rshift(addr, 8), 0xFF)
       pkt.uint8[3] = bit.band(bit.rshift(addr, 16), 0xFF)
       pkt.uint8[2] = bit.band(bit.rshift(addr, 24), 0xFF)
       pkt.uint8[1] = bit.band(bit.rshift(addr + 0ULL, 32ULL), 0xFF)
       pkt.uint8[0] = bit.band(bit.rshift(addr + 0ULL, 40ULL), 0xFF)
-      counter = (counter + 1) % flows
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
     bufs:offloadUdpChecksums()
