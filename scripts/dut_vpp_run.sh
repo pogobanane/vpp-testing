@@ -211,22 +211,17 @@ function vpp-find-sweetspot () {
 
 #### multimac throughput testing ####
 
-# 5 runs with 66 different l2fib sizes each = 330
+# 5 runs with 47 different l2fib sizes each = 235
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
 for run in {0..4}
 do
-	for s in {1..60}
+	for s in {1..47}
 	do
-		i=$((s*25000))
+		i=`echo "1.4^$s" | bc`
+		i=`printf "%.0f" $i`
 		istr=`printf "%08i" $i`
 		vpp-test "l2_throughmac_${istr}_$run" "$vppcmd" $i
 	done
-	vpp-test "l2_throughmac_00000100_$run" "$vppcmd" 100
-	vpp-test "l2_throughmac_00001000_$run" "$vppcmd" 1000
-	vpp-test "l2_throughmac_00005000_$run" "$vppcmd" 5000
-	vpp-test "l2_throughmac_00010000_$run" "$vppcmd" 10000
-	vpp-test "l2_throughmac_00015000_$run" "$vppcmd" 15000
-	vpp-test "l2_throughmac_00020000_$run" "$vppcmd" 20000
 done
 
 echo "all done"

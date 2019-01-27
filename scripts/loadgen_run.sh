@@ -178,21 +178,16 @@ function l2-throughput-sweetspot () {
 
 #### multimac throughput testing ####
 
-# 5 runs with 66 different l2fib sizes each = 330
+# 5 runs with 47 different l2fib sizes each = 235
 for run in {0..4}
 do
-	for s in {1..60}
+	for s in {1..47}
 	do
-		i=$((s*25000))
+		i=`echo "1.4^$s" | bc`
+		i=`printf "%.0f" $i`
 		istr=`printf "%08i" $i`
 		l2-throughput-complex "l2_throughmac_${istr}_$run" 9000 $i
 	done
-	l2-throughput-complex "l2_throughmac_00000100_$run" 9000 100
-	l2-throughput-complex "l2_throughmac_00001000_$run" 9000 1000
-	l2-throughput-complex "l2_throughmac_00005000_$run" 9000 5000
-	l2-throughput-complex "l2_throughmac_00010000_$run" 9000 10000
-	l2-throughput-complex "l2_throughmac_00015000_$run" 9000 15000
-	l2-throughput-complex "l2_throughmac_00020000_$run" 9000 20000
 done
 
 echo "all done"
