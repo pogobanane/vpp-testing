@@ -147,10 +147,11 @@ function sendIPs(bufs, txQueue, txCtr, rxCtr, pktSize, baseIP, flows)
 end
 
 function loadSlave(txQueue, rxDev, eth_src, eth_dst, pktSize, macCount, file)
+  local eth_dst_nr = parseMacAddress(eth_dst, 1)
   local mem
   if macCount > 0 then
     mem = memory.createMemPool(function(buf)
-      fillEthPacketMacs(buf, eth_src, eth_dst, macCount)
+      fillEthPacketMacs(buf, eth_src, eth_dst_nr, macCount)
     end)
   else
     mem = memory.createMemPool(function(buf)
