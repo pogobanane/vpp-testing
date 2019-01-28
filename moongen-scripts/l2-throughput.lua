@@ -92,13 +92,13 @@ local function fillEthPacketMacs(buf, eth_src, eth_dst_base, macs)
     ethDst = eth_dst,
     ethType = 0x1234
   }
-  local pl = buf:getRawPacket()
-  pl.uint8[5] = bit.band(addr, 0xFF)
-  pl.uint8[4] = bit.band(bit.rshift(addr, 8), 0xFF)
-  pl.uint8[3] = bit.band(bit.rshift(addr, 16), 0xFF)
-  pl.uint8[2] = bit.band(bit.rshift(addr, 24), 0xFF)
-  pl.uint8[1] = bit.band(bit.rshift(addr + 0ULL, 32ULL), 0xFF)
-  pl.uint8[0] = bit.band(bit.rshift(addr + 0ULL, 40ULL), 0xFF)
+  local pl = buf:getRawPacket().payload
+  pl.uint8[5] = bit.band(dst, 0xFF)
+  pl.uint8[4] = bit.band(bit.rshift(dst, 8), 0xFF)
+  pl.uint8[3] = bit.band(bit.rshift(dst, 16), 0xFF)
+  pl.uint8[2] = bit.band(bit.rshift(dst, 24), 0xFF)
+  pl.uint8[1] = bit.band(bit.rshift(dst + 0ULL, 32ULL), 0xFF)
+  pl.uint8[0] = bit.band(bit.rshift(dst + 0ULL, 40ULL), 0xFF)
 end
 
 function sendPoisson(bufs, txQueue, txCtr, rxCtr, pktSize, rate)
@@ -150,11 +150,11 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, pktSize, macCount, file)
   local mem
   if macCount > 0 then
     mem = memory.createMemPool(function(buf)
-      fillEthPacket(buf, eth_src, eth_dst)
+      fillEthPacketMacs(buf, eth_src, eth_dst, macCount)
     end)
   else
-    mem = memory,createMemPool(function(buf)
-      fillEthPacketMacs(buf, eth_src, eth_dst, macCount)
+    mem = memory.createMemPool(function(buf)
+      fillEthPacket(buf, eth_src, eth_dst)
     end)
   end
   local bufs = mem:bufArray()
