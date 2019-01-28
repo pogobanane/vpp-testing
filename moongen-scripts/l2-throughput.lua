@@ -85,6 +85,22 @@ local function fillEthPacket(buf, eth_src, eth_dst)
   }
 end
 
+local function fillEthPacketMacs(buf, eth_src, eth_dst_base, macs)
+  local dst = eth_dst_base + random(0, macs-1) * 2
+  buf:getEthernetPacket():fill{
+    ethSrc = eth_src,
+    ethDst = eth_dst,
+    ethType = 0x1234
+  }
+  local pl = buf:getRawPacket()
+  pl.uint8[5] = bit.band(addr, 0xFF)
+  pl.uint8[4] = bit.band(bit.rshift(addr, 8), 0xFF)
+  pl.uint8[3] = bit.band(bit.rshift(addr, 16), 0xFF)
+  pl.uint8[2] = bit.band(bit.rshift(addr, 24), 0xFF)
+  pl.uint8[1] = bit.band(bit.rshift(addr + 0ULL, 32ULL), 0xFF)
+  pl.uint8[0] = bit.band(bit.rshift(addr + 0ULL, 40ULL), 0xFF)
+end
+
 function sendPoisson(bufs, txQueue, txCtr, rxCtr, pktSize, rate)
   while mg.running() do
     bufs:alloc(pktSize)
@@ -130,42 +146,23 @@ function sendIPs(bufs, txQueue, txCtr, rxCtr, pktSize, baseIP, flows)
   end
 end
 
-function sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, baseMac, flows)
-  local baseMacNr = parseMacAddress(baseMac, 1)
-  while mg.running() do
-    bufs:alloc(pktSize)
-    for _, buf in ipairs(bufs) do
-      local pkt = buf:getRawPacket().payload
-      local addr = (baseMacNr + random(0, flows)) * 2
-      pkt.uint8[5] = bit.band(addr, 0xFF)
-      pkt.uint8[4] = bit.band(bit.rshift(addr, 8), 0xFF)
-      pkt.uint8[3] = bit.band(bit.rshift(addr, 16), 0xFF)
-      pkt.uint8[2] = bit.band(bit.rshift(addr, 24), 0xFF)
-      pkt.uint8[1] = bit.band(bit.rshift(addr + 0ULL, 32ULL), 0xFF)
-      pkt.uint8[0] = bit.band(bit.rshift(addr + 0ULL, 40ULL), 0xFF)
-    end
-    -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
-    bufs:offloadUdpChecksums()
-    txQueue:send(bufs)
-    txCtr:update()
-    rxCtr:update()
-  end
-end
-
 function loadSlave(txQueue, rxDev, eth_src, eth_dst, pktSize, macCount, file)
-  local mem = memory.createMemPool(function(buf)
-    fillEthPacket(buf, eth_src, eth_dst)
-  end)
-  local bufs = mem:bufArray()
-	local txCtr = stats:newDevTxCounter(txQueue, "plain")
-	local rxCtr = stats:newDevRxCounter(rxDev, "plain")
-	-- local txCtrF = stats:newDevTxCounter(txQueue, "csv", "txthrouhput.csv")
-	-- local rxCtrF = stats:newDevRxCounter(rxDev, "csv", "rxthroughput.csv")
+  local mem
   if macCount > 0 then
-    sendMacs(bufs, txQueue, txCtr, rxCtr, pktSize, eth_dst, macCount)
+    mem = memory.createMemPool(function(buf)
+      fillEthPacket(buf, eth_src, eth_dst)
+    end)
   else
-    sendSimple(bufs, txQueue, txCtr, rxCtr, pktSize)
+    mem = memory,createMemPool(function(buf)
+      fillEthPacketMacs(buf, eth_src, eth_dst, macCount)
+    end)
   end
+  local bufs = mem:bufArray()
+  local txCtr = stats:newDevTxCounter(txQueue, "plain")
+  local rxCtr = stats:newDevRxCounter(rxDev, "plain")
+  -- local txCtrF = stats:newDevTxCounter(txQueue, "csv", "txthrouhput.csv")
+  -- local rxCtrF = stats:newDevRxCounter(rxDev, "csv", "rxthroughput.csv")
+  sendSimple(bufs, txQueue, txCtr, rxCtr, pktSize)
   txCtr:finalize()
   rxCtr:finalize()
   logThroughput(txCtr, rxCtr, file)
