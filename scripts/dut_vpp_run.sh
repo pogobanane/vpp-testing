@@ -215,9 +215,9 @@ function vpp-find-sweetspot () {
 
 # 5 runs with 47 different l2fib sizes each = 235
 vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
-for run in {0..14}
+for run in {0..4}
 do
-	for s in {1..47}
+	for s in {14..47}
 	do
 		i=`echo "1.4^$s" | bc`
 		i=`printf "%.0f" $i`
