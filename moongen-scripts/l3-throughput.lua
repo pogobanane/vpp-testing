@@ -134,6 +134,8 @@ end
 function sendSimple(bufs, txQueue, txCtr, rxCtr, pktSize)
   while mg.running() do
     bufs:alloc(pktSize)
+    -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
+    bufs:offloadUdpChecksums()
     txQueue:send(bufs)
     txCtr:update()
     rxCtr:update()
