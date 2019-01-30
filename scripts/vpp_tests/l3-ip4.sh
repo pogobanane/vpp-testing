@@ -13,3 +13,5 @@ set int ip address $INT_DST $INT_DST_IP
 
 set ip arp $INT_DST $DST_IP
 "
+
+test_vpp_with "$config_1worker" "$exec"
