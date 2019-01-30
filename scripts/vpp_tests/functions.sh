@@ -9,10 +9,10 @@ INT_DST="$2"
 MAC_SRC="00:11:22:33:44:55"
 MAC_DST="00:00:00:00:00:00"
 
-INT_SRC_IP="10.1.0.3/24" #ip of recieving interface with subnet like: "1.2.3.4/24"
-INT_DST_IP="10.2.0.3/24"
+INT_SRC_IP="10.1.0.2/24" #ip of recieving interface with subnet like: "1.2.3.4/24"
+INT_DST_IP="10.2.0.2/24"
 
-DST_IP="10.2.0.2" # ip of recieving device in the INT_DST_IP subnet
+DST_IP="10.2.0.3" # ip of recieving device in the INT_DST_IP subnet
 
 VPP_CLI_LISTEN="/tmp/vpptesting_cli"
 VPP_CONF="/tmp/vpptesting_startup.conf"

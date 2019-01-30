@@ -11,7 +11,7 @@ set int state $INT_DST up
 set int ip address $INT_SRC $INT_SRC_IP
 set int ip address $INT_DST $INT_DST_IP
 
-set ip arp $INT_DST $DST_IP
+set ip arp $INT_DST $DST_IP dead.beef.bab0
 "
 
 test_vpp_with "$config_1worker" "$exec"
