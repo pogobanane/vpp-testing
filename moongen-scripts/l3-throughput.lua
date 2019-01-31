@@ -37,7 +37,10 @@ function master(args)
   local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
   txWarmup(recTask, txDev:getTxQueue(0), args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize)
   mg.waitForTasks()
+  -- warmup done
+  mg.startTask("statsTask", txDev, rxDev, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.thfile)
+  mg.startTask("loadSlave", txDev:getTxQueue(1), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.thfile)
   mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.hifile, args.lafile)
   mg.waitForTasks()
 end
@@ -104,14 +107,12 @@ function sendPoisson(bufs, txQueue, txCtr, rxCtr, pktSize, rate)
   end
 end
 
-function sendSimple(bufs, txQueue, txCtr, rxCtr, pktSize)
+function sendSimple(bufs, txQueue, pktSize)
   while mg.running() do
     bufs:alloc(pktSize)
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
     bufs:offloadUdpChecksums()
     txQueue:send(bufs)
-    txCtr:update()
-    rxCtr:update()
   end
 end
 
@@ -128,14 +129,9 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, ip_src, ip_dst, pktSize, fl
     end)
   end
   local bufs = mem:bufArray()
-  local txCtr = stats:newDevTxCounter(txQueue, "plain")
-  local rxCtr = stats:newDevRxCounter(rxDev, "plain")
   -- local txCtrF = stats:newDevTxCounter(txQueue, "csv", "txthrouhput.csv")
   -- local rxCtrF = stats:newDevRxCounter(rxDev, "csv", "rxthroughput.csv")
-  sendSimple(bufs, txQueue, txCtr, rxCtr, pktSize)
-  txCtr:finalize()
-  rxCtr:finalize()
-  logThroughput(txCtr, rxCtr, file)
+  sendSimple(bufs, txQueue, pktSize)
 end
 
 function timerSlave(txQueue, rxQueue, ethDst, histfile, lafile)

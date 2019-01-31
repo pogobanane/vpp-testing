@@ -1,3 +1,10 @@
+local mg     = require "moongen"
+local memory = require "memory"
+local device = require "device"
+local ts     = require "timestamping"
+local stats  = require "stats"
+local hist   = require "histogram"
+local log    = require "log"
 
 function logThroughput(txCtr, rxCtr, file)
   log:info(("Saving throughput to '%s'"):format(file))
@@ -16,6 +23,18 @@ function logThroughput(txCtr, rxCtr, file)
     rxCtr.total, rxCtr.totalBytes
   ))
   file:close()
+end
+
+function statsTask(txDev, rxDev, logfile)
+  local txCtr = stats:newDevTxCounter(txDev, "plain")
+  local rxCtr = stats:newDevRxCounter(rxDev, "plain")
+  while mg.running(200) do
+    txCtr:update()
+    rxCtr:update()
+  end
+  txCtr:finalize()
+  rxCtr:finalize()
+  logThroughput(txCtr, rxCtr, logfile)
 end
 
 function logLatency(hist, file)
