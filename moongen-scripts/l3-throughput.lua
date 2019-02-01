@@ -141,7 +141,7 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, ip_src, ip_dst, pktSize, fl
   -- local txCtrF = stats:newDevTxCounter(txQueue, "csv", "txthrouhput.csv")
   -- local rxCtrF = stats:newDevRxCounter(rxDev, "csv", "rxthroughput.csv")
   if flows > 0 then
-    sendIpFlows(bufs, txQueue, pktSize, flows, ipSrc)
+    sendIpFlows(bufs, txQueue, pktSize, flows, ip_src)
   else
     sendSimple(bufs, txQueue, pktSize)
   end
