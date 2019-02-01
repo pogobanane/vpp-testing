@@ -7,6 +7,8 @@ local hist   = require "histogram"
 local log    = require "log"
 local random = math.random
 
+package.path = package.path .. ";./throughput-util.lua"
+require "throughput-util"
 
 function configure(parser)
   parser:description("Generates CBR traffic with hardware rate control")
@@ -33,6 +35,8 @@ function master(args)
   local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
   txWarmup(recTask, txDev:getTxQueue(0), args.ethSrc, args.ethDst, args.pktSize)
   mg.waitForTasks()
+  -- warmup done
+  mg.startTask("statsTask", txDev, rxDev, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.ethSrc, args.ethDst, args.pktSize, args.macs, args.thfile)
   mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.hifile, args.lafile)
   mg.waitForTasks()
@@ -114,12 +118,27 @@ function sendPoisson(bufs, txQueue, txCtr, rxCtr, pktSize, rate)
   end
 end
 
-function sendSimple(bufs, txQueue, txCtr, rxCtr, pktSize)
+function sendSimple(bufs, txQueue, pktSize)
   while mg.running() do
     bufs:alloc(pktSize)
     txQueue:send(bufs)
-    txCtr:update()
-    rxCtr:update()
+    end
+end
+
+function sendMacFlows(bufs, txQueue, pktSize, eth_dst_nr, macs)
+  while mg.running() do
+    bufs:alloc(pktSize)
+    for i, buf in ipairs(bufs) do
+      local dst = eth_dst_base + random(0, macs-1) * 2
+      local pl = buf:getRawPacket().payload
+      pl.uint8[5] = bit.band(dst, 0xFF)
+      pl.uint8[4] = bit.band(bit.rshift(dst, 8), 0xFF)
+      pl.uint8[3] = bit.band(bit.rshift(dst, 16), 0xFF)
+      pl.uint8[2] = bit.band(bit.rshift(dst, 24), 0xFF)
+      pl.uint8[1] = bit.band(bit.rshift(dst + 0ULL, 32ULL), 0xFF)
+      pl.uint8[0] = bit.band(bit.rshift(dst + 0ULL, 40ULL), 0xFF)
+    end
+    txQueue:send(bufs)
   end
 end
 
@@ -148,24 +167,15 @@ end
 
 function loadSlave(txQueue, rxDev, eth_src, eth_dst, pktSize, macCount, file)
   local eth_dst_nr = parseMacAddress(eth_dst, 1)
-  local mem
-  if macCount > 0 then
-    mem = memory.createMemPool(function(buf)
-      fillEthPacketMacs(buf, eth_src, eth_dst_nr, macCount)
-    end)
-  else
-    mem = memory.createMemPool(function(buf)
-      fillEthPacket(buf, eth_src, eth_dst)
-    end)
-  end
+  local mem = memory.createMemPool(function(buf)
+    fillEthPacket(buf, eth_src, eth_dst)
+  end)
   local bufs = mem:bufArray()
-  local txCtr = stats:newDevTxCounter(txQueue, "plain")
-  local rxCtr = stats:newDevRxCounter(rxDev, "plain")
-  -- local txCtrF = stats:newDevTxCounter(txQueue, "csv", "txthrouhput.csv")
-  -- local rxCtrF = stats:newDevRxCounter(rxDev, "csv", "rxthroughput.csv")
-  sendSimple(bufs, txQueue, txCtr, rxCtr, pktSize)
-  txCtr:finalize()
-  rxCtr:finalize()
+  if macCount > 0 then
+    sendMacFlows(bufs, txQueue, pktSize, eth_dst_nr, macs)
+  else
+    sendSimple(bufs, txQueue, pktSize)
+  end
   logThroughput(txCtr, rxCtr, file)
 end
 
