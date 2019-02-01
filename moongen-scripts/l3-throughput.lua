@@ -41,7 +41,7 @@ function master(args)
   mg.startTask("statsTask", txDev, rxDev, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(1), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(2), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.thfile)
-  mg.startTask("timerSlave", txDev:getTxQueue(0), rxDev:getRxQueue(0), args.pktSize, ethSrc, ethDst, ipSrc, ipDst, args.hifile, args.lafile)
+  mg.startTask("timerSlave", txDev:getTxQueue(0), rxDev:getRxQueue(0), args.pktSize, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.hifile, args.lafile)
   mg.waitForTasks()
 end
 
@@ -140,16 +140,7 @@ function timerSlave(txQueue, rxQueue, size, eth_src, eth_dst, ip_src, ip_dst, hi
 	mg.sleepMillis(1000) -- ensure that the load task is running
 	while mg.running() do
 		hist:update(timestamper:measureLatency(size, function(buf)
-      local pkt = buf:getUdpPacket()
-      pkt:fill{
-        ethSrc = eth_src,
-        ethDst = eth_dst,
-        ip4Src = ip_src,
-        ip4Dst = ip_dst,
-        udpSrc = 1,
-        udpDst = 2,
-        pktLength = size
-      }
+      fillUdpPacket(buf, eth_src, eth_dst, ip_src, ip_dst, size)
     end))
 	end
 	hist:print()
