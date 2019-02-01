@@ -41,7 +41,7 @@ function master(args)
   mg.startTask("statsTask", txDev, rxDev, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(1), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(2), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.thfile)
-  mg.startTask("timerSlave", txDev:getTxQueue(0), rxDev:getRxQueue(0), args.ethDst, args.hifile, args.lafile)
+  mg.startTask("timerSlave", txDev:getTxQueue(0), rxDev:getRxQueue(0), args.pktSize, ethSrc, ethDst, ipSrc, ipDst, args.hifile, args.lafile)
   mg.waitForTasks()
 end
 
@@ -134,12 +134,23 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, ip_src, ip_dst, pktSize, fl
   sendSimple(bufs, txQueue, pktSize)
 end
 
-function timerSlave(txQueue, rxQueue, ethDst, histfile, lafile)
-	local timestamper = ts:newTimestamper(txQueue, rxQueue)
+function timerSlave(txQueue, rxQueue, size, eth_src, eth_dst, ip_src, ip_dst, histfile, lafile)
+	local timestamper = ts:newUdpTimestamper(txQueue, rxQueue)
 	local hist = hist:new()
 	mg.sleepMillis(1000) -- ensure that the load task is running
 	while mg.running() do
-		hist:update(timestamper:measureLatency(function(buf) buf:getEthernetPacket().eth.dst:setString(ethDst) end))
+		hist:update(timestamper:measureLatency(size, function(buf)
+      local pkt = buf:getUdpPacket()
+      pkt:fill{
+        ethSrc = eth_src,
+        ethDst = eth_dst,
+        ip4Src = ip_src,
+        ip4Dst = ip_dst,
+        udpSrc = 1,
+        udpDst = 2,
+        pktLength = size
+      }
+    end))
 	end
 	hist:print()
 	hist:save(histfile)
