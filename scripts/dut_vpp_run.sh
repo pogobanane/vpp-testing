@@ -72,7 +72,7 @@ echo 'sync done'
 
 # this function is blocking!
 # $1: filename for perf-stat.csv
-# $2: filename for perf-record.data
+# $2: filename for perf-record (without .csv or .data appendix)
 # $3: time to collect (in sec).
 function perf-collect () {
 	# TODO: 
@@ -108,8 +108,9 @@ dTLB-stores"
 	vpp_pid=`pgrep $VPP_PNAME`
 
 	perf stat -x";" -e "$hwevents,$cacheevents" -o "$1" -t $vpp_pid sleep $3 &
-	perf record -o "$2" -t $vpp_pid sleep $3 &
+	perf record -o "${2}.data" -t $vpp_pid sleep $3 &
 	wait
+	perf report -i "${2}.data" --field-separator=";" > ${2}.csv
 }
 
 # $1: filename for vpp output like vpp-stats
@@ -123,7 +124,7 @@ function vpp-collect () {
 function vpp-test () {
 	jobname=$1
 	perfstatfile="/tmp/$jobname.perfstat.csv"
-	perfdatafile="/tmp/$jobname.perfrecord.data"
+	perfdataname="/tmp/$jobname.perfrecord" # without .csv appendix
 	vppfile="/tmp/$jobname.vpp.out"
 
 	echo "Starting bridging test $1"
@@ -137,14 +138,14 @@ function vpp-test () {
 
 	pos_sync #s21: moogen should be generating load now
 	
-	perf-collect "$perfstatfile" "$perfdatafile" 10
+	perf-collect "$perfstatfile" "$perfdataname" 10
 
 	pos_sync #s31: vpp side live data collection done
 	pos_sync #s32: moongen is now terminating
 	
 	echo "collecting vpp info and upload files..."
 	vpp-collect "$vppfile"
-	pos_upload $perfdatafile
+	pos_upload ${perfdataname}.csv
 	pos_upload $perfstatfile
 	pos_upload $vppfile
 
