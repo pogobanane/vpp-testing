@@ -18,7 +18,7 @@ function configure(parser)
   parser:option("--ethDst", "Target eth addr."):default("00:00:00:00:00:00"):convert(tostring)
   parser:option("--ipSrc", "Source eth addr."):default("10.1.0.3"):convert(tostring)
   parser:option("--ipDst", "Target eth addr."):default("10.2.0.3"):convert(tostring)
-  parser:option("-s --pktSize", "Packet size."):default(60):convert(tonumber)
+  parser:option("-s --pktSize", "Packet size."):default(84):convert(tonumber)
   parser:option("-r --rate", "Transmit rate in Mbit/s."):default(10000):convert(tonumber)
   parser:option("-f --flows", "Number of flows (randomized source IP)."):default(0):convert(tonumber)
   parser:option("-h --hifile", "Filename for the latency histogram."):default("histogram.csv")
@@ -116,25 +116,42 @@ function sendSimple(bufs, txQueue, pktSize)
   end
 end
 
+function sendIpFlows(bufs, txQueue, pktSize, flows, ipSrc) 
+  local counter = 0
+  local baseIP = parseIPAddress(ipSrc)
+  while mg.running() do
+    bufs:alloc(pktSize)
+    for i, buf in ipairs(bufs) do
+      local pkt = buf:getUdpPacket()
+      pkt.ip4.src:set(baseIP + counter)
+      counter = incAndWrap(counter, flows)
+    end
+    -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
+    bufs:offloadUdpChecksums()
+    txQueue:send(bufs)
+  end
+end
+
 function loadSlave(txQueue, rxDev, eth_src, eth_dst, ip_src, ip_dst, pktSize, flows, file)
   local ip_src_nr = parseIPAddress(ip_src)
-  local mem
-  if flows > 0 then
-    mem = memory.createMemPool(function(buf)
-      fillUdpPacketFlows(buf, eth_src, eth_dst, ip_src_nr, ip_dst, flows, pktSize) -- TODO
-    end)
-  else
-    mem = memory.createMemPool(function(buf)
-      fillUdpPacket(buf, eth_src, eth_dst, ip_src, ip_dst, pktSize)
-    end)
-  end
+  local mem = memory.createMemPool(function(buf)
+    fillUdpPacket(buf, eth_src, eth_dst, ip_src, ip_dst, pktSize)
+  end)
   local bufs = mem:bufArray()
   -- local txCtrF = stats:newDevTxCounter(txQueue, "csv", "txthrouhput.csv")
   -- local rxCtrF = stats:newDevRxCounter(rxDev, "csv", "rxthroughput.csv")
-  sendSimple(bufs, txQueue, pktSize)
+  if flows > 0 then
+    sendIpFlows(bufs, txQueue, pktSize, flows, ipSrc)
+  else
+    sendSimple(bufs, txQueue, pktSize)
+  end
 end
 
 function timerSlave(txQueue, rxQueue, size, eth_src, eth_dst, ip_src, ip_dst, histfile, lafile)
+  if size < 84 then
+    log:warn("Packet size %d is smaller than minimum timestamp size 84. Timestamped packets will be larger than load packets.", size)
+    size = 84
+  end
 	local timestamper = ts:newUdpTimestamper(txQueue, rxQueue)
 	local hist = hist:new()
 	mg.sleepMillis(1000) -- ensure that the load task is running
