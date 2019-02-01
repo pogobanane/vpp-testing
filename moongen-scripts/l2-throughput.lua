@@ -102,7 +102,7 @@ function sendMacFlows(bufs, txQueue, pktSize, eth_dst_nr, macs)
   while mg.running() do
     bufs:alloc(pktSize)
     for i, buf in ipairs(bufs) do
-      local dst = eth_dst_base + random(0, macs-1) * 2
+      local dst = eth_dst_nr + random(0, macs-1) * 2
       local pl = buf:getRawPacket().payload
       pl.uint8[5] = bit.band(dst, 0xFF)
       pl.uint8[4] = bit.band(bit.rshift(dst, 8), 0xFF)
@@ -145,7 +145,7 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, pktSize, macCount, file)
   end)
   local bufs = mem:bufArray()
   if macCount > 0 then
-    sendMacFlows(bufs, txQueue, pktSize, eth_dst_nr, macs)
+    sendMacFlows(bufs, txQueue, pktSize, eth_dst_nr, macCount)
   else
     sendSimple(bufs, txQueue, pktSize)
   end
