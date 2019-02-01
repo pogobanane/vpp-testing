@@ -42,33 +42,6 @@ function master(args)
   mg.waitForTasks()
 end
 
-function logThroughput(txCtr, rxCtr, file)
-  log:info(("Saving throughput to '%s'"):format(file))
-  file = io.open(file, "w+")
-  file:write("devDesc,mpps_avg,mpps_stdDev,mbit_avg,mbit_stdDev,wirembit_avg,bytes_total,packets_total\n")
-  file:write(("txCtr,%f,%f,%f,%f,%f,%f,%f\n"):format(
-    txCtr.mpps.avg, txCtr.mpps.stdDev,
-    txCtr.mbit.avg, txCtr.mbit.stdDev,
-    txCtr.wireMbit.avg,
-    txCtr.total, txCtr.totalBytes
-  ))
-  file:write(("rxCtr,%f,%f,%f,%f,%f,%f,%f\n"):format(
-    rxCtr.mpps.avg, rxCtr.mpps.stdDev,
-    rxCtr.mbit.avg, rxCtr.mbit.stdDev,
-    rxCtr.wireMbit.avg,
-    rxCtr.total, rxCtr.totalBytes
-  ))
-  file:close()
-end
-
-function logLatency(hist, file)
-  log:info(("Saving latency to '%s'"):format(file))
-  file = io.open(file, "w+")
-  file:write("samples,average_ns,stdDev_ns,quartile_25th,quartile_50th,quartile_75th\n")
-  file:write(("%u,%f,%f,%f,%f,%f\n"):format(hist.numSamples, hist.avg, hist.stdDev, unpack(hist.quarts)))
-  file:close()
-end
-
 local function fillUdpPacket(buf, eth_src, eth_dst, len)
 	buf:getUdpPacket():fill{
 		ethSrc = eth_src,
@@ -176,7 +149,6 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, pktSize, macCount, file)
   else
     sendSimple(bufs, txQueue, pktSize)
   end
-  logThroughput(txCtr, rxCtr, file)
 end
 
 function timerSlave(txQueue, rxQueue, ethDst, histfile, lafile)
