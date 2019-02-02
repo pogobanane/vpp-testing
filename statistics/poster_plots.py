@@ -17,8 +17,8 @@ import re
 from scipy.ndimage.filters import gaussian_filter1d
 
 hmac = ''
-DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-27_15-16-04_515943/nida/',
-        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-01-27_15-16-04_515943/cesis/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-02-01_22-59-33_163135/nida/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-02-01_22-59-33_163135/cesis/']
 
 GREEN = "#3f9852"
 BLUE = "#3869b1"
@@ -298,7 +298,7 @@ def throughput_per_macs(fileprefix):
             filename = os.path.basename(throughfile)
             if fileprefix in filename and "_0." in filename:
                 macs = int(filename.split(fileprefix)[1][0:8])
-                runs = 5
+                runs = 14
                 runresults = []
                 runresults_cache1 = []
                 runresults_cache3 = []
@@ -335,8 +335,8 @@ def throughput_per_macs(fileprefix):
     print(cachemisses3)
     cachemisses1_smooth = gaussian_filter1d(cachemisses1, sigma=1)
     cachemisses3_smooth = gaussian_filter1d(cachemisses3, sigma=1)
-    fig = plt.figure(figsize=(7, 4), dpi=80)
-    axes = plt.gca()
+    fig = plt.figure(figsize=(7, 4), dpi=160)
+    axes = plt.gca() # swap axes
     ax2 = axes.twinx()
     #axes.set_ylim([0,150])
     #axes.set_xlim([0, 10000000])
@@ -350,17 +350,17 @@ def throughput_per_macs(fileprefix):
     axes.axvline(color="gray", x=2097152)
     axes.text(2097152, 8.4, " l3 cache")
 
-    ax2.axhline(color="gray", linewidth=0.5, y=15)
+    #ax2.axhline(color="gray", linewidth=0.5, y=15)
     g2,n0,n1 = ax2.errorbar(macss, cachemisses1, cachemisses1_stddevs, elinewidth=0.5, color=BLUE)
     n2,n0,n1 = ax2.errorbar(macss, cachemisses1_smooth, elinewidth=0.5, color=BLUE, linestyle=":")
     g1,n0,n1 = ax2.errorbar(macss, cachemisses3, cachemisses3_stddevs, elinewidth=0.5, color=ORANGE)
     n2,n0,n1 = ax2.errorbar(macss, cachemisses3_smooth, elinewidth=0.5, color=ORANGE, linestyle=":")
-    g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs, elinewidth=0.5, color=GREEN) #, linestyle="-", marker=".")
+    g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs, linewidth=3, elinewidth=0.5, color=GREEN) #, linestyle="-", marker=".")
     plt.title("sending to many destinations")
     axes.set_ylabel("throughput (Mpps)")
-    axes.set_xlabel("mac table entries")
-    ax2.set_ylabel("l3 cache misses per 256-packet vector")
-    plt.legend([g0,g1, g2], ["throughput", "L3 cache misses", "L1 cache misses"], loc="center left")
+    axes.set_xlabel("l2fib entries")
+    ax2.set_ylabel("cache misses per 256-packet vector")
+    plt.legend([g0,g1, g2], ["throughput", "L3 load misses", "L1d load misses"], loc="center left")
     fig.tight_layout()
     #plt.grid(True)
 
