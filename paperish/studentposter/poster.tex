@@ -65,18 +65,18 @@
 \doubletextbox{35ex}{VPP: a fast software router}{
 
 	\footnotesize
-	VPP (Vector Packet Processing) is a user-space software router. It's approach combines many advantages:
+	VPP (Vector Packet Processing):
 	\begin{itemize}
 		\item deployable to mainstream architechtures
 		\item fast, user-space NIC drivers
 		\item can run in virtualized containers
 	\end{itemize}
-	\vspace{1ex}
+	\vspace{2ex}
 
 	\footnotesize
-	"It is the open source version of Cisco's Vector Packet Processing (VPP) technology" \cite{vppwiki:whatis} and is now beeing developed by FD.io ("The Fast Data Project") which belongs to the Linux Foundation. 
+	"It is the open source version of Cisco's Vector Packet Processing (VPP) technology" \cite{vppwiki:whatis} and is now beeing developed by FD.io ("The Fast Data Project"). 
 
-	\vspace{1ex}
+	\vspace{2ex}
 	\footnotesize
 	Feature Highlights:
 	\begin{itemize}
@@ -90,7 +90,7 @@
 
 	\footnotesize
 	\begin{center}
-		\includegraphics[width=24cm]{pics/topology3.png}
+		\includegraphics[width=24cm]{pics/topology.png}
 		% \includesvg[width=14cm]{../../../pics/topology}
 	\end{center}
 
@@ -102,7 +102,7 @@
 
 	\vspace{2ex}
 	\footnotesize
-	For tests to return meaningful latency results, the optimum of throughput to latency is beeing found by a script. This packet rate is then used for further tests. Otherwise a worst case of latency is triggered, because packet queues fill up. \cite{gallenmuller2015comparison} 
+	For latency measurements the optimum of throughput to latency has to be found. Otherwise a worst case of latency is triggered, because packet queues fill up. \cite{gallenmuller2015comparison} 
 
 	\vspace{5ex}
 	\footnotesize
@@ -112,7 +112,6 @@
 		\item latency: cache and memory impact
 		\item packet processing graphs utilizing multiple cpu cores
 		\item testing specific processing nodes / router features
-		\item TODO
 	\end{itemize}
 
 }{Testing Parameters}{
@@ -123,7 +122,7 @@
 	\begin{itemize}
 		\item packet rate
 		\item packet size
-		\item traffic type (generic Ethernet, UDP)
+		\item traffic type (ethernet, UDP, multiple flows)
 		\item traffic pattern (inter packet gaps)
 		\item grant warmup time
 	\end{itemize}
@@ -145,7 +144,7 @@
 \doubletextbox{28ex}{l2 Throughput}{
 
 	\footnotesize
-	The following results are produced by sending non-ip ethernet packets to a single destination. Running VPP on an Intel E5-2640 @ 2.0GHz (cesis) with 10G networking results in the following numbers:
+	VPP on Intel E5-2640 @ 2.0GHz (cesis) with 10G networking
 
 	\vspace{5ex}
 	\centering
@@ -153,7 +152,7 @@
 		\footnotesize
 		VPP config & max Mpps & stable Mpps & Relative \\
 		\midrule
-		packet gen speed & 14.86 & 14.86 & 100\% \\
+		offered load & 14.86 & 14.86 & 100\% \\
 		l2 xconnect & 10.4 & 10.1 & 68\% \\
 		l2 bridge: no features & 9.35 & 9.2 & 62\% \\
 		l2 bridge: mac-age & 8.62 & 8.6 & 58\% \\
@@ -162,10 +161,10 @@
 	\end{tabular}
 
 }
-{l2 Latencies per Flow}{
+{l2 Throughput per Flows}{
 
 	\vspace{-2ex}
-	\includegraphics[width=.95\linewidth]{../../statistics/throughput_l2_throughmac_}
+	\includegraphics[width=.95\linewidth]{../../statistics/throughput_l2_throughmac_trulyRandom}
 	% \includesvg[width=14cm]{../../../pics/topology}
 
 }
