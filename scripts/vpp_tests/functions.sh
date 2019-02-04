@@ -8,6 +8,8 @@ INT_DST="$2"
 
 MAC_SRC="00:11:22:33:44:55"
 MAC_DST="00:00:00:00:00:00"
+INT_SRC_MAC="de:ad:be:ef:00:02"
+INT_DST_MAC="de:ad:be:ef:00:04"
 
 INT_SRC_IP="10.1.0.2/24" #ip of recieving interface with subnet like: "1.2.3.4/24"
 INT_DST_IP="10.2.0.2/24"

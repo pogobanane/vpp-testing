@@ -8,6 +8,9 @@ source scripts/vpp_tests/functions.sh
 exec="set int state $INT_SRC up
 set int state $INT_DST up
 
+set int mac address $INT_SRC $INT_SRC_MAC
+set int mac address $INT_DST $INT_DST_MAC
+
 set int ip address $INT_SRC $INT_SRC_IP
 set int ip address $INT_DST $INT_DST_IP
 
