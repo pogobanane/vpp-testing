@@ -38,6 +38,8 @@ echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_
 # read vars
 INT_SRC=`pos_get_variable -r vpp/int_src`
 INT_DST=`pos_get_variable -r vpp/int_dst`
+INT_SRC_PCI=`pos_get_variable -r vpp/int_src_pci`
+INT_DST_PCI=`pos_get_variable -r vpp/int_dst_pci`
 
 VPP_PNAME="vpp_main"
 

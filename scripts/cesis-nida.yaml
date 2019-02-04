@@ -1,4 +1,5 @@
 # vpp: cesis, moongen: nida
+# moongen rx and tx port number
 moongen:
         tx: 2
         rx: 3
@@ -9,3 +10,5 @@ vpp:
         config: '/root/ba-okelmann/vpp-configs/simple1.conf'
         int_src: 'TenGigabitEthernet5/0/0'
         int_dst: 'TenGigabitEthernet5/0/1'
+        int_src_pci: '0000:05:00.0'
+        int_dst_pci: '0000:05:00.1'
