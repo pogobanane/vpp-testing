@@ -14,18 +14,14 @@ exec="set int state $INT_DST up
 
 create bridge-domain $bdid learn 0 uu-flood 0 flood 0
 
-create loopback interface mac 1a:2b:3c:4d:5e:6f instance $bdid
 create vxlan tunnel src 10.1.0.2 dst 10.2.0.2 vni $bdid instance $bdid
 
-set int state loop$bdid up
 set int state $INT_SRC up
 
-set int l2 bridge $INT_SRC $bdid 0
-set int l2 bridge vxlan_tunnel$bdid $bdid 1
-set int l2 bridge loop$bdid $bdid bvi 0
-set int ip address loop$bdid 6.2.0.2/24
-
-set int l2 bridge $INT_DST $bdid
+set int l2 bridge vxlan_tunnel$bdid $bdid
+set int l2 bridge $INT_SRC $bdid bvi
+set int mac address $INT_SRC $INT_SRC_MAC
+set int ip address $INT_SRC 10.1.0.2/24
 
 l2fib add $INT_SRC_MAC $bdid vxlan_tunnel$bdid
 l2fib add $MAC_SRC $bdid $INT_SRC
