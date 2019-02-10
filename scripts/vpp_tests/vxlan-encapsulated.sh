@@ -16,30 +16,24 @@ exec="
 set int mac address $INT_SRC $INT_SRC_MAC
 set int mac address $INT_DST $INT_DST_MAC
 
-set int state $INT_DST up
 ip table add 7
-set int ip table TenGigabitEthernet5/0/1 7
-set int ip address TenGigabitEthernet5/0/1 10.1.0.2/24
+ip route add ${VTEP_IP}/24 table $bdid via $VTEP_IP $INT_DST
+set int ip table $INT_DST $bdid
+set int ip address $INT_DST 10.1.0.2/24
+set ip arp $INT_DST $VTEP_IP $VTEP_MAC
 
 create bridge-domain $bdid learn 0 uu-flood 0 flood 0
-create loopback interface mac dead.beef.0010 instance $bdid
 create vxlan tunnel src 10.1.0.2 dst $VTEP_IP vni $bdid instance $bdid encap-vrf-id $bdid decap-next l2
 
-set int state loop$bdid up
 set int state $INT_SRC up
+set int state $INT_DST up
 
-set int l2 bridge $INT_SRC $bdid 0 
-set int l2 bridge vxlan_tunnel$bdid $bdid 1
-set int l2 bridge loop$bdid $bdid bvi 0
+set int l2 bridge $INT_SRC $bdid
+set int l2 bridge vxlan_tunnel$bdid $bdid
 
-set ip arp ...
-
-l2fib add dead.beef.0010 $bdid $loop$bdid
 l2fib add $MAC_SRC $bdid $INT_SRC
 l2fib add $MAC_DST $bdid vxlan_tunnel$bdid
 l2fib add $VTEP_MAC $bdid $INT_DST
-
-sh vlib graph vxlan4-encap
 "
 
 config_workers="
