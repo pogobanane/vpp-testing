@@ -86,8 +86,9 @@ function perf-collect () {
 branch-misses,\
 cache-misses,\
 ref-cycles,\
-cache-references"
-	unused="cpu-cycles,\
+cpu-cycles"
+	unused="
+cache-references,\
 instructions,\
 idle-cycles-frontend"
 	cacheevents="L1-dcache-load-misses,\
