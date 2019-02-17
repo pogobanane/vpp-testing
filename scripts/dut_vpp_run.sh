@@ -35,6 +35,9 @@ echo 1 >   /sys/devices/system/cpu/intel_pstate/no_turbo
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_perf_pct
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
+# load driver
+modprobe uio_pci_generic
+
 # read vars
 INT_SRC=`pos_get_variable -r vpp/int_src`
 INT_DST=`pos_get_variable -r vpp/int_dst`
@@ -49,7 +52,6 @@ function cleanup_vpp () {
 	pkill $VPP_PNAME
 	rm -f /dev/shm/db /dev/shm/global_vm /dev/shm/vpe-api
 	set -e
-	modprobe uio_pci_generic
 }
 
 # does this work?
