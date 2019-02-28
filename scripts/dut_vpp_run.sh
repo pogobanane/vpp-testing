@@ -220,17 +220,17 @@ function vpp-find-sweetspot () {
 #### multimac throughput testing ####
 
 # 5 runs with 47 different l2fib sizes each = 235
-vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
-for run in {0..14}
-do
-	for s in {1..47}
-	do
-		i=`echo "1.4^$s" | bc`
-		i=`printf "%.0f" $i`
-		istr=`printf "%08i" $i`
-		vpp-test "l2_throughmac_${istr}_$run" "$vppcmd" $i
-	done
-done
+# vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
+# for run in {0..14}
+# do
+# 	for s in {1..47}
+# 	do
+# 		i=`echo "1.4^$s" | bc`
+# 		i=`printf "%.0f" $i`
+# 		istr=`printf "%08i" $i`
+# 		vpp-test "l2_throughmac_${istr}_$run" "$vppcmd" $i
+# 	done
+# done
 
 #### l3 ip multicore testing ####
 
