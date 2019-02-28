@@ -232,4 +232,24 @@ do
 	done
 done
 
+#### l3 ip multicore testing ####
+
+# 5 runs with 47 different l2fib sizes each = 235
+vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-flows.sh"
+for run in {0..5}
+do
+	max=6
+	for s in {0..$max}
+	do
+		sstr=`printf "%02i" $s`
+		j=$((2+$s))
+		vpp-test "l3_multicore_${istr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
+	done
+done
+
+
+#### vxlan throughput ####
+
+# vpp-test "vxlan_encap" "${GITDIR}/scripts/vpp_tests/vxlan-encapsulated.sh" "${INT_SRC_PCI} ${INT_DST_PCI}"
+
 echo "all done"

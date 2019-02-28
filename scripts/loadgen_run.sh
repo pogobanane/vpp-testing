@@ -47,9 +47,8 @@ pos_sync
 echo 'sync done'
 
 # $1: jobname
-# $2: rate in mbit/s
-# $3: mac flows
-function l2-throughput-complex () {
+# $2: cmd and it's required arugments
+function test-throughput () {
 	echo "Starting test"
 
 	# pos_run COMMMAND_ID -- COMMAND
@@ -64,7 +63,7 @@ function l2-throughput-complex () {
 	latencyfile="/tmp/$jobname.latency.csv"
 
 
-	pos_run $jobname -- ${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua $TX_DEV $RX_DEV --hifile $historyfile --thfile $throughputfile --lafile $latencyfile --rate $2 --macs $3
+	pos_run $jobname -- $2 --hifile $historyfile --thfile $throughputfile --lafile $latencyfile
 
 	sleep 20
 	pos_sync #s21: moogen should be generating load now
@@ -90,6 +89,20 @@ function l2-throughput-complex () {
 	# wait for test done signal
 	pos_sync #s42: test done
 	echo "Stopped test" # ~46s
+}
+
+# $1: jobname
+# $2: rate in mbit/s
+# $3: ip flows
+function l3-throughput-complex () {
+	test-throughput "$1" "${BINDIR}/MoonGen moongen-scripts/l3-throughput.lua $TX_DEV $RX_DEV --rate $2 --flows $3"
+}
+
+# $1: jobname
+# $2: rate in mbit/s
+# $3: mac flows
+function l2-throughput-complex () {
+	test-throughput "$1" "${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua $TX_DEV $RX_DEV --rate $2 --macs $3"
 }
 
 # $1: jobname
@@ -189,5 +202,24 @@ do
 		l2-throughput-complex "l2_throughmac_${istr}_$run" 9000 $i
 	done
 done
+
+#### l3 ip multicore testing ####
+
+# 5 runs with 47 different l2fib sizes each = 235
+for run in {0..5}
+do
+	max=6
+	for s in {0..$max}
+	do
+		sstr=`printf "%02i" $s`
+		l3-throughput-complex "l3_multicore_${sstr}_$run" 9000 $(($max*4))
+	done
+done
+
+
+#### vxlan throughput ####
+
+# l2-throughput oh shit l3 and vxlan testing is missing
+# ./MoonGen/build/MoonGen ./moongen-scripts/vxlan-throughput.lua 2 3 0 0
 
 echo "all done"
