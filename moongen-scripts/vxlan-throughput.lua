@@ -78,16 +78,16 @@ function master(args)
 
         if isEndpoint then
                 if isTunneled then
-                        mg.launchLua("decapsulateSlave", rxDev, txPort, 3)
+                        mg.startTask("decapsulateSlave", rxDev, txPort, 2)
                 else
-                        mg.launchLua("encapsulateSlave", rxDev, txPort, 3)
+                        mg.startTask("encapsulateSlave", rxDev, txPort, 2)
                 end
         else
-                mg.launchLua("loadSlave", isTunneled, txPort, 3)
-                mg.launchLua("counterSlave", isTunneled, rxDev)
+                mg.startTask("loadSlave", isTunneled, txPort, 2)
+                mg.startTask("counterSlave", isTunneled, rxDev:getRxQueue(2))
         end
 
-        mg.waitForSlaves()
+        mg.waitForTasks()
 end
 
 function loadSlave(sendTunneled, port, queue)
@@ -164,13 +164,13 @@ function isVxlanPacket(pkt)
                 and pkt.udp:getDstPort() == proto.udp.PORT_VXLAN
 end
 
-function counterSlave(receiveInner, dev)
-        rxStats = stats:newDevRxCounter(dev, "plain")
+function counterSlave(receiveInner, queue)
+        rxStats = stats:newDevRxCounter(queue, "plain")
         local bufs = memory.bufArray(1)
         local c = 0
 
         while mg.running() do
-                local rx = dev:getRxQueue(0):recv(bufs)
+                local rx = queue:recv(bufs)
                 if rx > 0 then
                         local buf = bufs[1]
                         if receiveInner then
