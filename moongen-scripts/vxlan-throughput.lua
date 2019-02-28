@@ -84,7 +84,7 @@ function master(args)
                 end
         else
                 mg.startTask("loadSlave", isTunneled, txPort, 2)
-                mg.startTask("counterSlave", isTunneled, rxPort, 2)
+                mg.startTask("counterSlave", isTunneled, rxDev:getRxQueue(2))
         end
 
         mg.waitForTasks()
@@ -164,14 +164,13 @@ function isVxlanPacket(pkt)
                 and pkt.udp:getDstPort() == proto.udp.PORT_VXLAN
 end
 
-function counterSlave(receiveInner, port, queue)
-        local queue = device.get(port):getTxQueue(queue)
+function counterSlave(receiveInner, queue)
         rxStats = stats:newDevRxCounter(queue, "plain")
         local bufs = memory.bufArray(1)
         local c = 0
 
         while mg.running() do
-                local rx = queue:recv(bufs)
+                local rx = queue:tryRecv(bufs, 1)
                 if rx > 0 then
                         local buf = bufs[1]
                         if receiveInner then
