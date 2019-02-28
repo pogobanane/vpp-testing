@@ -243,7 +243,7 @@ do
 	do
 		sstr=`printf "%02i" $s`
 		j=$((2+$s))
-		vpp-test "l3_multicore_${istr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
+		vpp-test "l3_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
 	done
 done
 
