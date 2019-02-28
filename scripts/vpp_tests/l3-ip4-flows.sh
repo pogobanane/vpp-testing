@@ -49,3 +49,4 @@ dpdk {
 }
 "
 	test_vpp_with "$config_multithreaded" "$exec"
+done
