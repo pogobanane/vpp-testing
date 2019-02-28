@@ -5,7 +5,7 @@
 -- 1 0: Receive ethernet frames, encapsulate them, send VXLAN packet
 -- 1 1: Receive VXLAN packets, decapsulate them, send ethernet frame
 
-local mg        = require "dpdk"
+local mg        = require "moongen"
 local memory    = require "memory"
 local device    = require "device"
 local stats     = require "stats"
@@ -26,6 +26,7 @@ function configure(parser)
 	parser:option("-h --hifile", "Filename for the latency histogram."):default("histogram.csv")
 	parser:option("-t --thfile", "Filename for the throughput csv file."):default("throuput.csv")
 	parser:option("-l --lafile", "Filename for latency summery file."):default("latency.csv")
+end
 
 -- vtep is the endpoint when MoonGen de-/encapsulates traffic 
 -- enc(capsulated/tunneled traffic) is facing the l3 network, dec(apsulated traffic) is facing l2 network
@@ -324,4 +325,33 @@ function encapsulateSlave(rxDev, txPort, queue)
         end
         rxStats:finalize()
         txStats:finalize()
+end
+
+-- recTask is only usable in master thread
+function txWarmup(recTask, txQueue, eth_src, eth_dst, ip_src, ip_dst, pktSize)
+  local mem = memory.createMemPool(function(buf)
+    fillUdpPacket(buf, eth_src, eth_dst, ip_src, ip_dst, pktSize)
+  end)
+  local bufs = mem:bufArray(1)
+  mg.sleepMillis(1000) -- ensure that waitWarmup is listening
+  while recTask:isRunning() do
+    bufs:alloc(pktSize)
+    bufs:offloadUdpChecksums()
+    txQueue:send(bufs)
+    log:info("warmup packet sent")
+    mg.sleepMillis(1500)
+  end
+end
+
+function rxWarmup(rxQueue, timeout)
+	local bufs = memory.bufArray(128)
+
+	log:info("waiting for first successful packet...")
+	local rx = rxQueue:tryRecv(bufs, timeout)
+	bufs:freeAll()
+	if rx <= 0 then
+		log:fatal("no packet could be received!")
+	else
+		log:info("first packet received")
+	end
 end
