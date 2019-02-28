@@ -13,36 +13,19 @@ local proto     = require "proto.proto"
 local log       = require "log"
 local ffi       = require "ffi"
 
-function master(txPort, rxPort, isEndpoint, isTunneled, rate)
-        if not txPort or not rxPort or not isEndpoint or not isTunneled then
-                log:info("usage: txPort rxPort isEndpoint isTunneled [rate]")
-                return
-        end
-        txPort = tonumber(txPort)
-        rxPort = tonumber(rxPort)
-        isEndpoint = tonumber(isEndpoint) == 1
-        isTunneled= tonumber(isTunneled) == 1
-        rate = rate or 0
+package.path = package.path .. ";./throughput-util.lua"
+require "throughput-util"
 
-        local txDev = device.config{ port = txPort }
-        txDev:wait()
-        txDev:getTxQueue(0):setRate(rate)
-        local rxDev = device.config{ port = rxPort }
-        rxDev:wait()
-
-        if isEndpoint then
-                if isTunneled then
-                        mg.launchLua("decapsulateSlave", rxDev, txPort, 0)
-                else
-                        mg.launchLua("encapsulateSlave", rxDev, txPort, 0)
-                end
-        else
-                mg.launchLua("loadSlave", isTunneled, txPort, 0)
-                mg.launchLua("counterSlave", isTunneled, rxDev)
-        end
-
-        mg.waitForSlaves()
-end
+function configure(parser)
+	parser:description("vxlan testing")  
+	parser:argument("txDev", "Device to send from."):convert(tonumber)
+	parser:argument("rxDev", "Device to recieve from."):convert(tonumber)
+	parser:argument("isEndpoint", "0 if you expect someone else to encap/decap"):convert(tonumber)
+	parser:argument("isTunneled", "0 to send ethernet, 1 to send vxlan"):convert(tonumber)
+	parser:option("-r --rate", "Transmit rate in Mbit/s."):default(10000):convert(tonumber)
+	parser:option("-h --hifile", "Filename for the latency histogram."):default("histogram.csv")
+	parser:option("-t --thfile", "Filename for the throughput csv file."):default("throuput.csv")
+	parser:option("-l --lafile", "Filename for latency summery file."):default("latency.csv")
 
 -- vtep is the endpoint when MoonGen de-/encapsulates traffic 
 -- enc(capsulated/tunneled traffic) is facing the l3 network, dec(apsulated traffic) is facing l2 network
@@ -65,6 +48,46 @@ local decEthType        = 1
 local decPacketLen      = 60
 local encapsulationLen  = 14 + 20 + 8 + 8 -- Eth, IP, UDP, VXLAN
 local encPacketLen      = encapsulationLen + decPacketLen
+
+function master(args)
+		local txPort = args.txDev
+		local rxPort = args.rxDev
+		local isEndpoint = args.isEndpoint
+		local isTunneled = args.isTunneled
+		local rate = args.rate
+        if not txPort or not rxPort or not isEndpoint or not isTunneled then
+                log:info("usage: txPort rxPort isEndpoint isTunneled [rate]")
+                return
+        end
+        txPort = tonumber(txPort)
+        rxPort = tonumber(rxPort)
+        isEndpoint = tonumber(isEndpoint) == 1
+        isTunneled= tonumber(isTunneled) == 1
+        rate = rate or 0
+
+        local txDev = device.config{ port = txPort, rxQueues = 3, txQueues = 3 }
+        txDev:wait()
+        txDev:getTxQueue(0):setRate(rate)
+        local rxDev = device.config{ port = rxPort, rxQueues = 3, txQueues = 3 }
+        rxDev:wait()
+
+		local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
+		txWarmup(recTask, txDev:getTxQueue(0), decRemoteEth, decVtepEth, encRemoteIP, encVtepIP, 60)
+		mg.waitForTasks()
+
+        if isEndpoint then
+                if isTunneled then
+                        mg.launchLua("decapsulateSlave", rxDev, txPort, 3)
+                else
+                        mg.launchLua("encapsulateSlave", rxDev, txPort, 3)
+                end
+        else
+                mg.launchLua("loadSlave", isTunneled, txPort, 3)
+                mg.launchLua("counterSlave", isTunneled, rxDev)
+        end
+
+        mg.waitForSlaves()
+end
 
 function loadSlave(sendTunneled, port, queue)
 
