@@ -29,6 +29,16 @@ function test_vpp_with () {
 	./vpp/build-root/install-vpp-native/vpp/bin/vpp -c $VPP_CONF
 }
 
+config_singlethreaded="
+unix {
+	exec $VPP_EXEC
+	cli-listen $VPP_CLI_LISTEN
+}
+dpdk {
+	socket-mem 1024,1024
+}
+"
+
 config_1worker="
 unix {
 	exec $VPP_EXEC

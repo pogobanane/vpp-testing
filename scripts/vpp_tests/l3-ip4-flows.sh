@@ -9,6 +9,11 @@ INT_DST_PCI=$4
 # expects $1: INT_SRC; $2: INT_DST
 source scripts/vpp_tests/functions.sh
 
+# expects $5: workers count
+# expects $6 if $5 not 0: corelist range like "2-3,6-7"
+workers=$5
+corelist=$6
+
 exec="set int state $INT_SRC up
 set int state $INT_DST up
 
@@ -21,24 +26,26 @@ set int ip address $INT_DST $INT_DST_IP
 set ip arp $INT_DST $DST_IP dead.beef.bab0
 "
 
-config_workers="
+if [ $workers == 0 ]; then
+	test_vpp_with "$config_singlethreaded" "$exec"
+else
+	config_multithreaded="
 unix {
 	exec $VPP_EXEC
 	cli-listen $VPP_CLI_LISTEN
 }
 cpu {
 	main-core 1
-	corelist-workers 4-7
+	corelist-workers ${corelist}
 }
 dpdk {
 	socket-mem 1024,1024
 	dev ${INT_SRC_PCI} {
-		num-rx-queues 2
+		num-rx-queues ${workers}
 	}
 	dev ${INT_DST_PCI} {
-		num-rx-queues 2
+		num-rx-queues ${workers}
 	}
 }
 "
-
-test_vpp_with "$config_workers" "$exec"
+	test_vpp_with "$config_multithreaded" "$exec"
