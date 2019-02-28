@@ -239,7 +239,7 @@ vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-flows.sh"
 for run in {0..5}
 do
 	max=6
-	for s in {0..$max}
+	for s in $(seq 0 $max)
 	do
 		sstr=`printf "%02i" $s`
 		j=$((2+$s))

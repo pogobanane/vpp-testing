@@ -209,7 +209,7 @@ function l2-throughput-sweetspot () {
 for run in {0..5}
 do
 	max=6
-	for s in {0..$max}
+	for s in $(seq 0 $max)
 	do
 		sstr=`printf "%02i" $s`
 		l3-throughput-complex "l3_multicore_${sstr}_$run" 9000 $(($max*4))
