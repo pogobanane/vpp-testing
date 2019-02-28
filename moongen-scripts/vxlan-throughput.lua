@@ -327,6 +327,18 @@ function encapsulateSlave(rxDev, txPort, queue)
         txStats:finalize()
 end
 
+local function fillUdpPacket(buf, eth_src, eth_dst, ip_src, ip_dst, len)
+  buf:getUdpPacket():fill{
+    ethSrc = eth_src,
+    ethDst = eth_dst,
+    ip4Src = ip_src,
+    ip4Dst = ip_dst,
+    udpSrc = 1,
+    udpDst = 2,
+    pktLength = len
+  }
+end
+
 -- recTask is only usable in master thread
 function txWarmup(recTask, txQueue, eth_src, eth_dst, ip_src, ip_dst, pktSize)
   local mem = memory.createMemPool(function(buf)
