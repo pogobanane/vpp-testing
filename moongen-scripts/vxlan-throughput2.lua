@@ -20,9 +20,9 @@ function configure(parser)
   parser:option("--ipDst", "Target eth addr."):default("10.2.0.3"):convert(tostring)
   parser:option("-s --pktSize", "Packet size (payload + header; no CRC, preamble or inter packet gap)."):default(60):convert(tonumber)
   parser:option("-r --rate", "Transmit rate in Mbit/s."):default(10000):convert(tonumber)
-  parser:option("-h --hifile", "Filename for the latency histogram."):default("histogram.csv")
+  parser:option("-h --hifile", "NOT SUPPORTED! Filename for the latency histogram."):default("histogram.csv")
   parser:option("-t --thfile", "Filename for the throughput csv file."):default("throuput.csv")
-  parser:option("-l --lafile", "Filename for latency summery file."):default("latency.csv")
+  parser:option("-l --lafile", "NOT SUPPORTED! Filename for latency summery file."):default("latency.csv")
 end
 
 function master(args)
@@ -40,7 +40,7 @@ function master(args)
   mg.startTask("statsTask", txDev, rxDev, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(1), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(2), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.thfile)
-  mg.startTask("timerSlave", txDev:getTxQueue(0), rxDev:getRxQueue(0), args.pktSize, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.hifile, args.lafile)
+  -- mg.startTask("timerSlave", txDev:getTxQueue(0), rxDev:getRxQueue(0), args.pktSize, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.hifile, args.lafile)
   mg.waitForTasks()
 end
 
