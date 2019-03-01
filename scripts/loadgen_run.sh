@@ -217,9 +217,8 @@ do
 done
 
 
-#### vxlan throughput ####
+#### vxlan encap throughput ####
 
-# l2-throughput oh shit l3 and vxlan testing is missing
-# ./MoonGen/build/MoonGen ./moongen-scripts/vxlan-throughput.lua 2 3 0 0
+# ./MoonGen/build/MoonGen ./moongen-scripts/vxlan-throughput2.lua 2 3
 
 echo "all done"

@@ -250,6 +250,6 @@ done
 
 #### vxlan throughput ####
 
-# vpp-test "vxlan_encap" "${GITDIR}/scripts/vpp_tests/vxlan-encapsulated.sh" "${INT_SRC_PCI} ${INT_DST_PCI}"
+vpp-test "vxlan_encap" "${GITDIR}/scripts/vpp_tests/vxlan-encapsulated.sh" "${INT_SRC_PCI} ${INT_DST_PCI}"
 
 echo "all done"
