@@ -85,16 +85,12 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, ip_src, ip_dst, pktSize, fi
 end
 
 function timerSlave(txQueue, rxQueue, size, eth_src, eth_dst, ip_src, ip_dst, histfile, lafile)
-  if size < 84 then
-    log:warn("Packet size %d is smaller than minimum timestamp size 84. Timestamped packets will be larger than load packets.", size)
-    size = 84
-  end
-	local timestamper = ts:newUdpTimestamper(txQueue, rxQueue)
+	local timestamper = ts:newTimestamper(txQueue, rxQueue)
 	local hist = hist:new()
 	mg.sleepMillis(1000) -- ensure that the load task is running
 	while mg.running() do
 		hist:update(timestamper:measureLatency(size, function(buf)
-      fillUdpPacket(buf, eth_src, eth_dst, ip_src, ip_dst, size)
+      fillEthPacket(buf, eth_src, eth_dst)
     end))
 	end
 	hist:print()
@@ -121,7 +117,7 @@ function txWarmup(recTask, txQueue, eth_src, eth_dst, ip_src, ip_dst, pktSize)
       c = c + 1
     end
 
-    bufs:offloadUdpChecksums()
+    -- bufs:offloadUdpChecksums() this is no udp traffic
     txQueue:send(bufs)
     log:info("warmup packet sent")
     mg.sleepMillis(1500)
@@ -133,11 +129,11 @@ function rxWarmup(rxQueue, timeout)
 
 	log:info("waiting for first successful packet...")
 	local rx = rxQueue:tryRecv(bufs, timeout)
-	bufs:freeAll()
 	if rx <= 0 then
 		log:fatal("no packet could be received!")
 	else
 		log:info("first packet received:")
     bufs[1]:dump()
 	end
+  bufs:freeAll()
 end
