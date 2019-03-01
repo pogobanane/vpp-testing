@@ -15,7 +15,7 @@ function configure(parser)
   parser:argument("txDev", "Device to send from."):convert(tonumber)
   parser:argument("rxDev", "Device to recieve from."):convert(tonumber)
   parser:option("--ethSrc", "Source eth addr."):default("00:11:22:33:44:55"):convert(tostring)
-  parser:option("--ethDst", "Target eth addr."):default("de:ad:be:ef:00:02"):convert(tostring)
+  parser:option("--ethDst", "Target eth addr."):default("00:00:00:00:00:00"):convert(tostring)
   parser:option("--ipSrc", "Source eth addr."):default("10.1.0.3"):convert(tostring)
   parser:option("--ipDst", "Target eth addr."):default("10.2.0.3"):convert(tostring)
   parser:option("-s --pktSize", "Packet size (payload + header; no CRC, preamble or inter packet gap)."):default(60):convert(tonumber)
@@ -105,12 +105,22 @@ end
 -- recTask is only usable in master thread
 function txWarmup(recTask, txQueue, eth_src, eth_dst, ip_src, ip_dst, pktSize)
   local mem = memory.createMemPool(function(buf)
-    fillUdpPacket(buf, eth_src, eth_dst, ip_src, ip_dst, pktSize)
+    fillEthPacket(buf, eth_src, eth_dst)
   end)
   local bufs = mem:bufArray(1)
   mg.sleepMillis(1000) -- ensure that waitWarmup is listening
+
+  local c = 0
   while recTask:isRunning() do
     bufs:alloc(pktSize)
+
+    -- dump first packet to see what we send
+    if c < 1 then
+      log:info("Sent frame:")
+      bufs[1]:dump()
+      c = c + 1
+    end
+
     bufs:offloadUdpChecksums()
     txQueue:send(bufs)
     log:info("warmup packet sent")
@@ -127,6 +137,7 @@ function rxWarmup(rxQueue, timeout)
 	if rx <= 0 then
 		log:fatal("no packet could be received!")
 	else
-		log:info("first packet received")
+		log:info("first packet received:")
+    bufs[1]:dump()
 	end
 end
