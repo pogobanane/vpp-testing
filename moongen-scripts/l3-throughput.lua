@@ -135,14 +135,14 @@ function sendIpFlows(bufs, txQueue, pktSize, flows, ipSrc)
 end
 
 -- send to different locations: $routes amount of random /24 subnets
-function sendIpRoutes(bufs, txQueue, pktSize, routes, ipSrc)
-  local baseIP = parseIPAddress(ipSrc)
+function sendIpRoutes(bufs, txQueue, pktSize, routes, ipDst)
+  local baseIP = parseIPAddress(ipDst)
   while mg.running() do
     bufs:alloc(pktSize)
     for i, buf in ipairs(bufs) do
       local dst = baseIP + random(0, (routes-1) * 256) -- 2^8=256 addrs in each subnet
       local pkt = buf:getUdpPacket()
-      pkt.ip4.src:set(dst)
+      pkt.ip4.dst:set(dst)
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
     bufs:offloadUdpChecksums()
@@ -161,7 +161,7 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, ip_src, ip_dst, pktSize, fl
   if flows > 0 then
     sendIpFlows(bufs, txQueue, pktSize, flows, ip_src)
   elseif routes > 0 then
-    sendIpRoutes(bufs, txQueue, pktSize, routes, ip_src)
+    sendIpRoutes(bufs, txQueue, pktSize, routes, ip_dst)
   else
     sendSimple(bufs, txQueue, pktSize)
   end
