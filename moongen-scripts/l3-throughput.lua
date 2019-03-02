@@ -20,7 +20,8 @@ function configure(parser)
   parser:option("--ipDst", "Target eth addr."):default("10.2.0.3"):convert(tostring)
   parser:option("-s --pktSize", "Packet size (payload + header; no CRC, preamble or inter packet gap)."):default(84):convert(tonumber)
   parser:option("-r --rate", "Transmit rate in Mbit/s."):default(10000):convert(tonumber)
-  parser:option("-f --flows", "Number of flows (randomized source IP)."):default(0):convert(tonumber)
+  parser:option("-f --flows", "Number of flows (rotating source IP). Can't be used with -o."):default(0):convert(tonumber)
+  parser:option("-o --routes", "Number of /24 routes to send to (randomized dst IP). Can't be used with -f."):default(0):convert(tonumber)
   parser:option("-h --hifile", "Filename for the latency histogram."):default("histogram.csv")
   parser:option("-t --thfile", "Filename for the throughput csv file."):default("throuput.csv")
   parser:option("-l --lafile", "Filename for latency summery file."):default("latency.csv")
@@ -39,8 +40,8 @@ function master(args)
   mg.waitForTasks()
   -- warmup done
   mg.startTask("statsTask", txDev, rxDev, args.thfile)
-  mg.startTask("loadSlave", txDev:getTxQueue(1), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.thfile)
-  mg.startTask("loadSlave", txDev:getTxQueue(2), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.thfile)
+  mg.startTask("loadSlave", txDev:getTxQueue(1), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.routes, args.thfile)
+  mg.startTask("loadSlave", txDev:getTxQueue(2), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.routes, args.thfile)
   mg.startTask("timerSlave", txDev:getTxQueue(0), rxDev:getRxQueue(0), args.pktSize, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.hifile, args.lafile)
   mg.waitForTasks()
 end
@@ -116,6 +117,7 @@ function sendSimple(bufs, txQueue, pktSize)
   end
 end
 
+-- send from different src: rotate ip's
 function sendIpFlows(bufs, txQueue, pktSize, flows, ipSrc) 
   local counter = 0
   local baseIP = parseIPAddress(ipSrc)
@@ -132,7 +134,23 @@ function sendIpFlows(bufs, txQueue, pktSize, flows, ipSrc)
   end
 end
 
-function loadSlave(txQueue, rxDev, eth_src, eth_dst, ip_src, ip_dst, pktSize, flows, file)
+-- send to different locations: $routes amount of random /24 subnets
+function sendIpRoutes(bufs, txQueue, pktSize, routes, ipSrc)
+  local baseIP = parseIPAddress(ipSrc)
+  while mg.running() do
+    bufs:alloc(pktSize)
+    for i, buf in ipairs(bufs) do
+      local dst = baseIP + random(0, (routes-1) * 256) -- 2^8=256 addrs in each subnet
+      local pkt = buf:getUdpPacket()
+      pkt.ip4.src:set(dst)
+    end
+    -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
+    bufs:offloadUdpChecksums()
+    txQueue:send(bufs)
+  end
+end
+
+function loadSlave(txQueue, rxDev, eth_src, eth_dst, ip_src, ip_dst, pktSize, flows, routes, file)
   local ip_src_nr = parseIPAddress(ip_src)
   local mem = memory.createMemPool(function(buf)
     fillUdpPacket(buf, eth_src, eth_dst, ip_src, ip_dst, pktSize)
@@ -142,6 +160,8 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, ip_src, ip_dst, pktSize, fl
   -- local rxCtrF = stats:newDevRxCounter(rxDev, "csv", "rxthroughput.csv")
   if flows > 0 then
     sendIpFlows(bufs, txQueue, pktSize, flows, ip_src)
+  elseif routes > 0 then
+    sendIpRoutes(bufs, txQueue, pktSize, routes, ipSrc)
   else
     sendSimple(bufs, txQueue, pktSize)
   end
