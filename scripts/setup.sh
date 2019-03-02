@@ -37,8 +37,8 @@ function posping() {
 }
 
 # allocate all hosts for ONE experiment
-echo "allocate hosts"
-pos allocations allocate "$DUT" "$LOADGEN"
+# echo "allocate hosts"
+# pos allocations allocate "$DUT" "$LOADGEN"
 
 echo "set images to debian stretch"
 pos nodes image "$DUT" debian-stretch
@@ -87,6 +87,6 @@ echo "run test..."
 echo "$DUT finished test"
 wait
 
-echo "freeing nodes..."
-pos allocations free "$DUT"
-pos allocations free "$LOADGEN"
+# echo "freeing nodes..."
+# pos allocations free "$DUT"
+# pos allocations free "$LOADGEN"

@@ -19,8 +19,8 @@ set -x
 # run test
 
 # allocate all hosts for ONE experiment
-echo "allocate hosts"
-pos allocations allocate "$DUT" "$LOADGEN"
+# echo "allocate hosts"
+# pos allocations allocate "$DUT" "$LOADGEN"
 
 echo "pos bootstraping"
 pos nodes bootstrap $DUT
@@ -36,6 +36,6 @@ pos commands launch --infile scripts/loadgen_run.sh "$LOADGEN"
 echo "$DUT finished test"
 wait
 
-echo "freeing nodes..."
-pos allocations free "$DUT"
-pos allocations free "$LOADGEN"
+# echo "freeing nodes..."
+# pos allocations free "$DUT"
+# pos allocations free "$LOADGEN"
