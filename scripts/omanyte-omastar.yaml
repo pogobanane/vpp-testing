@@ -1,4 +1,6 @@
 # vpp: omanyte: Intel 82599, moongen: omastar: 10-Gigabit X540-AT2
+# apt install dpdk-igb-uio-dkms
+# modprobe igb_uio
 moongen:
         tx: 3
         rx: 2
