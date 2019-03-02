@@ -161,7 +161,7 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, ip_src, ip_dst, pktSize, fl
   if flows > 0 then
     sendIpFlows(bufs, txQueue, pktSize, flows, ip_src)
   elseif routes > 0 then
-    sendIpRoutes(bufs, txQueue, pktSize, routes, ipSrc)
+    sendIpRoutes(bufs, txQueue, pktSize, routes, ip_src)
   else
     sendSimple(bufs, txQueue, pktSize)
   end
