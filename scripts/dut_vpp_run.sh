@@ -252,7 +252,7 @@ function vpp-find-sweetspot () {
 vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
 for run in {0..0}
 do
-	for s in {1..47}
+	for s in {1..37} # 47}
 	do
 		i=`echo "1.4^$s" | bc`
 		i=`printf "%.0f" $i`
