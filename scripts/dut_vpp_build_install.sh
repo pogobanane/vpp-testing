@@ -4,6 +4,8 @@
 # exit on error
 set -e
 
+apt-get update
+
 # deps for some scripts/vpp-tests
 apt-get -y install socat linux-tools
 
