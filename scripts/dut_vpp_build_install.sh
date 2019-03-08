@@ -7,6 +7,9 @@ set -e
 # deps for some scripts/vpp-tests
 apt-get -y install socat linux-tools
 
+# driver for some 40G NICs
+apt-get -y install dpdk-igb-uio-dkms
+
 ## build vpp
 
 #apt-get install git

@@ -36,7 +36,7 @@ echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
 # load driver
-modprobe uio_pci_generic
+modprobe $(pos_get_variable -r vpp/driver)
 
 # read vars
 INT_SRC=`pos_get_variable -r vpp/int_src`
