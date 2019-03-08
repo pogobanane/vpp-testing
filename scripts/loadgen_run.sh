@@ -212,20 +212,20 @@ function l2-throughput-sweetspot () {
 
 #### l3 ip multicore testing ####
 
-# for run in {0..5}
-# do
-# 	max=6
-# 	for s in $(seq 0 $max)
-# 	do
-# 		sstr=`printf "%02i" $s`
-# 		l3-throughput-complex "l3_multicore_${sstr}_$run" 9000 $(($max*4))
-# 	done
-# done
+for run in {0..5}
+do
+	max=6
+	for s in $(seq 0 $max)
+	do
+		sstr=`printf "%02i" $s`
+		l3-throughput-complex "l3_multicore_${sstr}_$run" 9000 $(($max*4))
+	done
+done
 
 #### l3 ip routing ####
 
 # 5 runs with 47 different l2fib sizes each = 235
-for run in {0..0}
+for run in {0..5}
 do
 	for s in {1..37} # 47}
 	do
