@@ -225,16 +225,16 @@ done
 #### l3 ip routing ####
 
 # 5 runs with 47 different l2fib sizes each = 235
-for run in {0..5}
-do
-	for s in {1..37} # 47}
-	do
-		i=`echo "1.4^$s" | bc`
-		i=`printf "%.0f" $i`
-		istr=`printf "%08i" $i`
-		l3-throughput-routes "l3_routes_${istr}_$run" 9000 $i
-	done
-done
+# for run in {0..5}
+# do
+# 	for s in {1..37} # 47}
+# 	do
+# 		i=`echo "1.4^$s" | bc`
+# 		i=`printf "%.0f" $i`
+# 		istr=`printf "%08i" $i`
+# 		l3-throughput-routes "l3_routes_${istr}_$run" 9000 $i
+# 	done
+# done
 
 #### vxlan encap throughput ####
 

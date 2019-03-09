@@ -28,8 +28,8 @@ function configure(parser)
 end
 
 function master(args)
-  local txDev = device.config({port = args.txDev, rxQueues = 6, txQueues = 6})
-  local rxDev = device.config({port = args.rxDev, rxQueues = 6, txQueues = 6})
+  local txDev = device.config({port = args.txDev, rxQueues = 3, txQueues = 3})
+  local rxDev = device.config({port = args.rxDev, rxQueues = 3, txQueues = 3})
   device.waitForLinks()
   if args.rate > 0 then
     txDev:getTxQueue(0):setRate(args.rate)
@@ -42,8 +42,6 @@ function master(args)
   mg.startSharedTask("statsTask", txDev, rxDev, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(1), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.routes, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(2), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.routes, args.thfile)
-  mg.startTask("loadSlave", txDev:getTxQueue(3), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.routes, args.thfile)
-  mg.startTask("loadSlave", txDev:getTxQueue(4), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.routes, args.thfile)
   mg.startSharedTask("timerSlave", txDev:getTxQueue(0), rxDev:getRxQueue(0), args.pktSize, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.hifile, args.lafile)
   mg.waitForTasks()
 end

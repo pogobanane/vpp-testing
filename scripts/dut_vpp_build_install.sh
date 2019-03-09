@@ -23,6 +23,14 @@ UNATTENDED=y make install-ext-deps
 # make release build and package for .deb
 make build-release
 
+
+# disable turbo boost preliminarily
+echo 1 >   /sys/devices/system/cpu/intel_pstate/no_turbo
+
+# set preliminary frequency
+echo 100 > /sys/devices/system/cpu/intel_pstate/max_perf_pct
+echo 100 > /sys/devices/system/cpu/intel_pstate/min_perf_pct
+
 # Artifacts:
 # ls build-root/*.deb
 

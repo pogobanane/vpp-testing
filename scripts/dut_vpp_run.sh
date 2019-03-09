@@ -249,17 +249,17 @@ done
 #### l3 ip routing ####
 
 # 5 runs with 47 different l2fib sizes each = 235
-vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
-for run in {0..5}
-do
-	for s in {1..37} # 47}
-	do
-		i=`echo "1.4^$s" | bc`
-		i=`printf "%.0f" $i`
-		istr=`printf "%08i" $i`
-		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-	done
-done
+# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
+# for run in {0..5}
+# do
+# 	for s in {1..37} # 47}
+# 	do
+# 		i=`echo "1.4^$s" | bc`
+# 		i=`printf "%.0f" $i`
+# 		istr=`printf "%08i" $i`
+# 		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+# 	done
+# done
 
 #### vxlan throughput ####
 
