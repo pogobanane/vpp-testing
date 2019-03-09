@@ -121,12 +121,12 @@ function l2-throughput-rate () {
 # $1: jobname
 # $2: number of different macs to use
 function l2-throughput-flows () {
-	l2-throughput-complex $1 10000 $2
+	l2-throughput-complex $1 100000 $2
 }
 
 # $1: jobname
 function l2-throughput () {
-	l2-throughput-complex $1 10000 0
+	l2-throughput-complex $1 100000 0
 }
 
 # does 9 test runs!
@@ -206,7 +206,7 @@ function l2-throughput-sweetspot () {
 # 		i=`echo "1.4^$s" | bc`
 # 		i=`printf "%.0f" $i`
 # 		istr=`printf "%08i" $i`
-# 		l2-throughput-complex "l2_throughmac_${istr}_$run" 9000 $i
+# 		l2-throughput-complex "l2_throughmac_${istr}_$run" 100000 $i
 # 	done
 # done
 
@@ -218,7 +218,7 @@ do
 	for s in $(seq 0 $max)
 	do
 		sstr=`printf "%02i" $s`
-		l3-throughput-complex "l3_multicore_${sstr}_$run" 9000 $(($max*4))
+		l3-throughput-complex "l3_multicore_${sstr}_$run" 100000 $(($max*4))
 	done
 done
 
@@ -232,7 +232,7 @@ done
 # 		i=`echo "1.4^$s" | bc`
 # 		i=`printf "%.0f" $i`
 # 		istr=`printf "%08i" $i`
-# 		l3-throughput-routes "l3_routes_${istr}_$run" 9000 $i
+# 		l3-throughput-routes "l3_routes_${istr}_$run" 100000 $i
 # 	done
 # done
 
