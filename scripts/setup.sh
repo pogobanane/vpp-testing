@@ -3,7 +3,7 @@
 # hosts. The two experiment scripts demonstrate how to use all of the postools on the hosts.
 # The experiment is to run one of the example MoonGen scripts
 
-if test "$#" -lt 2; then
+if [ "$#" -lt 2 ]; then
 	echo "Usage: setup.sh dut loadgen"
 	exit
 fi
