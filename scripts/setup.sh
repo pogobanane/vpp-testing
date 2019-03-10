@@ -10,6 +10,7 @@ fi
 
 DUT=$1
 LOADGEN=$2
+VPPVERSION=$3 # can be empty or 16.09
 
 # exit on error
 set -e
@@ -69,7 +70,7 @@ echo "done"
 
 echo "install vpp..."
 { 
-	ssh "$DUT" "cd ba-okelmann/vpp && ../scripts/dut_vpp_build_install.sh"
+	ssh "$DUT" "cd ba-okelmann/vpp && ../scripts/dut_vpp_build_install${VPPVERSION}.sh"
 	echo "$DUT vpp installed"
 } &
 {
