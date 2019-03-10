@@ -13,8 +13,11 @@ INT_DST_MAC="de:ad:be:ef:00:04"
 
 INT_SRC_IP="10.1.0.2/24" #ip of recieving interface with subnet like: "1.2.3.4/24"
 INT_DST_IP="10.2.0.2/24"
+INT_SRC_IP6="::1:0:0:0:2/64"
+INT_DST_IP6="::2:0:0:0:2/64"
 
 DST_IP="10.2.0.3" # ip of recieving device in the INT_DST_IP subnet
+DST_IP6="::2:0:0:0:3"
 
 VPP_CLI_LISTEN="/tmp/vpptesting_cli"
 VPP_CONF="/tmp/vpptesting_startup.conf"

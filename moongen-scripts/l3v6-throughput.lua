@@ -11,13 +11,13 @@ package.path = package.path .. ";./throughput-util.lua"
 require "throughput-util"
 
 function configure(parser)
-  parser:description("Generates CBR traffic with hardware rate control")
+  parser:description("Generates CBR ipv6 traffic with hardware rate control")
   parser:argument("txDev", "Device to send from."):convert(tonumber)
   parser:argument("rxDev", "Device to recieve from."):convert(tonumber)
   parser:option("--ethSrc", "Source eth addr."):default("00:11:22:33:44:55"):convert(tostring)
   parser:option("--ethDst", "Target eth addr."):default("de:ad:be:ef:00:02"):convert(tostring)
-  parser:option("--ipSrc", "Source eth addr."):default("10.1.0.3"):convert(tostring)
-  parser:option("--ipDst", "Target eth addr."):default("10.2.0.3"):convert(tostring)
+  parser:option("--ipSrc", "Source eth addr."):default("0:0:0:1::3"):convert(tostring)
+  parser:option("--ipDst", "Target eth addr."):default("0:0:0:2::3"):convert(tostring)
   parser:option("-s --pktSize", "Packet size (payload + header; no CRC, preamble or inter packet gap)."):default(84):convert(tonumber)
   parser:option("-r --rate", "Transmit rate in Mbit/s."):default(100000):convert(tonumber)
   parser:option("-f --flows", "Number of flows (rotating source IP). Can't be used with -o."):default(0):convert(tonumber)
