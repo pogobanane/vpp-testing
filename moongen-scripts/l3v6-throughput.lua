@@ -49,11 +49,11 @@ function master(args)
 end
 
 local function fillUdpPacket(buf, eth_src, eth_dst, ip_src, ip_dst, len)
-  buf:getUdpPacket():fill{
+  buf:getUdpPacket(false):fill{
     ethSrc = eth_src,
     ethDst = eth_dst,
-    ip4Src = ip_src,
-    ip4Dst = ip_dst,
+    ip6Src = ip_src,
+    ip6Dst = ip_dst,
     udpSrc = 1,
     udpDst = 2,
     pktLength = len
@@ -62,11 +62,11 @@ end
 
 local function fillUdpPacketFlows(buf, eth_src, eth_dst, ip_src_nr, ip_dst, flows, len)
   local ip_src = ip_src_nr + random(0, flows-1) * 65536 -- flow mask 255.255.0.0 (2^16=65536)
-  buf:getUdpPacket():fill{
+  buf:getUdpPacket(false):fill{
     ethSrc = eth_src,
     ethDst = eth_dst,
-    ip4Src = ip_src,
-    ip4Dst = ip_dst,
+    ip6Src = ip_src,
+    ip6Dst = ip_dst,
     udpSrc = 1,
     udpDst = 2,
     pktLength = len
@@ -114,7 +114,8 @@ function sendSimple(bufs, txQueue, pktSize)
   while mg.running() do
     bufs:alloc(pktSize)
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
-    bufs:offloadUdpChecksums()
+    -- but this breaks ipv6 traffic, so we dont offload checksums
+    -- bufs:offloadUdpChecksums()
     txQueue:send(bufs)
   end
 end
@@ -127,11 +128,12 @@ function sendIpFlows(bufs, txQueue, pktSize, flows, ipSrc)
     bufs:alloc(pktSize)
     for i, buf in ipairs(bufs) do
       local pkt = buf:getUdpPacket()
-      pkt.ip4.src:set(baseIP + counter)
+      pkt.ip6.src:set(baseIP + counter)
       counter = incAndWrap(counter, flows)
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
-    bufs:offloadUdpChecksums()
+    -- but this breaks ipv6 traffic, so we dont offload checksums
+    -- bufs:offloadUdpChecksums()
     txQueue:send(bufs)
   end
 end
@@ -144,10 +146,11 @@ function sendIpRoutes(bufs, txQueue, pktSize, routes, ipDst)
     for i, buf in ipairs(bufs) do
       local dst = baseIP + random(0, routes * 256) -- 2^8=256 addrs in each subnet
       local pkt = buf:getUdpPacket()
-      pkt.ip4.dst:set(dst)
+      pkt.ip6.dst:set(dst)
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
-    bufs:offloadUdpChecksums()
+    -- but this breaks ipv6 traffic, so we dont offload checksums
+    -- bufs:offloadUdpChecksums()
     txQueue:send(bufs)
   end
 end
@@ -196,7 +199,7 @@ function txWarmup(recTask, txQueue, eth_src, eth_dst, ip_src, ip_dst, pktSize)
   mg.sleepMillis(1000) -- ensure that waitWarmup is listening
   while recTask:isRunning() do
     bufs:alloc(pktSize)
-    bufs:offloadUdpChecksums()
+    -- bufs:offloadUdpChecksums()
     txQueue:send(bufs)
     log:info("warmup packet sent")
     mg.sleepMillis(1500)
