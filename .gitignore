@@ -16,3 +16,4 @@ paperish/*/*.blg
 paperish/*/*.fdb_latexmk
 paperish/*/*.fls
 paperish/*/*.synctex.gz
+statistics/data/*/
