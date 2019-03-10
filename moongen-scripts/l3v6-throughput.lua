@@ -127,7 +127,7 @@ function sendIpFlows(bufs, txQueue, pktSize, flows, ipSrc)
   while mg.running() do
     bufs:alloc(pktSize)
     for i, buf in ipairs(bufs) do
-      local pkt = buf:getUdpPacket()
+      local pkt = buf:getUdpPacket(false)
       pkt.ip6.src:set(baseIP + counter)
       counter = incAndWrap(counter, flows)
     end
@@ -145,7 +145,7 @@ function sendIpRoutes(bufs, txQueue, pktSize, routes, ipDst)
     bufs:alloc(pktSize)
     for i, buf in ipairs(bufs) do
       local dst = baseIP + random(0, routes * 256) -- 2^8=256 addrs in each subnet
-      local pkt = buf:getUdpPacket()
+      local pkt = buf:getUdpPacket(false)
       pkt.ip6.dst:set(dst)
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
