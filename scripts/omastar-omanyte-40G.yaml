@@ -1,15 +1,15 @@
 # apt install dpdk-igb-uio-dkms
 # modprobe igb_uio
 moongen:
-        tx: 4
-        rx: 0
+        tx: 0
+        rx: 1
 
 cpu-freq: 100
 
 vpp:
         config: '/root/ba-okelmann/vpp-configs/simple1.conf'
-        int_src: 'FortyGigabitEthernet83/0/0'
-        int_dst: 'FortyGigabitEthernet3/0/0'
+        int_src: 'FortyGigabitEthernet3/0/0'
+        int_dst: 'FortyGigabitEthernet3/0/1'
         int_src_pci: '0000:83:00.0'
-        int_dst_pci: '0000:03:00.0'
+        int_dst_pci: '0000:03:00.1'
         driver: 'igb_uio'
