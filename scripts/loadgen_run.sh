@@ -230,7 +230,7 @@ do
 	for s in $(seq 0 $max)
 	do
 		sstr=`printf "%02i" $s`
-		test-throughput "l3v6_multicore_${sstr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3v6-throughput.lua $TX_DEV $RX_DEV --rate 100000 --flows $(($max*4)) --ipDst \"::3:0:0:0:2\""
+		test-throughput "l3v6_multicore_${sstr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3v6-throughput.lua $TX_DEV $RX_DEV --rate 100000 --flows $(($max*4))"
 	done
 done
 
