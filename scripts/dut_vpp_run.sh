@@ -234,17 +234,17 @@ function vpp-find-sweetspot () {
 
 #### l3 ip4 multicore testing ####
 
-# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-flows.sh"
-# for run in {0..5}
-# do
-# 	max=8
-# 	for s in $(seq 0 $max)
-# 	do
-# 		sstr=`printf "%02i" $s`
-# 		j=$((1+$s))
-# 		vpp-test "l3_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
-# 	done
-# done
+vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-flows.sh"
+for run in {0..5}
+do
+	max=8
+	for s in $(seq 0 $max)
+	do
+		sstr=`printf "%02i" $s`
+		j=$((1+$s))
+		vpp-test "l3_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
+	done
+done
 
 #### l3 ip6 multicore testing ####
 
@@ -264,17 +264,17 @@ done
 #### l3 ip4 routing ####
 
 # 5 runs with 47 different l2fib sizes each = 235
-# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
-# for run in {0..5}
-# do
-# 	for s in {1..37} # 47}
-# 	do
-# 		i=`echo "1.4^$s" | bc`
-# 		i=`printf "%.0f" $i`
-# 		istr=`printf "%08i" $i`
-# 		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-# 	done
-# done
+vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
+for run in {0..5}
+do
+	for s in {1..37} # 47}
+	do
+		i=`echo "1.4^$s" | bc`
+		i=`printf "%.0f" $i`
+		istr=`printf "%08i" $i`
+		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+	done
+done
 
 #### l3 ip6 routing ####
 
