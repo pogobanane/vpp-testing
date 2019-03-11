@@ -11,8 +11,10 @@ source scripts/vpp_tests/functions.sh
 
 # expects $5: workers count
 # expects $6 if $5 not 0: corelist range like "2-3,6-7"
+# expects $7: route-count
 workers=$5
 corelist=$6
+routes=$7
 
 exec="set int state $INT_SRC up
 set int state $INT_DST up
