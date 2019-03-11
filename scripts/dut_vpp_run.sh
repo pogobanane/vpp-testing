@@ -267,13 +267,25 @@ function vpp-find-sweetspot () {
 vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routinglegacy.sh"
 for run in {0..5}
 do
-	for s in {1..47} # 47}
+	for s in {1..50} # 47}
 	do
 		i=`echo "1.4^$s" | bc`
 		i=`printf "%.0f" $i`
 		istr=`printf "%08i" $i`
 		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
 	done
+
+	# 2^20
+	i=`echo "2^20" | bc`
+	i=`printf "%.0f" $i`
+	istr=`printf "%08i" $i`
+	vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+
+	# 2^24
+	i=`echo "2^24" | bc`
+	i=`printf "%.0f" $i`
+	istr=`printf "%08i" $i`
+	vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
 done
 
 #### vxlan throughput ####
