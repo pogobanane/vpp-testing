@@ -153,7 +153,7 @@ function sendIpRoutes(bufs, txQueue, pktSize, routes, ipDst)
   while mg.running() do
     bufs:alloc(pktSize)
     for i, buf in ipairs(bufs) do
-      local dst = baseIP + random(0, routes)
+      local dst = baseIP + random(0, routes - 1)
       local pl = buf:getRawPacket().payload
       -- 14B ethernet header + 24B ip6 header and source addr = 38B
       -- [38,54) ip6 dst addr
