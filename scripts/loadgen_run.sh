@@ -258,7 +258,7 @@ do
 		i=`echo "1.4^$s" | bc`
 		i=`printf "%.0f" $i`
 		istr=`printf "%08i" $i`
-		test-throughput "l3v6_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3v6-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $(($max*4)) --ipDst ::3:0:0:0:2"
+		test-throughput "l3v6_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3v6-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $i --ipDst ::3:0:0:0:2"
 	done
 done
 
