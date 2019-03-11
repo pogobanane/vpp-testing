@@ -128,16 +128,16 @@ function sendIpFlows(bufs, txQueue, pktSize, flows, ipSrc)
     bufs:alloc(pktSize)
     for i, buf in ipairs(bufs) do
       local pl = buf:getRawPacket().payload
-      local dst = baseIP + counter
+      local src = baseIP + counter
       -- 14B ethernet header + 8B ip6 header = 22B
       -- [22,38) ip6 src addr
       -- least significant 6B of src addr: first 10B stay untouched
-      pl.uint8[37] = bit.band(dst, 0xFF)
-      pl.uint8[36] = bit.band(bit.rshift(dst, 8), 0xFF)
-      pl.uint8[35] = bit.band(bit.rshift(dst, 16), 0xFF)
-      pl.uint8[34] = bit.band(bit.rshift(dst, 24), 0xFF)
-      pl.uint8[33] = bit.band(bit.rshift(dst + 0ULL, 32ULL), 0xFF)
-      pl.uint8[32] = bit.band(bit.rshift(dst + 0ULL, 40ULL), 0xFF)
+      pl.uint8[37] = bit.band(src, 0xFF)
+      pl.uint8[36] = bit.band(bit.rshift(src, 8), 0xFF)
+      pl.uint8[35] = bit.band(bit.rshift(src, 16), 0xFF)
+      pl.uint8[34] = bit.band(bit.rshift(src, 24), 0xFF)
+      pl.uint8[33] = bit.band(bit.rshift(src + 0ULL, 32ULL), 0xFF)
+      pl.uint8[32] = bit.band(bit.rshift(src + 0ULL, 40ULL), 0xFF)
       counter = incAndWrap(counter, flows)
     end
     -- UDP checksums are optional, so using just IPv4 checksums would be sufficient here
@@ -149,7 +149,7 @@ end
 
 -- send to different locations: $routes amount of random /24 subnets
 function sendIpRoutes(bufs, txQueue, pktSize, routes, ipDst)
-  local baseIP = parseIPAddress(ipDst)
+  local baseIP = 3
   while mg.running() do
     bufs:alloc(pktSize)
     for i, buf in ipairs(bufs) do
@@ -159,8 +159,8 @@ function sendIpRoutes(bufs, txQueue, pktSize, routes, ipDst)
       -- [38,54) ip6 dst addr
       -- overwrite 6B of dst addr: first 2B and last 8B stay untouched
       -- but network byte order:
-      pl.uint8[55] = bit.band(dst, 0xFF)
-      pl.uint8[54] = bit.band(bit.rshift(dst, 8), 0xFF)
+      pl.uint8[45] = bit.band(dst, 0xFF)
+      pl.uint8[44] = bit.band(bit.rshift(dst, 8), 0xFF)
       pl.uint8[43] = bit.band(bit.rshift(dst, 16), 0xFF)
       pl.uint8[42] = bit.band(bit.rshift(dst, 24), 0xFF)
       pl.uint8[41] = bit.band(bit.rshift(dst + 0ULL, 32ULL), 0xFF)
