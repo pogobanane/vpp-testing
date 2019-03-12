@@ -264,10 +264,10 @@ function l2-throughput-sweetspot () {
 
 #### l3 ip4 routing legacy: v16.09 ####
 
-# 5 runs with 47 different l2fib sizes each = 235
+# 6 runs with 50 different l2fib sizes each = 300
 for run in {0..5}
 do
-	for s in {1..50} # 47}
+	for s in {1..48} # 47}
 	do
 		i=`echo "1.4^$s" | bc`
 		i=`printf "%.0f" $i`
@@ -281,8 +281,8 @@ do
 	istr=`printf "%08i" $i`
 	test-throughput "l3_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $i --ipDst 10.3.0.0 --ethDst 3c:fd:fe:9e:d6:b8"
 
-	# 2^24
-	i=`echo "2^24" | bc`
+	# 2^23
+	i=`echo "2^23" | bc`
 	i=`printf "%.0f" $i`
 	istr=`printf "%08i" $i`
 	test-throughput "l3_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $i --ipDst 10.3.0.0 --ethDst 3c:fd:fe:9e:d6:b8"

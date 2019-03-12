@@ -293,11 +293,11 @@ function vpp-find-sweetspot () {
 
 #### l3 ip4 routing legacy: v16.09 ####
 
-# 5 runs with 47 different l2fib sizes each = 235
+# 6 runs with 50 different l2fib sizes each = 300
 vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routinglegacy.sh"
 for run in {0..5}
 do
-	for s in {1..50} # 47}
+	for s in {1..48} # 47}
 	do
 		i=`echo "1.4^$s" | bc`
 		i=`printf "%.0f" $i`
@@ -311,8 +311,8 @@ do
 	istr=`printf "%08i" $i`
 	vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
 
-	# 2^24
-	i=`echo "2^24" | bc`
+	# 2^23
+	i=`echo "2^23" | bc`
 	i=`printf "%.0f" $i`
 	istr=`printf "%08i" $i`
 	vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
