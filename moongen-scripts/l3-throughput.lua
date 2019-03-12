@@ -140,7 +140,7 @@ function sendIpRoutes(bufs, txQueue, pktSize, routes, ipDst)
   while mg.running() do
     bufs:alloc(pktSize)
     for i, buf in ipairs(bufs) do
-      local dst = baseIP + random(0, routes * 256) -- 2^8=256 addrs in each subnet
+      local dst = baseIP + random(0, routes * 256 - 1) -- 2^8=256 addrs in each subnet
       local pkt = buf:getUdpPacket()
       pkt.ip4.dst:set(dst)
     end
