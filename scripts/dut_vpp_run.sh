@@ -232,91 +232,91 @@ function vpp-find-sweetspot () {
 # 	done
 # done
 
-#### l3 ip4 multicore testing ####
+# #### l3 ip4 multicore testing ####
 
-vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-flows.sh"
-for run in {0..5}
-do
-	max=8
-	for s in $(seq 0 $max)
-	do
-		sstr=`printf "%02i" $s`
-		j=$((1+$s))
-		vpp-test "l3_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
-	done
-done
-
-#### l3 ip6 multicore testing ####
-
-vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-flows.sh"
-for run in {0..0}
-do
-	max=8
-	for s in $(seq 0 $max)
-	do
-		sstr=`printf "%02i" $s`
-		j=$((1+$s))
-		vpp-test "l3v6_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
-	done
-done
-
-
-#### l3 ip4 routing ####
-
-# 5 runs with 47 different l2fib sizes each = 235
-vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
-for run in {0..5}
-do
-	for s in {1..37} # 47}
-	do
-		i=`echo "1.4^$s" | bc`
-		i=`printf "%.0f" $i`
-		istr=`printf "%08i" $i`
-		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-	done
-done
-
-#### l3 ip6 routing ####
-
-# 5 runs with 47 different l2fib sizes each = 235
-vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-routing.sh"
-for run in {0..0}
-do
-	for s in {1..37} # 47}
-	do
-		i=`echo "1.4^$s" | bc`
-		i=`printf "%.0f" $i`
-		istr=`printf "%08i" $i`
-		vpp-test "l3v6_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-	done
-done
-
-#### l3 ip4 routing legacy: v16.09 ####
-
-# 5 runs with 47 different l2fib sizes each = 235
-# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routinglegacy.sh"
+# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-flows.sh"
 # for run in {0..5}
 # do
-# 	for s in {1..50} # 47}
+# 	max=8
+# 	for s in $(seq 0 $max)
+# 	do
+# 		sstr=`printf "%02i" $s`
+# 		j=$((1+$s))
+# 		vpp-test "l3_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
+# 	done
+# done
+
+# #### l3 ip6 multicore testing ####
+
+# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-flows.sh"
+# for run in {0..5}
+# do
+# 	max=8
+# 	for s in $(seq 0 $max)
+# 	do
+# 		sstr=`printf "%02i" $s`
+# 		j=$((1+$s))
+# 		vpp-test "l3v6_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
+# 	done
+# done
+
+
+# #### l3 ip4 routing ####
+
+# # 5 runs with 47 different l2fib sizes each = 235
+# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
+# for run in {0..5}
+# do
+# 	for s in {1..37} # 47}
 # 	do
 # 		i=`echo "1.4^$s" | bc`
 # 		i=`printf "%.0f" $i`
 # 		istr=`printf "%08i" $i`
 # 		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
 # 	done
-
-# 	# 2^20
-# 	i=`echo "2^20" | bc`
-# 	i=`printf "%.0f" $i`
-# 	istr=`printf "%08i" $i`
-# 	vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-
-# 	# 2^24
-# 	i=`echo "2^24" | bc`
-# 	i=`printf "%.0f" $i`
-# 	istr=`printf "%08i" $i`
-# 	vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
 # done
+
+# #### l3 ip6 routing ####
+
+# # 5 runs with 47 different l2fib sizes each = 235
+# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-routing.sh"
+# for run in {0..5}
+# do
+# 	for s in {1..37} # 47}
+# 	do
+# 		i=`echo "1.4^$s" | bc`
+# 		i=`printf "%.0f" $i`
+# 		istr=`printf "%08i" $i`
+# 		vpp-test "l3v6_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+# 	done
+# done
+
+#### l3 ip4 routing legacy: v16.09 ####
+
+# 5 runs with 47 different l2fib sizes each = 235
+vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routinglegacy.sh"
+for run in {0..5}
+do
+	for s in {1..50} # 47}
+	do
+		i=`echo "1.4^$s" | bc`
+		i=`printf "%.0f" $i`
+		istr=`printf "%08i" $i`
+		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+	done
+
+	# 2^20
+	i=`echo "2^20" | bc`
+	i=`printf "%.0f" $i`
+	istr=`printf "%08i" $i`
+	vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+
+	# 2^24
+	i=`echo "2^24" | bc`
+	i=`printf "%.0f" $i`
+	istr=`printf "%08i" $i`
+	vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+done
 
 #### vxlan throughput ####
 
