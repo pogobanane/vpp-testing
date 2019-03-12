@@ -272,20 +272,20 @@ do
 		i=`echo "1.4^$s" | bc`
 		i=`printf "%.0f" $i`
 		istr=`printf "%08i" $i`
-		test-throughput "l3_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $i --ipDst \"10.3.0.0\" --ethDst \"3c:fd:fe:9e:d7:40\""
+		test-throughput "l3_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $i --ipDst 10.3.0.0 --ethDst 3c:fd:fe:9e:d6:b8"
 	done
 
 	# 2^20
 	i=`echo "2^20" | bc`
 	i=`printf "%.0f" $i`
 	istr=`printf "%08i" $i`
-	test-throughput "l3_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $i --ipDst \"10.3.0.0\" --ethDst \"3c:fd:fe:9e:d7:40\""
+	test-throughput "l3_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $i --ipDst 10.3.0.0 --ethDst 3c:fd:fe:9e:d6:b8"
 
 	# 2^24
 	i=`echo "2^24" | bc`
 	i=`printf "%.0f" $i`
 	istr=`printf "%08i" $i`
-	test-throughput "l3_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $i --ipDst \"10.3.0.0\" --ethDst \"3c:fd:fe:9e:d7:40\""
+	test-throughput "l3_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $i --ipDst 10.3.0.0 --ethDst 3c:fd:fe:9e:d6:b8"
 done
 
 #### vxlan encap throughput ####
