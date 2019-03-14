@@ -32,10 +32,8 @@ cd "$GITDIR"
 echo 1 >   /sys/devices/system/cpu/intel_pstate/no_turbo
 
 # set frequency
-sleep 0.5
-echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_perf_pct
-sleep 0.5
 echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
+echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_perf_pct
 
 # load driver
 modprobe $(pos_get_variable -r vpp/driver)
