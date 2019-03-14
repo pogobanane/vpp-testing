@@ -147,7 +147,7 @@ function sendIpFlows(bufs, txQueue, pktSize, flows, ipSrc)
   end
 end
 
--- send to different locations: $routes amount of random /24 subnets
+-- send to different locations: $routes amount of random /64 subnets
 function sendIpRoutes(bufs, txQueue, pktSize, routes, ipDst)
   local baseIP = 3
   while mg.running() do

@@ -35,9 +35,9 @@ cd "$GITDIR"
 # disable turbo boost
 echo 1 >   /sys/devices/system/cpu/intel_pstate/no_turbo
 
-# set frequency
-echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/max_perf_pct
-echo $(pos_get_variable -r cpu-freq) > /sys/devices/system/cpu/intel_pstate/min_perf_pct
+# set frequency to max, even if DUT runs on lower freq
+echo 100 > /sys/devices/system/cpu/intel_pstate/max_perf_pct
+echo 100 > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
 TX_DEV=`pos_get_variable -r moongen/tx`
 RX_DEV=`pos_get_variable -r moongen/rx`
