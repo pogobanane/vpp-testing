@@ -1,0 +1,13 @@
+moongen:
+        tx: 0
+        rx: 1
+
+cpu-freq: 100
+
+vpp:
+        config: '/root/ba-okelmann/vpp-configs/simple1.conf'
+        int_src: 'FortyGigabitEthernet2/0/0'
+        int_dst: 'FortyGigabitEthernet2/0/1'
+        int_src_pci: '0000:02:00.0'
+        int_dst_pci: '0000:02:00.1'
+        driver: 'uio_pci_generic'
