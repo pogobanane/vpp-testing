@@ -237,7 +237,7 @@ function vpp-find-sweetspot () {
 vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-flows.sh"
 for run in {0..5}
 do
-	max=8
+	max=6
 	for s in $(seq 0 $max)
 	do
 		sstr=`printf "%02i" $s`
@@ -251,7 +251,7 @@ done
 vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-flows.sh"
 for run in {0..5}
 do
-	max=8
+	max=6
 	for s in $(seq 0 $max)
 	do
 		sstr=`printf "%02i" $s`

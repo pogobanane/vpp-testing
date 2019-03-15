@@ -214,7 +214,7 @@ function l2-throughput-sweetspot () {
 
 for run in {0..5}
 do
-	max=8
+	max=6
 	for s in $(seq 0 $max)
 	do
 		sstr=`printf "%02i" $s`
@@ -226,7 +226,7 @@ done
 
 for run in {0..5}
 do
-	max=8
+	max=6
 	for s in $(seq 0 $max)
 	do
 		sstr=`printf "%02i" $s`
