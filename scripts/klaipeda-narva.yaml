@@ -2,7 +2,7 @@ moongen:
         tx: 0
         rx: 1
 
-cpu-freq: 100
+cpu-freq: 0
 
 vpp:
         config: '/root/ba-okelmann/vpp-configs/simple1.conf'
