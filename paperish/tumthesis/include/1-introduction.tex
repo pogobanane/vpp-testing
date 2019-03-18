@@ -1,0 +1,57 @@
+\chapter{Introduction}
+
+% microservices -> virtualization -> software routing
+% problem: software router slower than specialized hardware
+
+A world of microservices counting on virtualization is more and
+more interested in beeing able to move dedicated hardware into
+virtualized spaces. But especially high speed networking is
+traditionally bound to specialized hardware, because many software
+routers can't keep up performancewise.
+
+% solution: faster software routers like VPP
+% vpp: cisco
+
+There are software routers though which focus on performance and are
+improved in many aspects. Especially frameworks like DPDK help in the
+making of fast software routers which can run on affordable commodity
+hardware. One of the routers built on that framework is \Ac{vpp} which
+was developed by Cisco and is now open source and maintained by
+\Ac{fdio}.
+
+% little indepencent and comparable benchmarks of vpp and others
+
+There is little independent performance analysis of \Ac{vpp} though and even less that allows for an accurate comparison between different software routers. 
+
+% therefore this work: well documented for comparison, automated for reproducability 
+
+% tests shall 
+% - find numerical answers to the performance question
+% - make vpp comparable to other software routers
+% - model to describe performance behaviour
+% - indentify/quantify bottlenecks
+
+Therefore this work presents well documented performance tests and
+results of \Ac{vpp} in different scenarios to enable comparability to
+other software routers. The tests procedures are as far as possible
+automated, to be as reproducable as possible. The resulting data is
+then analyzed to learn about the behaviour of \Ac{vpp} and it's
+performance bottlenecks. 
+
+% summarize tests
+
+Namely the this paper tests the performance scaling on multiple cores, imapct of varying cpu clocks, ip version, l2fib and l3fib sizes and tasks like vxlan encapsulation. 
+
+% therefore the structure of this paper: 
+% 1. previous performance analysis of routers in general and vpp in particular
+% 2. analysis of performance critical aspects of software routing, benchmarking challenges and vpp
+% 3. describe methodology and executed tests
+% 4. evaluate results and create model
+
+First, this paper will introduce previously existing methods for
+router perfomance analysis and existing benchmarking results for
+\Ac{vpp} in particular. Then challenges and perfomance critical
+aspects of software routing and \Ac{vpp} are analyzed. In section
+\ref{sec:methodology} the methodology and the executed tests are
+desrcibed in detail. Finally the results are evaluated to create a
+model to describe \Ac{vpp}'s performance behaviour.

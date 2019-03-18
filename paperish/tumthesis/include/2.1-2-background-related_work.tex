@@ -1,0 +1,162 @@
+
+\section{Background}
+
+\subsection{Core Features}
+
+% features:
+% - modularity, feature rich
+% - vectorization
+% - RSS
+% - dpdk: fast userspace NIC drivers
+
+Core features of \Ac{vpp} are... 
+
+... it's vectorized processing of packets in badges as the name
+indicates. This allows for better optimization.
+
+... it's support for \Ac{dpdk} with it's fast user-space NIC drivers.
+
+... it's modular packet processing graph. Specific features are
+implemented in nodes for example like ip4-lookup, ip6-lookup or
+vxlan4-encap and vxlan6-encap. Not only has it packet input nodes for
+NIC's handled by \Ac{dpdk} (dpdk-input), but also drivers to virtual
+links like virtual linux interfaces (tuntap, af-packet-input, tapcli)
+or memory map based interfaces (memif, netmap, vhost-user). New
+features can be added with plugins extending the packet processing
+graph by new nodes, adding new processing paths and adding new CLI
+commands. \cite{linguaglossa2017high}
+
+
+\subsection{Releases}
+
+% releases:
+
+Each release (such as v18.10) contains the following pre-release
+milestones:  With the first label "F0" the API is frozen and
+development shall aim for stability. For the second label "RC1" only
+bug fix changes are accepted and a first artifact is released. Then
+the iteration repeats and a second "RC2" version is released. Those
+pre- releases are marked with a tag containing the version number and
+the iteration appendix (v18.10-rc1). The final release will have no
+extra tags in their name. The git tag marks the official release, but
+the version-specific branch can still receive occasional updates.
+\cite{vppwiki:releases}
+
+The oldest version of VPP available in the github repository is from
+2016. Unless otherwise specified this performance analysis used the
+v18.10 branch from 14th of december 2018\footnote{commit
+a8e3001e68d8f5ea6cf526b131c92f5993597f81}.
+
+
+\subsection{Scenarios and Use Cases}
+
+% interesting scenarios / use cases: 
+
+% - routing the internet: >500.000 routes
+% - scale to multiple cpu's
+% - latency behaviour
+% - more complex tasks like vxlan encapsulation
+
+There are different scenarios and use cases for \Ac{vpp} tests: 
+
+The internet the BGP table size grew to 512,000 prefixes in 2014 and
+it continues growing. If \Ac{vpp} was to be used for routing tasks, it
+has to perform well with big routing tables.
+
+For handling high loads it helps spreading the computation intensive
+frame processing tasks to multiple cpu cores. Qosmos for example uses
+\Ac{vpp} to implement deep packet
+inspection.\footnote{\url{https://www.slideshare.net/QosmosResources
+/boosting-vnf-performance-with-vector-packet-processing-vpp}} The
+scaling in different scenarios like routing or vxlan encapsulation is
+therefore important to be tested.
+
+Viosoft on the other hand uses \Ac{vpp}
+\footnote{\url{https://www.slideshare.net/MichelleHolley1/development-
+test-and-characterization-of-mec-platforms-with-teranium-and-dronava}}
+in the context of embedded systems which might require stable or short
+latencies. Therefore latency behaviour represents an important aspect
+of performance analysis, too.
+
+
+\section{Related Work}
+
+There has been a previous work analyzing and describing the design,
+architechture and performance of \Ac{vpp} \cite{linguaglossa2017high}.
+It presents measurement results mainly regarding very specific
+properties like packet vector sizes. This paper on the other hand ...
+
+% TODO add differences. i haz:
+% - l2fib, ip4/6 l3fib routing table entries
+% - high core count cpu scaling
+% - models describing performance behaviour
+% - more in-depth latency description and model
+
+There is also a repository \cite{github:vpp-bench} containing some
+\Ac{vpp} startup and setup scripts used for
+\cite{linguaglossa2017high}.
+
+% moongen
+
+Regarding benchmarking methodology, \cite{emmerich2015moongen}
+discusses MoonGen, the load generator used in this paper.
+
+% rfc2544 not usable
+
+Unfortunately there is no fitting and established benchmarking
+routine. Even though RFC2544 \cite{rfc2544} describes "Benchmarking
+Methodology for Network Interconnect Devices", most of the suggestions
+done in it, are not relevant or applicable to software routers like
+\Ac{vpp}.
+
+% frame sizes
+
+For example it stresses procedures to test different ethernet frame
+sizes. Frame size is no limiting factor inside the \Ac{dut} though (in
+software routers with high packet rates) and is thus not necessary for
+upper bound performance analysis. \cite{emmerich2015assessing}
+
+% - "At the start of each trial a routing update
+%    MUST be sent to the DUT." (long running, no good idea)
+
+Furthermore the RFC states: "At the start of each trial a routing
+update MUST be sent to the DUT" \cite{rfc2544}. Adding up to several
+million routing entries using networking protocols before every test
+run doesn't appear to be a feasable approach. Instead \Ac{vpp}'s CLI
+is used to add all table entries using a single command.
+
+% - each test-run SHOULD take over a minute. (no change after 20
+%   seconds with turbo boost disabled) latency measurement one packet
+% - per minute - to slow rate
+
+Generally speaking, the RFC's requirements torwards the duration of
+test runs exceeds what was done for this paper. According to the RFC a
+test run should take longer than a minute - latency measurements shall
+only measure timings of a single packet per minute. Providing a
+constant level of CPU performance for example by disabling Intels
+turbo-boost, \Ac{vpp} stabilizes after only 10 to 20 seconds of
+receiving load which allows for way shorter test runs.
+
+% this one uses definitions of rfc1242. 
+% usable: throughput and latency
+
+RFC 2544 uses some definitions from RFC1242 \cite{rfc1242} like
+"Throughput" and "Latency", which are worth a look: RFC 1242 defines
+throughput as the highest throughput without any packet loss, which is
+not the same as the maximum measurable throughput. This paper
+refferes to throughput as the maximum measurable throughput if
+not specified otherwise. 
+
+% - latency measurement at the rfc1242 throughput rate -> doesnt work because of variance
+
+RFC 1242's definition of latency conforms to the latency measured by
+MoonGen which was used for this paper. RFC 2544 on the other hand
+additionally requires to measure the latency at the throughput
+according to RFC 1242. As this paper will show, the latency at very
+high throughput rates without packet loss varies a lot. Instead in
+order to get comparable latency results, a lower packet rate has to be
+selected.
+
+% TODO - special frames: broadcast, management, routing update
+% mentioned in rfc, but not looked at in this paper
+
