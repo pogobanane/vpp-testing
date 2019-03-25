@@ -204,6 +204,8 @@ lookups use a mtrie (\lstinline|vpp/src/vnet/ip/ip4_mtrie.h|).
 
 % There is a  All of them are used to heavily utilize the CPU's cache.
 
+% TODO compare to fastclick's fastest table https://github.com/tbarbette/fastclick/wiki/RangeIPLookup
+
 \paragraph{l2-fib}
 
 For packets reaching the l2-fwd node, the destination lookup is done
@@ -266,10 +268,55 @@ like the ip4-rewrite node does.
 %	- more efficient instruction cache usage?
 %	- VLIB_FRAME_SIZE
 
+Vectorization referres to \Ac{vpp} collecting incoming packets in
+batches. The input batch size is defined at compile time by
+\lstinline|VLIB_FRAME_SIZE| and per default set to 256. This is only
+the maximum size though. When packets don't arrive fast enough,
+batches are closed and submitted to the processing graph, before the
+size limit is reached. Nodes which classify packets might split input
+batches allow packets to traverse to different subsequent nodes. In
+this case the batch size shrinks further.
+
+This procedure reduces the number of \textit{instruction cache misses}, because
+a new node and it's associated function is loaded into the cache only
+once for every batch, instead of once per processed packet, as long as
+the node is small enough to fit in the cache. The node switching
+overhead is therefore shared among all packets in a batch.
+
+Additionally input batching allows for better \textit{data prefetching}. When
+each packet traverses the whole graph in a single run, nodes never
+know what data the next node will need to be prefetched. With input
+batching a single node processes many similar packets in a row and can
+thus efficiently prefetch the data it needs for the next packets of
+the current batch. Only the first few packets won't be prefetched.
+
+Comparing input batching to \textit{FastClick batching} there are two major
+differences: "Nodes in FastClick implicitly process packets
+individually, and only specific nodes have been augmented to also
+accept batched input" \cite{linguaglossa2017high}. Additionally
+\Ac{vpp} has better optimized buffer management and allocation for
+input batching for example through reuse of already allocated buffers.
+\cite{linguaglossa2017high}
+
+Furthermore the packet batch entering a node can be processed in
+batches, too. The packet processing function of a graph node may take
+typically up to four packets as parameters to process them
+simultaniously. This results in the minimum
+\lstinline|VLIB_FRAME_SIZE| beeing four. Not all nodes implement this
+feature, sometimes called "\textit{multi-loop}" though, because not
+all processing functions profit from it: While the profit in the
+xconnect processing path is negligible, the \Ac{ip4} lookup node is
+23\% faster with quad loop than with single loop processing. The
+\Ac{ip6} lookup node is only 5\% faster.
+
 
 \subsection{Collected Data}
 
 % why used testing methods: latency, throughput, perf/cache-misses
+
+For buil
+
+For \cite{linguaglossa2017high} the vpp nodes were extended to collect hardware stats for all processing functions individually which allowes for good insights. Because of time constraints this was not done in this paper. Instead this paper simply uses this asd
 
 % Analyzes and assesses several possible approaches that solve the problem
 

@@ -52,48 +52,65 @@ a8e3001e68d8f5ea6cf526b131c92f5993597f81}.
 
 % interesting scenarios / use cases: 
 
-A developer once formulated the design goal of \Ac{vpp}: It shall seemlessly integrate into the existing \Ac{sdn} stacks and it shall "become the foundation of the future cloud native services" \cite{florincoras}. That is, because \Ac{vpp} can serve in quite some different scenarios and can connect to different control plane tooling. 
+A developer once formulated the design goal of \Ac{vpp}: It shall
+seemlessly integrate into the existing \Ac{sdn} stacks and it shall
+"become the foundation of the future cloud native services"
+\cite{florincoras}. That is, because \Ac{vpp} can serve in quite some
+different scenarios and can connect to different control plane
+tooling.
 
-\paragraph{Data Plane}
+\subsubsection{Data Plane}
 
 % - routing the internet: >500.000 routes
-% - scale to multiple cpu's
-% - latency behaviour
-% - more complex tasks like vxlan encapsulation
 
 The internet the BGP table size grew to 512,000 prefixes in 2014 and
 it continues growing. As \Ac{vpp} aims to be used for routing tasks,
-it has to perform well with big routing tables.
+it has to perform well with big routing tables. \cite{bgphelp:size}
+
+% - scale to multiple cpu's
 
 For handling high loads \Ac{vpp} helps spreading the computation
 intensive frame processing tasks to multiple cpu cores. Qosmos for
 example uses \Ac{vpp} to implement deep packet inspection
 \cite{qosmos}.
 
+% - latency behaviour
+
 Viosoft on the other hand uses \Ac{vpp} in the context of embedded
 systems which might require stable or short latencies \cite{viosoft}.
 Therefore latency behaviour represents an important aspect of
 performance analysis, too.
 
-\paragraph{Control Plane}
+% - TODO more complex tasks like vxlan encapsulation
+% In \Ac{sdn} environments increasing virtualization of hardware also leads to a virtualization of physical links. P
 
-OpenDaylight software can do some VPP management using an OpenFlow interface via LISP flow mapping (Locator ID Separation Protocol) \cite{opendaylight:lisp}. 
+\subsubsection{Control Plane Integration}
 
-VPP also integrates into OpenStack Neutron, a networking management software for the OpenStack cloud computing platform.
+\Ac{vpp} integrates into open source control plane projects:
+OpenDaylight software can do some VPP management using an OpenFlow
+interface via \Ac{lisp} flow mapping \cite{opendaylight:lisp}. Using
+control plane software linke OpenDaylight, \Ac{vpp} also integrates
+into OpenStack Neutron, a networking management software for the
+OpenStack cloud computing platform \cite{fdio:integration}.
 
+% vPE: 39 times in source code, 
+% - Cisco Virtual Multiservice Data Center (VMDC)
+% - vPE (Virtual Provider Edge) provides VMDC 1-4.x
 
-vPE: 39 times in source code, 
-- Cisco Virtual Multiservice Data Center (VMDC)
-- vPE (Virtual Provider Edge) provides VMDC 1-4.x
+Furthermore it can be assumed that Cisco's \Ac{vpe} product group uses
+VPP, because the term "vPE" can be found 39 times in the source code
+and many additional times in the official documentation
+\cite{vppdocs}. \Ac{vpe} is a collection of Cisco's concepts for
+\Ac{sdn}, virtualized datacenters and cloud native environments called
+\Ac{vmdc} 1.x to 4.x. Those \Ac{vpe} concepts are used in several
+Cisco products \cite{cisco:sdn}:
 
-vPE is used by 
-Cisco VSG (Virtual Security Gateway)
-Cisco ASA 1000v, a Cloud Firewall
-Cisco vWAAS (Virtual Wide Area Applications Services)
-Citrix ADC VPX, a SDN suite
-
-
-
+\begin{itemize}
+	\item Cisco VSG (Virtual Security Gateway)
+	\item Cisco ASA 1000v, a Cloud Firewall
+	\item Cisco vWAAS (Virtual Wide Area Applications Services)
+	\item Citrix ADC VPX, a SDN suite
+\end{itemize}
 
 
 \section{Related Work}
@@ -101,14 +118,18 @@ Citrix ADC VPX, a SDN suite
 There has been a previous work analyzing and describing the design,
 architechture and performance of \Ac{vpp} \cite{linguaglossa2017high}.
 It presents measurement results mainly regarding very specific
-properties like packet vector sizes but lacks results about the impact
-of hash table sizes (l2fib, l3fib). This paper on the other hand ...
+properties like packet vector size or other optimization strategies
+but lacks results about the impact of hash table sizes. This paper on
+the other hand presents detailed test results for the layer 2
+\Ac{fib}, \Ac{ip4} \Ac{fib} and \Ac{ip6} \Ac{fib} which allow for a
+quantitative performance comparison.
 
 % TODO add differences. i haz:
 % - l2fib, ip4/6 l3fib routing table entries
 % - high core count cpu scaling
 % - models describing performance behaviour
 % - more in-depth latency description and model
+% - more independenet
 
 There is also a repository \cite{github:vpp-bench} containing some
 \Ac{vpp} startup and setup scripts used for
