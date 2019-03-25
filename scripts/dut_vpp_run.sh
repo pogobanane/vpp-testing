@@ -111,9 +111,18 @@ dTLB-store-misses,\
 dTLB-stores"
 
 	vpp_pid=`pgrep $VPP_PNAME`
+	
+	# worker thread to attatch perf record to
+	vpp_wk_spid=`ps -T -p $vpp_pid | grep vpp_wk_0 | tr " " "\n" | head -n2 | tail -n1`
+	if [[ -z "$vpp_wk_spid" ]]; then
+		vpp_wk_spid="$vpp_pid" # vpp runs without a worker -> attatch to vpp
+	fi
 
-	perf stat -x";" -e "$hwevents,$cacheevents" -o "$1" -t $vpp_pid sleep $3 &
-	perf record -o "${2}.data" -t $vpp_pid sleep $3 &
+	# run stats on the process to register all events 
+	perf stat -x";" -e "$hwevents,$cacheevents" -o "$1" -p $vpp_pid sleep $3 &
+	# run record only on main working thread to get representative
+	# perf top results
+	perf record -o "${2}.data" -t $vpp_wk_spid sleep $3 &
 	wait
 	perf report -i "${2}.data" --field-separator=";" > ${2}.csv
 }
