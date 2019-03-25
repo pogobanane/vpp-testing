@@ -302,7 +302,7 @@ function vpp-find-sweetspot () {
 
 #### l3 ip4 routing legacy: v16.09 ####
 
-# 6 runs with 50 different l2fib sizes each = 300
+# 6 runs with 50 different l3fib sizes each = 300
 vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routinglegacy.sh"
 for run in {0..5}
 do
