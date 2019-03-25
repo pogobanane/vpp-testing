@@ -48,35 +48,52 @@ v18.10 branch from 14th of december 2018\footnote{commit
 a8e3001e68d8f5ea6cf526b131c92f5993597f81}.
 
 
-\subsection{Scenarios and Use Cases}
+\subsection{Use Cases}
 
 % interesting scenarios / use cases: 
+
+A developer once formulated the design goal of \Ac{vpp}: It shall seemlessly integrate into the existing \Ac{sdn} stacks and it shall "become the foundation of the future cloud native services" \cite{florincoras}. That is, because \Ac{vpp} can serve in quite some different scenarios and can connect to different control plane tooling. 
+
+\paragraph{Data Plane}
 
 % - routing the internet: >500.000 routes
 % - scale to multiple cpu's
 % - latency behaviour
 % - more complex tasks like vxlan encapsulation
 
-There are different scenarios and use cases for \Ac{vpp} tests: 
-
 The internet the BGP table size grew to 512,000 prefixes in 2014 and
-it continues growing. If \Ac{vpp} was to be used for routing tasks, it
-has to perform well with big routing tables.
+it continues growing. As \Ac{vpp} aims to be used for routing tasks,
+it has to perform well with big routing tables.
 
-For handling high loads it helps spreading the computation intensive
-frame processing tasks to multiple cpu cores. Qosmos for example uses
-\Ac{vpp} to implement deep packet
-inspection.\footnote{\url{https://www.slideshare.net/QosmosResources
-/boosting-vnf-performance-with-vector-packet-processing-vpp}} The
-scaling in different scenarios like routing or vxlan encapsulation is
-therefore important to be tested.
+For handling high loads \Ac{vpp} helps spreading the computation
+intensive frame processing tasks to multiple cpu cores. Qosmos for
+example uses \Ac{vpp} to implement deep packet inspection
+\cite{qosmos}.
 
-Viosoft on the other hand uses \Ac{vpp}
-\footnote{\url{https://www.slideshare.net/MichelleHolley1/development-
-test-and-characterization-of-mec-platforms-with-teranium-and-dronava}}
-in the context of embedded systems which might require stable or short
-latencies. Therefore latency behaviour represents an important aspect
-of performance analysis, too.
+Viosoft on the other hand uses \Ac{vpp} in the context of embedded
+systems which might require stable or short latencies \cite{viosoft}.
+Therefore latency behaviour represents an important aspect of
+performance analysis, too.
+
+\paragraph{Control Plane}
+
+OpenDaylight software can do some VPP management using an OpenFlow interface via LISP flow mapping (Locator ID Separation Protocol) \cite{opendaylight:lisp}. 
+
+VPP also integrates into OpenStack Neutron, a networking management software for the OpenStack cloud computing platform.
+
+
+vPE: 39 times in source code, 
+- Cisco Virtual Multiservice Data Center (VMDC)
+- vPE (Virtual Provider Edge) provides VMDC 1-4.x
+
+vPE is used by 
+Cisco VSG (Virtual Security Gateway)
+Cisco ASA 1000v, a Cloud Firewall
+Cisco vWAAS (Virtual Wide Area Applications Services)
+Citrix ADC VPX, a SDN suite
+
+
+
 
 
 \section{Related Work}
@@ -84,7 +101,8 @@ of performance analysis, too.
 There has been a previous work analyzing and describing the design,
 architechture and performance of \Ac{vpp} \cite{linguaglossa2017high}.
 It presents measurement results mainly regarding very specific
-properties like packet vector sizes. This paper on the other hand ...
+properties like packet vector sizes but lacks results about the impact
+of hash table sizes (l2fib, l3fib). This paper on the other hand ...
 
 % TODO add differences. i haz:
 % - l2fib, ip4/6 l3fib routing table entries
@@ -141,21 +159,22 @@ receiving load which allows for way shorter test runs.
 % usable: throughput and latency
 
 RFC 2544 uses some definitions from RFC1242 \cite{rfc1242} like
-"Throughput" and "Latency", which are worth a look: RFC 1242 defines
-throughput as the highest throughput without any packet loss, which is
-not the same as the maximum measurable throughput. This paper
-refferes to throughput as the maximum measurable throughput if
-not specified otherwise. 
+"Throughput": RFC 1242 defines throughput as the highest throughput
+without any packet loss, which is not the same as the maximum
+measurable throughput. This paper refferes to throughput as the
+maximum measurable throughput if not specified otherwise.
 
 % - latency measurement at the rfc1242 throughput rate -> doesnt work because of variance
 
-RFC 1242's definition of latency conforms to the latency measured by
-MoonGen which was used for this paper. RFC 2544 on the other hand
-additionally requires to measure the latency at the throughput
-according to RFC 1242. As this paper will show, the latency at very
-high throughput rates without packet loss varies a lot. Instead in
-order to get comparable latency results, a lower packet rate has to be
-selected.
+% removed, because too complicated to be correct. 
+% "moongen latency measurement is science stadtard" - paul
+% RFC 1242's definition of latency conforms to the latency measured by
+% MoonGen which was used for this paper. RFC 2544 on the other hand
+% additionally requires to measure the latency at the throughput
+% according to RFC 1242. As this paper will show, the latency at very
+% high throughput rates without packet loss varies a lot. Instead in
+% order to get comparable latency results, a lower packet rate has to be
+% selected.
 
 % TODO - special frames: broadcast, management, routing update
 % mentioned in rfc, but not looked at in this paper
