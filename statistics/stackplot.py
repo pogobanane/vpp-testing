@@ -17,8 +17,8 @@ import re
 from scipy.ndimage.filters import gaussian_filter1d
 
 hmac = ''
-DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-02-01_22-59-33_163135/nida/',
-        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-02-01_22-59-33_163135/cesis/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-25_19-52-28_296008/klaipeda/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-25_19-52-28_296008/narva/']
 
 GREEN = "#3f9852"
 BLUE = "#3869b1"
@@ -377,4 +377,76 @@ def stacksgraph_per_macs(fileprefix):
     fig.savefig("stackplot_{}_smallWiggle.pdf".format(fileprefix))
     plt.show()
 
-stacksgraph_per_macs("l2_throughmac_")
+def stacksgraph_per_routes(fileprefix):
+    macss = []
+    perfrecorddicts = []
+    perfrecordlabels = []
+    for throughfile in fthroughput: 
+            filename = os.path.basename(throughfile)
+            if fileprefix in filename and "_0." in filename:
+                macs = int(filename.split(fileprefix)[1][0:8])
+                runs = 6
+                runresults = {}
+                for run in range(0,runs):
+                    print(run)
+                    postfix = filename.split(fileprefix)[1]
+                    postfix = "{}{}{}".format(postfix[0:9], run, postfix[10:])
+                    nextfile = os.path.join(os.path.dirname(throughfile), "{}{}".format(fileprefix, postfix))
+                    print(nextfile)
+                    statfile = nextfile[:-15]
+                    statfile = "{}{}".format(nextfile[:-15], ".perfrecord.csv")
+                    print(statfile)
+                    statfilepath = next(filter(lambda x: x.endswith(os.path.basename(statfile)), frecord))
+                    symbols = parse_perfrecord(statfilepath)
+                    for key, value in symbols.items():
+                        runresults[key] = runresults.get(key, [value])
+
+                macss.append(macs)
+                avgdict = {}
+                for key, values in runresults.items():
+                    print(values)
+                    avgdict[key] = np.average(values)
+                    if key not in perfrecordlabels:
+                        perfrecordlabels.append(key)
+                avgsum = 0
+                for value in avgdict.values():
+                    avgsum += float(value)
+                for key, avg in avgdict.items():
+                    avgdict[key] = float(avgdict[key]) / avgsum
+                perfrecorddicts.append(avgdict)
+
+    print(macss)
+    print(perfrecorddicts)
+    print(perfrecordlabels)
+    d2arr = []
+    for label in perfrecordlabels:
+        yvalues = []
+        for perfdict in perfrecorddicts:
+            yvalues.append(perfdict.get(label, 0))
+        d2arr.append(yvalues)
+    print(d2arr)
+    for arr in d2arr:
+        print(arr[0])
+    #cachemisses1_smooth = gaussian_filter1d(cachemisses1, sigma=1)
+    fig = plt.figure(figsize=(7, 5), dpi=160)
+    axes = plt.gca() # swap axes
+    #ax2 = axes.twinx()
+    #axes.set_ylim([0,150])
+    #axes.set_xlim([0, 10000000])
+    axes.set_xscale("log")
+
+    #ax2.axhline(color="gray", linewidth=0.5, y=15)
+    gTuples = axes.stackplot(macss, tuple(d2arr[3:]), labels=perfrecordlabels[3:8], baseline="wiggle")
+    plt.title("sending to many destinations")
+    axes.legend(loc='upper center')
+    axes.set_ylabel("throughput (Mpps)")
+    axes.set_xlabel("l2fib entries")
+    fig.tight_layout()
+    #plt.grid(True)
+
+    #return get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm")
+    fig.savefig("stackplot_{}_wiggle.pdf".format(fileprefix))
+    plt.show()
+
+#stacksgraph_per_macs("l2_throughmac_")
+stacksgraph_per_routes("l3_routes_")
