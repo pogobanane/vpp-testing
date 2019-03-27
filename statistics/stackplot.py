@@ -436,16 +436,17 @@ def stacksgraph_per_routes(fileprefix):
     axes.set_xscale("log")
 
     #ax2.axhline(color="gray", linewidth=0.5, y=15)
-    gTuples = axes.stackplot(macss, tuple(d2arr[3:]), labels=perfrecordlabels[3:8], baseline="wiggle")
+    gTuples = axes.stackplot(macss, tuple(d2arr[3:]), labels=perfrecordlabels[3:8])
+        #, baseline="wiggle")
     plt.title("sending to many destinations")
     axes.legend(loc='upper center')
     axes.set_ylabel("throughput (Mpps)")
-    axes.set_xlabel("l2fib entries")
+    axes.set_xlabel("l3fib entries")
     fig.tight_layout()
     #plt.grid(True)
 
     #return get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm")
-    fig.savefig("stackplot_{}_wiggle.pdf".format(fileprefix))
+    fig.savefig("stackplot_{}.pdf".format(fileprefix))
     plt.show()
 
 #stacksgraph_per_macs("l2_throughmac_")
