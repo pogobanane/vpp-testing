@@ -26,6 +26,7 @@ features can be added with plugins extending the packet processing
 graph by new nodes, adding new processing paths and adding new CLI
 commands. \cite{linguaglossa2017high}
 
+% TODO: direct competitors
 
 \subsection{Releases}
 
@@ -115,6 +116,11 @@ Cisco products \cite{cisco:sdn}:
 
 \section{Related Work}
 
+% TODO: add info about additional testing methodology like ip6 https://www.rfc-editor.org/rfc/rfc5180.txt
+% \cite{revisiting-benchmarking:1}
+% \cite{openvswitch:gym}
+% \cite{compare-highperf}
+
 There has been a previous work analyzing and describing the design,
 architechture and performance of \Ac{vpp} \cite{linguaglossa2017high}.
 It presents measurement results mainly regarding very specific
@@ -130,6 +136,12 @@ quantitative performance comparison.
 % - models describing performance behaviour
 % - more in-depth latency description and model
 % - more independenet
+
+For \cite{linguaglossa2017high} the vpp nodes were extended to collect
+stats, such as \Ac{perf} does, for all processing functions
+individually which allowes for further insights. This paper on the
+other hand (see chapter \ref{sec:methodology}) uses perf-record and
+perf-report, to compare used cpu time off all \Ac{vpp} funcions.
 
 There is also a repository \cite{github:vpp-bench} containing some
 \Ac{vpp} startup and setup scripts used for
@@ -185,9 +197,16 @@ without any packet loss, which is not the same as the maximum
 measurable throughput. This paper refferes to throughput as the
 maximum measurable throughput if not specified otherwise.
 
-% - latency measurement at the rfc1242 throughput rate -> doesnt work because of variance
+% - latency measurement at the rfc1242 throughput rate -> doesnt work
+% because of variance
 
-% removed, because too complicated to be correct. 
+% this replaces the commented paragraph, because that was too
+% complicated to get correct.
+
+For deeper insights into how the throughput and latency is measured,
+the paper \cite{emmerich2015moongen} gives a lot of insight for
+example about the time measurement accuracy.
+
 % "moongen latency measurement is science stadtard" - paul
 % RFC 1242's definition of latency conforms to the latency measured by
 % MoonGen which was used for this paper. RFC 2544 on the other hand

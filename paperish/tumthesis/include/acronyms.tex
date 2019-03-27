@@ -101,6 +101,11 @@
 	long				= {Device under Test},
 	list				= {\Acl{dut}.}
 }
+\DeclareAcronym{loadgen}{
+	short				= {\sc{LoadGen}},
+	long				= {Load Generating Device},
+	list				= {\Acl{loadgen}.}
+}
 \DeclareAcronym{fib}{
 	short				= {\sc{fib}},
 	long				= {Forwarding Information Base},
@@ -147,4 +152,52 @@
 	short				= {\sc{IPv6}},
 	long				= {Internet Protocol version 6},
 	list				= {\Acl{ip6}.}
+}
+
+\DeclareAcronym{perf}{
+	short				= {\sc{perf}},
+	long				= {Linux Performance Tools},
+	list				= {\Acl{perf}.},
+	extra				= {%
+		\cite{perf}.
+	}
+}
+
+\DeclareAcronym{vxlan}{
+	short				= {\sc{VXLAN}},
+	long				= {Virtual Extensible LAN},
+	list				= {\Acl{vxlan}.},
+	extra				= {%
+		A protocol for layer 2 ethernet packet encapsulation. Allows gateways to create over 16 million ip-tunnels for layer 2 traffic to a single remote network node.  
+	}
+}
+
+\DeclareAcronym{config}{
+	short				= {\sc{config}},
+	long				= {configuration file},
+	list				= {\Acl{config}.},
+	extra				= {%
+		Referres to \Ac{vpp}'s startup configuration file.  
+	}
+}
+
+\DeclareAcronym{exec}{
+	short				= {\sc{exec}},
+	long				= {execution file},
+	list				= {\Acl{exec}.},
+	extra				= {%
+		Referres to \Ac{vpp}'s on startup executed file.  
+	}
+}
+
+\DeclareAcronym{nic}{
+	short				= {\sc{NIC}},
+	long				= {Network Interface Controller},
+	list				= {\Acl{nic}.}
+}
+
+\DeclareAcronym{ram}{
+	short				= {\sc{RAM}},
+	long				= {Random Access Memory},
+	list				= {\Acl{ram}.}
 }
