@@ -25,7 +25,7 @@ packet processing.
 
 % moongen 
 
-\subsubsection{MoonGen} 
+\subsubsection{MoonGen (Throughput and Latency)} 
 
 % TODO talk about threading
 
@@ -134,13 +134,33 @@ significantly more than within one testrun. Therefore in order to get
 an insight in how spread the variance is, each test run is repeated 6
 times. 
 
-As figure \ref{testsequence} shows, the \Ac{dut} and \Ac{loadgen} first read the remote configuration file, after the management server has started the test. Afterwards both devices configure the Intel pstate driver  as described in section \ref{sec:hardware} and the \Ac{dut} loads the kernel module for the NIC's. Then \Ac{dut} and \Ac{loadgen} are synchronized as the pre-test \textit{setup is complete}. 
+As figure \ref{testsequence} shows, the \Ac{dut} and \Ac{loadgen}
+first read the remote configuration file, after the management server
+has started the test. Afterwards both devices configure the Intel
+pstate driver  as described in section \ref{sec:hardware} and the
+\Ac{dut} loads the kernel module for the NIC's. Then \Ac{dut} and
+\Ac{loadgen} are synchronized as the pre-test \textit{setup is
+complete}.
 
-Before starting the new \Ac{vpp} daemon, the old one is killed and some files which may contain global state are removed. The \Ac{vpp} daemon will take at most a few seconds to set itself up, so both devices are synchronized again and MoonGen is already beeing started, because it's setup takes longer. When MoonGen is set up and starts it's warmup loadgen-phase, \Ac{vpp} is already online. \textit{20 seconds} after MoonGen started both systems are \textit{running and have stabilized}. 
+Before starting the new \Ac{vpp} daemon, the old one is killed and
+some files which may contain global state are removed. The \Ac{vpp}
+daemon will take at most a few seconds to set itself up, so both
+devices are synchronized again and MoonGen is already beeing started,
+because it's setup takes longer. When MoonGen is set up and starts
+it's warmup loadgen-phase, \Ac{vpp} is already online. \textit{20
+seconds} after MoonGen started both systems are \textit{running and
+have stabilized}.
 
-Now, after both systems synchronized again, \textit{\Ac{perf} data is collected} as described in section \ref{sec:perf} for a timespan of 10 seconds. Then both systems synchronize again, \Ac{vpp}'s counters are queried (section \ref{sec:vppcounters}), MoonGen is killed and after giving it 10 seconds time to finalize the throughput and latency histogram, all files containing test results are uploaded to the management server. 
+Now, after both systems synchronized again, \textit{\Ac{perf} data is
+collected} as described in section \ref{sec:perf} for a timespan of 10
+seconds. Then both systems synchronize again, \Ac{vpp}'s counters are
+queried (section \ref{sec:vppcounters}), MoonGen is killed and after
+giving it 10 seconds time to finalize the throughput and latency
+histogram, all files containing test results are uploaded to the
+management server.
 
-Approximately 43 seconds after the test started, the final synchronization takes place an the \textit{next run can be started}. 
+Approximately 43 seconds after the test started, the final
+synchronization takes place an the \textit{next run can be started}.
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/procedure-sequence.png}
@@ -149,10 +169,50 @@ Approximately 43 seconds after the test started, the final synchronization takes
 \end{figure}
 
 
+\subsection{Testing Scenarios}
+
+For this paper several scenarios were tested: 
+
+\paragraph{XConnect} 
+
+The most simple configuration is linking two network interfaces via cross connect (xconnect). This is a static mapping from one interfaces input to another interfaces output and vice versa. 
+
+\paragraph{L2 bridging}
+
+For layer 2 switching \Ac{vpp} can create bridge domains. The optional
+bridge features mac-learning and mac-aging impact performance when
+activated, even when not specifially tested. Other features like
+flooding settings have no significant performance impact when not
+directly tested. Therefore in section \ref{sec:cpubottleneck} results
+are presented with and without those features enabled.
+
+\paragraph{L3 routing}
+
+The \Ac{ip4} and \Ac{ip6} routing tests use multiple routes which all point to the same destination, conforming RFC2544.
+
+\paragraph{\Ac{vxlan}}
+
+Setting \Ac{vpp} up to encapsulate \Ac{vxlan} packets takes amongh others the following steps: 
+
+\begin{enumerate}
+	\item Add a dedicated IP \Ac{fib} table and configure it to route to the \Ac{vxlan} decapsulation endpoint.
+	\item Create a bridge domain belonging to the dedicated ip table.
+	\item Setup the tunnel using the bridge domain and the dedicated ip table.
+	\item Add the new virtual vxlan-tunnel interface and all other necessary interfaces to the bridge domain and take care of all of their l2fib entries. 
+\end{enumerate}
+
+This means all packets arrive in the bridge domain, are forwarded to
+the virtual vxlan-tunnel interface, then encapsulated and sent to the
+vxlan-tunnel endpoint via IP.
+
+
 \subsection{Testbed Hardware Setup}
 \label{sec:hardware}
 
-Test are conducted on different test systems listed in table \ref{table:hardware}. All of the used systems (even the \Ac{loadgen} ones) are configured via the Intel Pstate driver to disable turbo boost in order to maintain a close to constanct clock speed. 
+Test are conducted on different test systems listed in table
+\ref{table:hardware}. All of the used systems (even the \Ac{loadgen}
+ones) are configured via the Intel Pstate driver to disable turbo
+boost in order to maintain a close to constanct clock speed.
 
 % lscpu
 % lshw -C memory

@@ -97,9 +97,9 @@ require at least DDR3-2133 memory.
 
 \subsubsection{CPU time per Packet}
 
-One of the biggest bottlenecks is the CPU time spent per packet, as a
-single core can't saturate a 10GbE link. The following subsections
-describe how this issue is dealt with in VPP.
+As section \ref{sec:cpubottleneck} will show, the CPU time spent per
+packet is a bottleneck. The following subsections describe how this
+issue is dealt with in VPP.
 
 
 % TODO:
@@ -113,6 +113,7 @@ For VPP to utilize NIC's up to their specified line rate, it relies on
 \Ac{dpdk}. This introduces a few noteworthy optimizations:
 
 \paragraph{RSS (Receive Side Scaling)}
+\label{sec:rss}
 
 When the NIC recieves a packet, it can be configured to hash over
 specified packet header fields to assign the packet to a recieving

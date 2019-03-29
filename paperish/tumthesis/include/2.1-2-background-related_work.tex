@@ -117,7 +117,6 @@ Cisco products \cite{cisco:sdn}:
 \section{Related Work}
 
 % TODO: add info about additional testing methodology like ip6 https://www.rfc-editor.org/rfc/rfc5180.txt
-% \cite{revisiting-benchmarking:1}
 % \cite{openvswitch:gym}
 % \cite{compare-highperf}
 
@@ -203,9 +202,10 @@ maximum measurable throughput if not specified otherwise.
 % this replaces the commented paragraph, because that was too
 % complicated to get correct.
 
-For deeper insights into how the throughput and latency is measured,
-the paper \cite{emmerich2015moongen} gives a lot of insight for
-example about the time measurement accuracy.
+For deeper insights into how the throughput and latency is measured by
+MoonGen, the tool used for this paper, \cite{emmerich2015moongen}
+gives a lot of insight for example about the time measurement
+accuracy.
 
 % "moongen latency measurement is science stadtard" - paul
 % RFC 1242's definition of latency conforms to the latency measured by
@@ -219,3 +219,12 @@ example about the time measurement accuracy.
 % TODO - special frames: broadcast, management, routing update
 % mentioned in rfc, but not looked at in this paper
 
+For another paper \cite{revisiting-benchmarking:1} RFC2544-compliant
+benchmarks were done with FreeBSD, Linux and an off-the-shelf MicroTik
+router. It summarizes existing methodology and benchmarking systems
+and presents relevant parts of the results.
+
+\subsubsection{TODO sections:}
+
+Compare own measurements with figure 5+6 regarding latencies (linux, microtik, freebsd) of revisiting benchmarking methodology for interconnected devices.
++ frame losses (fig. 3):
