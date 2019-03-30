@@ -17,8 +17,8 @@ import re
 from scipy.ndimage.filters import gaussian_filter1d
 
 hmac = ''
-DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-06_18-49-35_922378/nida/',
-        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-06_18-49-35_922378/cesis/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-25_19-52-28_296008/klaipeda/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-25_19-52-28_296008/narva/']
 
 GREEN = "#3f9852"
 BLUE = "#3869b1"
@@ -90,20 +90,30 @@ flatency = []
 fthroughput = []
 fstat = []
 
-for d in DIRS:
-    files = os.listdir(d)
+def scrape_dirs(folder, other):
+    flatency = []
+    fthroughput = []
+    fstat = []
 
-    flatency_ = filter(lambda x: x.endswith('.histogram.csv'), files)
-    flatency.extend(map(lambda x: os.path.join(d, x), flatency_))
-    flatency = sorted(flatency)
+    dirs = [folder, other]
+    for d in dirs:
+        files = os.listdir(d)
 
-    fthroughput_ = filter(lambda x: x.endswith('throughput.csv'), files)
-    fthroughput.extend(map(lambda x: os.path.join(d, x), fthroughput_))
-    fthroughput = sorted(fthroughput)
+        flatency_ = filter(lambda x: x.endswith('.histogram.csv'), files)
+        flatency.extend(map(lambda x: os.path.join(d, x), flatency_))
+        flatency = sorted(flatency)
 
-    fstat_ = filter(lambda x: x.endswith('.perfstat.csv'), files)
-    fstat.extend(map(lambda x: os.path.join(d, x), fstat_))
-    fstat = sorted(fstat)
+        fthroughput_ = filter(lambda x: x.endswith('throughput.csv'), files)
+        fthroughput.extend(map(lambda x: os.path.join(d, x), fthroughput_))
+        fthroughput = sorted(fthroughput)
+
+        fstat_ = filter(lambda x: x.endswith('.perfstat.csv'), files)
+        fstat.extend(map(lambda x: os.path.join(d, x), fstat_))
+        fstat = sorted(fstat)
+
+    return flatency, fthroughput, fstat
+
+flatency, fthroughput, fstat = scrape_dirs(DIRS[0], DIRS[1])
 
 def parse_throughput(csvfile):
     print("penis")
@@ -381,7 +391,7 @@ def throughput_per_routes(fileprefix):
             filename = os.path.basename(throughfile)
             if fileprefix in filename and "_0." in filename:
                 macs = int(filename.split(fileprefix)[1][0:8])
-                runs = 1
+                runs = 6
                 runresults = []
                 runresults_cache1 = []
                 runresults_cache3 = []
@@ -478,12 +488,12 @@ def throughput_per_cores(fileprefix):
                     statfile = nextfile[:-15]
                     statfile = "{}{}".format(nextfile[:-15], ".perfstat.csv")
                     print(statfile)
-                    #statfilepath = next(filter(lambda x: x.endswith(os.path.basename(statfile)), fstat))
-                    #misses1 = parse_perfstats(statfilepath, "L1-dcache-load-misses")
-                    #misses3 = parse_perfstats(statfilepath, "LLC-load-misses")
+                    statfilepath = next(filter(lambda x: x.endswith(os.path.basename(statfile)), fstat))
+                    misses1 = parse_perfstats(statfilepath, "L1-dcache-load-misses")
+                    misses3 = parse_perfstats(statfilepath, "LLC-load-misses")
                     runresults.append(throughput)
-                    #runresults_cache1.append(misses1)
-                    #runresults_cache3.append(misses3)
+                    runresults_cache1.append(misses1)
+                    runresults_cache3.append(misses3)
 
                 macss.append(macs)
                 through_avg = np.average(runresults)
@@ -534,4 +544,127 @@ def throughput_per_cores(fileprefix):
     fig.savefig("throughput_{}.pdf".format(fileprefix))
     plt.show()
 
-throughput_per_cores("l3_multicore_")
+def throughput_per_cores_collect(fileprefix, flatency, fthroughput, fstat):
+    macss = []
+    throughputs = []
+    through_stddevs = []
+    cachemisses1 = []
+    cachemisses1_stddevs = []
+    cachemisses3 = []
+    cachemisses3_stddevs = []
+    txmin = []
+    for throughfile in fthroughput: 
+            filename = os.path.basename(throughfile)
+            if fileprefix in filename and "_0." in filename:
+                macs = int(filename.split(fileprefix)[1][0:2])
+                runs = 6
+                runresults = []
+                runresults_cache1 = []
+                runresults_cache3 = []
+                txresults = []
+                for run in range(0,runs):
+                    print(run)
+                    postfix = filename.split(fileprefix)[1]
+                    postfix = "{}{}{}".format(postfix[0:3], run, postfix[4:])
+                    nextfile = os.path.join(os.path.dirname(throughfile), "{}{}".format(fileprefix, postfix))
+                    print(nextfile)
+                    tx,n2,throughput,n3 = parse_throughput(nextfile)
+                    statfile = nextfile[:-15]
+                    statfile = "{}{}".format(nextfile[:-15], ".perfstat.csv")
+                    print(statfile)
+                    statfilepath = next(filter(lambda x: x.endswith(os.path.basename(statfile)), fstat))
+                    misses1 = parse_perfstats(statfilepath, "L1-dcache-load-misses")
+                    misses3 = parse_perfstats(statfilepath, "LLC-load-misses")
+                    runresults.append(throughput)
+                    runresults_cache1.append(misses1)
+                    runresults_cache3.append(misses3)
+                    txresults.append(tx)
+
+                macss.append(macs)
+                through_avg = np.average(runresults)
+                throughputs.append(through_avg)
+                through_stddevs.append(np.std(runresults))
+                txmin.append(np.min(txresults))
+                print(runresults_cache1)
+                print(runresults_cache3)
+                cachemisses1.append(np.average(runresults_cache1) / through_avg * 256 / 1000000)
+                cachemisses1_stddevs.append(np.std(runresults_cache1) / through_avg * 256 / 1000000)
+                cachemisses3.append(np.average(runresults_cache3) / through_avg * 256 / 1000000)
+                cachemisses3_stddevs.append(np.std(runresults_cache3) / through_avg * 256 / 1000000)
+    print(macss)
+    print(throughputs)
+    print(cachemisses1)
+    print(cachemisses3)
+    print(txmin)
+    return macss, throughputs, through_stddevs, txmin
+
+def throughput_per_cores_summary():
+
+    # klaipeda, 3.2ghz, v18.10
+    flatency, fthroughput, fstat = scrape_dirs('/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-15_21-17-06_287474/klaipeda/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-15_21-17-06_287474/narva/')
+    macss1, throughputs1, through_stddevs1, txmin1 = throughput_per_cores_collect("l3_multicore_", flatency, fthroughput, fstat)
+
+    # klaipeda, 1.6ghz, v18.10
+    flatency, fthroughput, fstat = scrape_dirs('/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-16_23-04-20_018896/klaipeda/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-16_23-04-20_018896/narva/')
+    macss2, throughputs2, through_stddevs2, txmin2 = throughput_per_cores_collect("l3_multicore_", flatency, fthroughput, fstat)
+    
+    # omastar, 2.2ghz, v18.10
+    flatency, fthroughput, fstat = scrape_dirs('/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-12_21-04-57_933737/omastar/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-12_21-04-57_933737/omanyte/')
+    macss3, throughputs3, through_stddevs3, txmin3 = throughput_per_cores_collect("l3_multicore_", flatency, fthroughput, fstat)
+
+    # omastar, 1.2ghz, v18.10
+    flatency, fthroughput, fstat = scrape_dirs('/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-14_20-08-11_235402/omastar/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-14_20-08-11_235402/omanyte/')
+    macss4, throughputs4, through_stddevs4, txmin4 = throughput_per_cores_collect("l3_multicore_", flatency, fthroughput, fstat)
+
+    fig = plt.figure(figsize=(7, 4), dpi=160)
+    axes = plt.gca() # swap axes
+    #ax2 = axes.twinx()
+    #axes.set_ylim([0,150])
+    axes.set_xlim([0, 7])
+    #axes.set_yscale("log")
+    #ax2.set_yscale('log')
+    #axes.set_xscale("log", basex=10)
+    #axes.axvline(color="gray", x=2048)
+    #axes.text(2048, 8.4, " l1 cache")
+    #axes.axvline(color="gray", x=16384)
+    #axes.text(16384, 8.4, " l2 cache")
+    #axes.axvline(color="gray", x=2097152)
+    #axes.text(2097152, 8.4, " l3 cache")
+
+    n1,n1,n1 = axes.errorbar(macss1, txmin1, np.zeros(len(macss1)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
+    n1,n1,n1 = axes.errorbar(macss2, txmin2, np.zeros(len(macss2)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
+    n1,n1,n1 = axes.errorbar(macss3, txmin3, np.zeros(len(macss3)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
+    n1,n1,n1 = axes.errorbar(macss4, txmin4, np.zeros(len(macss4)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
+
+    g1,n1,n1 = axes.errorbar(macss1, throughputs1, through_stddevs1, linewidth=2, elinewidth=0.5, color=GREEN) #, linestyle="-", marker=".")
+    g2,n2,n2 = axes.errorbar(macss2, throughputs2, through_stddevs2, linewidth=2, elinewidth=0.5, color=BLUE) #, linestyle="-", marker=".")
+    g3,n1,n1 = axes.errorbar(macss3, throughputs3, through_stddevs3, linewidth=2, elinewidth=0.5, color=ORANGE) #, linestyle="-", marker=".")
+    g4,n1,n1 = axes.errorbar(macss4, throughputs4, through_stddevs4, linewidth=2, elinewidth=0.5, color=PURPLE) #, linestyle="-", marker=".")
+
+    axes.text(0.1, 15.1, "klaipeda tx (10GbE)")
+    axes.axhline(color="gray", linewidth=1, y=14.88)
+    axes.text(0.1, 19, "omastar tx (40GbE)")
+    axes.axhline(color="gray", linewidth=1, y=20.5)
+
+    plt.title("sending from a few ip's")
+    axes.set_ylabel("throughput (Mpps)")
+    axes.set_xlabel("vpp workers (rss)")
+    #ax2.set_ylabel("cache misses per 256-packet vector")
+    plt.legend([g1, g2, g3, g4], ["klaipeda @ 3.2GHz", "klaipeda @ 1.6GHz", "omastar @ 2.2GHz", "omastar @ 1.2GHz"], loc="lower right")
+    fig.tight_layout()
+    #plt.grid(True)
+
+    #return get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm")
+    fig.savefig("throughput_summary_multicore.pdf")
+    plt.show()
+
+
+throughput_per_cores_summary()
+#throughput_per_routes("l3_routes_")
+#throughput_per_cores("l3_multicore_")
+#throughput_per_routes("l3v6_routes_")
+#throughput_per_cores("l3v6_multicore_")
