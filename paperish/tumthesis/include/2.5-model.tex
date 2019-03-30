@@ -36,18 +36,20 @@ rates $p_{max}$ and the maximum clock speed $c_{max}$:
 
 $$ f(c) = (0.9 * \frac{c}{c_{max}} + 0.1) * p_{max} $$
 
-This does not exactly resemble the expected function $f(c) =
-\frac{c}{c_{max}} * p_{max}$ which were to be expected if the CPU
-cycles were the only limiting factor. This expected function can be
-observed though with MoonRoute \cite{chair:architecture} which
-indicates a further limiting factor caused by the code, besides CPU
+This models approximates for 50\% of the maximum clock speed a
+throughput of 55\% of the maximum one. This does not exactly resemble
+the expected function $f(c) = \frac{c}{c_{max}} * p_{max}$ (half
+the performance at half the clockspeed) which were to be expected if
+the CPU cycles were the only limiting factor. This expected behaviour
+can be observed though with MoonRoute \cite{chair:architecture} which
+indicates another limiting factor, besides CPU
 frequency.
 
 % could it be, that vectorization or multi loop gives a base performance boost?
 
 % TODO: automate tests for this table and look at i/d cache misses and perf records
 
-\begin{figure}[!ht]
+\begin{table}[!ht]
 	\vspace{5ex}
 	\begin{tabular}[]{ l r r r }
 		Scenario & 1.6GHz (50\%) & 3.1GHz (97\%)  & 3.2GHz (100\%) \\ 
@@ -64,7 +66,7 @@ frequency.
 	\end{tabular}
 	\caption{Maximum througput (Mpps) in different scenarios with different CPU frequencies measured on klaipeda. }
 	\label{bottleneck}
-\end{figure}
+\end{table}
 % With offered Mpps beeing 100\%, "Relative" is the maximum packet throughput in relation to the offered one.
 
 
@@ -89,11 +91,34 @@ field hashing can assign them to different queues. Using four
 different source addresses per queue is sufficient to hit all of them
 well.
 
-Layer 2 bridges on the other hand is completely singlethreaded.
+Layer 2 bridges on the other hand are completely singlethreaded.
 Because \Ac{vxlan} needs a bridge to recieve or send layer 2 traffic,
 it can't utilize multiple queues, too.
 
-% TODO what happens with different flows per core? low flows but high core count?
+Scaling measurements are conducted with a 10GbE and a 40GbE link with
+high and low CPU clock speed. Test begin with \Ac{vpp} in
+singlethreaded mode, having main core and worker in the same thread
+and continue with using unused physical cores for workers.
+
+As figure \ref{graph:multicore} shows, switching from singlethreaded
+mode to a dedicated worker increases throughput slightly, but barely
+noticable. Two cores are already enough to saturate the 10GbE link.
+The virtual ("hyper threading") cores are used for workers three to
+six within the 10GbE system which results in lower performance gain
+and even slight performance loss in the end.
+
+Using the 40GbE system at maximum CPU clock two cores can just not
+saturate the limits of the \Ac{nic}. Both 40GbE scaling tests show
+that doubeling the amount of workers doubles the throughput until line
+rate is hit at around two and four workers, respectively (using
+pysical cores).
+
+At around 20 Mpps the measured throughput can be unstable by around 0.4
+Mpps, because of unstable MoonGen packet generation rates. This is
+due to the \Ac{nic} performance limit described in section
+\ref{sec:40gbelimit}.
+
+% NAY what happens with different flows per core? low flows but high core count?
 
 % simple cpu scaling on klaipeda 10GbE and omanyte 40GbE
 % maybe show both with high and low cpufreq
@@ -102,12 +127,13 @@ it can't utilize multiple queues, too.
 
 % singlethreaded is typically a ~x% slower than main thread and a single worker
 
+% TODO model: cpu bottleneck model does not apply to omastar cpu. adjust? expand model for workers
 
-% \begin{figure}[!ht]
-% \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/vpp-nodes-horizontal.png}
-% \caption{VPP packet processing graph for xconnect, bridging, ip4 routing and ip6 routing. Other paths are left out. }
-% \label{nodegraph}
-% \end{figure}
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_summary_multicore.pdf}
+\caption{VPP CPU scaling with \Ac{ip4} traffic with 10GbE, 40GbE and different CPU clock speeds. All workers (besides klaipeda 3-6) use physical CPU cores. }
+\label{graph:multicore}
+\end{figure}
 
 
 \subsection{Forwarding Tables (Model)}
@@ -116,7 +142,7 @@ $2^{24}$
 
 % TODO fix nachkommastellen
 
-\begin{figure}[!ht]
+\begin{table}[!ht]
 	\vspace{5ex}
 	\begin{tabular}[]{ l r r r }
 		Implementation & FIB size & Mpps & Relative \\ 
@@ -140,7 +166,7 @@ $2^{24}$
 	\end{tabular}
 	\caption{Comparison of maximum \Ac{ip4} forwarding throughput with a single worker on klaipeda (see table \ref{table:hardware}). Non-VPP results are from \cite{chair:architecture}}
 	\label{table:comparison}
-\end{figure}
+\end{table}
 
 % present measurement results_
 % - l2fib
@@ -153,9 +179,14 @@ $2^{24}$
 
 % cpu scaling and live inserts
 
+% TODO fix perf stack plot script
+
 \subsection{Latencies (Model)}
 
 
+% dropped frames
+% histograms
+% sonstwas
 
 
 \subsection{Bottleneck Analysis}

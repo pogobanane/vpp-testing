@@ -63,6 +63,9 @@ conducted. For a simple unidirectional 10GbE link this results in
 14.88mpps \cite{emmerich2015assessing}.
 
 % TODO: remove this if not relevant to the paper: 
+% TODO: move this to the "internal paragraph" section
+
+\label{sec:40gbelimit}
 
 Using faster 40GbE with Intel XL710 NICs showed a soft throughput
 limit of about 22.81mpps (min. frame size, unidirectional, standard
@@ -88,12 +91,11 @@ for 40GbE links.
 
 % ram bandwidth
 
-Sencondly the ethernet frames have to be moved to the main memory. The
-test systems use DDR3 memory. It typically supports between 1333 MT/s
-(the 10GbE system) or 2133 MT/s (40GbE system) transmitting 64bit per
-message. This results in a transfer rate of 85 GBit/s and 136 GBit/s.
-This should be sufficient for 10GbE networking, 40GbE links
-require at least DDR3-2133 memory. 
+Sencondly the ethernet frames have to be moved to the main memory. It
+typically supports between 1333 MT/s (the 10GbE system) or 2133 MT/s
+(40GbE system) transmitting 64bit per message. This results in a
+transfer rate of 85 GBit/s and 136 GBit/s. This should be sufficient
+for 10GbE networking, 40GbE links require at least 2133MT/s memory.
 
 \subsubsection{CPU time per Packet}
 

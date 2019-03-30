@@ -220,16 +220,26 @@ boost in order to maintain a close to constanct clock speed.
 % modprobe eeprom
 % decode-dimms
 
-\begin{figure}[!ht]
+\begin{table}[!ht]
 	
-	\vspace{5ex}
-	\begin{tabular}[]{ l | l | l | l | l }
-		DUT name & CPU @ clock (GHz) & NIC Model & NIC type & RAM \\ \hline
-		klaipeda & Xeon E31230 @ 1.6-3.2 & Intel 82599 & 2x10GbE & DDR3 1333 MHz CL9-9-9-24 \\
+	\vspace{3ex}
+	\begin{tabular}[]{ l | c | c | c }
+		DUT & NIC Model & NIC type & RAM \\ \hline
+		klaipeda & Intel 82599 & 2x10GbE & DDR3 1333 MHz CL9-9-9-24 \\
+		omastar & Intel XL710 & 2x40GbE & DDR4 2133 MHz CL15-15-15-35
 	\end{tabular}
+
+	% TODO check this for neccessarity and correctness
+	\vspace{2ex}
+	\begin{tabular}[]{ l | c | r | r | r | r }
+		DUT & CPU @ clock (GHz) & pyhsical cores & L1 cache & L2 cache & L3 cache \\ \hline
+		klaipeda & Xeon E3-1230 @ 1.6-3.2 & 4 & 32k & 256k & 8192k \\
+		omastar & Xeon E5-2630 v4 @ 1.2-2.2 & 10 & 32k & 256k & 256000k
+	\end{tabular}
+
 	\caption{\Ac{dut} hardware: CPU model with minimum and maximum clock speed reachable with the Intel Pstate driver without turbo boost, \Ac{nic} model and \Ac{ram} timings}
 	\label{table:hardware}
-\end{figure}
+\end{table}
 
 % {details about testbed setup (used servers and configs)}
 
