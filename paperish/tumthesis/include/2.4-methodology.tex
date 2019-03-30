@@ -98,34 +98,6 @@ nevertheless, the tool "socat" was used to connect to the \Ac{cli}
 fifo.
 
 
-\subsection{Configuring \Ac{vpp}}
-
-% describe/explain vpp configs/execs
-
-Configuring \Ac{vpp} consists of two steps: Setting the startup
-parameters which is done using a \Ac{config} - and executing \Ac{cli}
-commands to configure the routing settings on runtime. For the latter
-a file containing the \Ac{cli} commands can be specified in the
-startup configuration file to be executed. 
-
-The vpp starting scripts used for this paper therefore creates
-temporary a \Ac{config} and \Ac{exec} for example according to the
-number of \Ac{ip4} routes specified in the starting script's
-parameters. The \Ac{ip4} and \Ac{ip6} scripts also support arbitrary
-multicore (-pinning) configurations.
-
-% for the l2fib size tests a plugin was written to add cli support for adding multiple entries with one command.  
-
-Adding millions of \Ac{ip4} or \Ac{ip6} entries to the layer 3
-\Ac{fib} is no problem, because the \Ac{cli} already has a command
-parameter to add any number of entries through a single command. The
-\Ac{cli} commands for the layer 2 \Ac{fib} don't support this though.
-Adding millions of entries via the command line would be too time
-consuming though. That's why this paper uses an own \Ac{vpp} plugin
-which extends the \Ac{cli} by a command with this functionality. In
-terms of speed it is comparable with the built-in commands.
-
-
 \subsection{Test Procedure}
 
 One test run tests one vpp configuration. After each test run, vpp is
@@ -169,7 +141,35 @@ synchronization takes place an the \textit{next run can be started}.
 \end{figure}
 
 
-\subsection{Testing Scenarios}
+\subsection{Configuring \Ac{vpp}}
+
+% describe/explain vpp configs/execs
+
+Configuring \Ac{vpp} consists of two steps: Setting the startup
+parameters which is done using a \Ac{config} - and executing \Ac{cli}
+commands to configure the routing settings on runtime. For the latter
+a file containing the \Ac{cli} commands can be specified in the
+startup configuration file to be executed. 
+
+The vpp starting scripts used for this paper therefore creates
+temporary a \Ac{config} and \Ac{exec} for example according to the
+number of \Ac{ip4} routes specified in the starting script's
+parameters. The \Ac{ip4} and \Ac{ip6} scripts also support arbitrary
+multicore (-pinning) configurations.
+
+% for the l2fib size tests a plugin was written to add cli support for adding multiple entries with one command.  
+
+Adding millions of \Ac{ip4} or \Ac{ip6} entries to the layer 3
+\Ac{fib} is no problem, because the \Ac{cli} already has a command
+parameter to add any number of entries through a single command. The
+\Ac{cli} commands for the layer 2 \Ac{fib} don't support this though.
+Adding millions of entries via the command line would be too time
+consuming though. That's why this paper uses an own \Ac{vpp} plugin
+which extends the \Ac{cli} by a command with this functionality. In
+terms of speed it is comparable with the built-in commands.
+
+
+\subsection{\Ac{vpp} configurations}
 
 For this paper several scenarios were tested: 
 

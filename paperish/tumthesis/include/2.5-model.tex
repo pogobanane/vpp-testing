@@ -14,29 +14,56 @@
 \subsection{CPU as the Bottleneck}
 \label{sec:cpubottleneck}
 
-Table \ref{table:bottleneck} presents maximum throughput of all
-measured scenarios with minimum sized packets using a single \Ac{vpp}
+Table \ref{bottleneck} presents maximum throughput of all
+measured \Ac{vpp} configurations with minimum sized packets using a single \Ac{vpp}
 worker. 
 
-The results show, that the computationally least expensive scenario (xconnect) allowes for the highest packet rates. 
+The results show, that the computationally least expensive scenario
+(xconnect) allows for the highest packet rates. Furthermore we see,
+that when reducing the CPU clock speed by 3\%, the number of processed
+packets shrinks by around 3\%, too. This indicates, that the CPU
+cycles are bottlenecking the packet throughput of \Ac{vpp}.
+
+The same can be seen with other CPU's, too. (TODO reference) This
+means for layer 2 configurations the packet throughput $p$ can be
+approximated depending on the clock speed $c$ for maxmimum packet
+rates $p_{max}$ and the maximum clock speed $c_{max}$:
+
+% f(50%) = 55%
+% f(97%) = 98%
+% f(100%)= 100%
+% f(x) = 0.9 * x + 10
+
+$$ f(c) = (0.9 * \frac{c}{c_{max}} + 0.1) * p_{max} $$
+
+This does not exactly resemble the expected function $f(c) =
+\frac{c}{c_{max}} * p_{max}$ which were to be expected if the CPU
+cycles were the only limiting factor. This expected function can be
+observed though with MoonRoute \cite{chair:architecture} which
+indicates a further limiting factor caused by the code, besides CPU
+frequency.
+
+% could it be, that vectorization or multi loop gives a base performance boost?
+
+% TODO: automate tests for this table and look at i/d cache misses and perf records
 
 \begin{figure}[!ht]
 	\vspace{5ex}
 	\begin{tabular}[]{ l r r r }
-		Scenario & 1.2GHz (50\%) & 3.1GHz (97\%)  & 3.2GHz (100\%) \\ 
+		Scenario & 1.6GHz (50\%) & 3.1GHz (97\%)  & 3.2GHz (100\%) \\ 
 		\midrule
 		xconnect & 7.34 (56\%) & 12.90 (98\%) & 13.20 (100\%) \\ % stdDev 0.03 0.02 0.12
 		l2 bridge no features & 6.69 (55\%) & 11.84 (97\%) & 12.18 (100\%) \\ % 0.01 0.03 0.08
-		l2 bridge mac-learn, mac-age & 6.05 (55\%) & 10.84 (98\%) & 11.09 (100\%) \\ % 0.01 0.05 0.02
 		IPv4 1 route & 6.03 (53\%) & 10.98 (97\%) & 11.28 (100\%) \\ % stdDev 0.01 0.02 0.05
-		IPv4 255k routes & \\
-		IPv6 1 route & \\
-		IPv6 255k routes & \\
-		VXLAN encap & \\
+		l2 bridge mac-learn, mac-age & 6.05 (55\%) & 10.84 (98\%) & 11.09 (100\%) \\ % 0.01 0.05 0.02
+		IPv6 1 route & 5.38 (53\%) & 9.87 (97\%) & 10.14 (100\%) \\ % 0.01 0.02 0.04
+		VXLAN encap & 4.48 (55\%) & 8.15 (99\%) & 8.21 (100\%) \\ % 0.01 0.03 0.39
+		IPv4 255k routes & 4.19 (58\%) & 7.06 (97\%) & 7.25 (100\%) \\ % 0.01 0.04 0.07
+		IPv6 255k routes & 2.34 (62\%) & 3.72 (98\%) & 3.80 (100\%) \\ % 0.01 0.04 0.02
 		\midrule
 	\end{tabular}
 	\caption{Maximum througput (Mpps) in different scenarios with different CPU frequencies measured on klaipeda. }
-	\label{table:bottleneck}
+	\label{bottleneck}
 \end{figure}
 % With offered Mpps beeing 100\%, "Relative" is the maximum packet throughput in relation to the offered one.
 
@@ -58,7 +85,13 @@ Many layer 3 processing nodes such as the \Ac{ip4} and the \Ac{ip6}
 processing path do support parallel packet processing using \Ac{rss}
 (see section \ref{sec:rss}). For the scaling to have effect, the
 packets need different packet headers though, so that \Ac{rss} header
-field hashing can assign them to different queues.
+field hashing can assign them to different queues. Using four
+different source addresses per queue is sufficient to hit all of them
+well.
+
+Layer 2 bridges on the other hand is completely singlethreaded.
+Because \Ac{vxlan} needs a bridge to recieve or send layer 2 traffic,
+it can't utilize multiple queues, too.
 
 % TODO what happens with different flows per core? low flows but high core count?
 
