@@ -233,8 +233,8 @@ boost in order to maintain a close to constanct clock speed.
 	\vspace{2ex}
 	\begin{tabular}[]{ l | c | r | r | r | r }
 		DUT & CPU @ clock (GHz) & pyhsical cores & L1 cache & L2 cache & L3 cache \\ \hline
-		klaipeda & Xeon E3-1230 @ 1.6-3.2 & 4 & 32k & 256k & 8192k \\
-		omastar & Xeon E5-2630 v4 @ 1.2-2.2 & 10 & 32k & 256k & 256000k
+		klaipeda & Xeon E3-1230 @ 1.6-3.2 & 4 & 32k & 256k & 8M \\ % 2^23
+		omastar & Xeon E5-2630 v4 @ 1.2-2.2 & 10 & 32k & 256k & 25M % 2^
 	\end{tabular}
 
 	\caption{\Ac{dut} hardware: CPU model with minimum and maximum clock speed reachable with the Intel Pstate driver without turbo boost, \Ac{nic} model and \Ac{ram} timings}

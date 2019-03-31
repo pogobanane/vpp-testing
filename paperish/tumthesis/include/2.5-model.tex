@@ -164,15 +164,19 @@ bit values as input and returns a 64 bit result. Assuming the table
 only contains keys and values, the maximum \Ac{fib} size fitting into
 cache of $n$ bytes is:
 
-$$ f_{l2fib}(x) = n * \frac{8}{2 * 64} = n * \frac{1}{16}  $$
+$$ f_{l2fib}(n) = n * \frac{8}{2 * 64} = n * \frac{1}{16}  $$
 
 This formula is used to create the l1, l2 and l3 cache marks in figure
 \ref{graph:l2fib} as a upper bound for how many fib entries could fit
-into the respective caches.
+into the respective caches. 
 
-As the increase of layer 3 data cache misses around the layer 3 cache
-upper bound mark indicates, the throughput actually decreases at those
-predicted points because of the respective caches.
+As figure \ref{graph:l2fib} shows, the throughput drops before the L1
+cache as the L1 cache misses start rising. With the Layer 2 cache mark
+the throughput drops further and more CPU time is spent inside the
+\lstinline|l2fwd_node| function which does the lookup. Finally before
+the layer 3 mark, the respective data cache misses rise, the
+throughput drops further and close to 40\% of the CPU time is spent
+inside the lookup node.
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v2.pdf}
@@ -185,26 +189,26 @@ predicted points because of the respective caches.
 \subsubsection{\Ac{ip6} \Ac{fib}}
 
 Figure \ref{graph:ip6fib} shows the results of \Ac{ip6} routing with
-different l2fib sizes. It's maximum size is remarkably smaller than
-the layer 2 \Ac{fib} and also each lookup table key and value together
-are only 64 bit in size. Assuming the table only contains keys and
-values, the maximum \Ac{fib} size fitting into cache of $n$ bytes is:
+different layer 3 \Ac{fib} sizes. It's maximum size is remarkably
+smaller compared to the layer 2 \Ac{fib}. Each lookup table result
+value is only 32 bit in size. Assuming the table only contains those
+values and keys the size of an \Ac{ip6} address, the maximum \Ac{fib}
+size fitting into cache of $n$ bytes is:
 
-$$ f_{ip6fib}(x) = n * \frac{8}{2 * 32} = n * \frac{1}{8}  $$
+$$ f_{ip6fib}(n) = n * \frac{8}{128 + 32} = n * \frac{1}{24}  $$
 
-This means for a layer 1 cache size of 32KB ($2^{15}$) at most 4096
-could fit into it. At this \Ac{fib} size there is no change in
-throughput, nor a drastic change in layer 1 data cache load misses.
+This means for a layer 3 cache size of 8MB ($2^{23}$B) at most 350,000
+could fit into it. At this \Ac{fib} size we are off the charts though
+and there is no correlating change in throughput. Therefore the model
+for layer 2 \Ac{fib}s seem not to apply to \Ac{ip6} \Ac{fib}s.
 
 % TODO there is a change before 4096 in omastar 
 
 % l2 cache size of 256k (2^18) at most 32,768 routes -> right after the big drop
 
-Nevertheless it can be assumed the massive drop in performance upwards
-from 20,000 \Ac{fib} entries is because of the BiHash table and the
-table which correlates the BiHash table result to actual information
-are not efficiently accessible anymore for traffic with random
-destinations.
+Nevertheless it can be assumed the massive drop in performance
+from 20,000 \Ac{fib} entries upwards is because of the BiHash table lookups taking longer because of cache size limitations, since the big drop of throughput closely correlates to the layer 3 cache misses and the time spent in the lookup function. 
+
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3v6_routes_klaipeda32ghz_v2.pdf}
@@ -218,6 +222,14 @@ destinations.
 \subsubsection{\Ac{ip4} \Ac{fib}}
 \label{sec:ip4fib}
 
+While the layer 2 \Ac{fib} can contain over $2^{23}$ entries, tests
+show that \Ac{vpp} v18.10 stops working with more than 287,743
+\Ac{ip4} \Ac{fib} entries. To be able to compare \Ac{vpp} to other
+software routers nevertheless, tests conducted with v16.09 show that
+this version is able to handle up to around 12,580,000 \Ac{fib}
+entries which is well above $2^{23}$.
+
+Figure \ref{graph:ip4fib} and \ref{graph:ip4fiblegacy} show test results of \Ac{vpp} v18.10 with up to 255,000 entries and of v16.09 with up to 10,300,000 entries. Both show similar behaviour to the \Ac{ip6} \Ac{fib} tests with one big throughput drop torwards the end of the graph. 
 
 
 \begin{figure}[!ht]
@@ -229,7 +241,7 @@ destinations.
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda_v1609_32ghz_v2.pdf}
 \caption{Testing \Ac{vpp} v16.09 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
-\label{graph:legacyip4fib}
+\label{graph:ip4fiblegacy}
 \end{figure}
 
 % model the performance decrease according to causes
@@ -239,6 +251,7 @@ destinations.
 % TODO fix perf stack plot script
 
 \subsection{Latencies (Model)}
+
 
 
 % dropped frames
