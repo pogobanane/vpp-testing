@@ -152,7 +152,8 @@ function vpp-test () {
 
 	pos_sync #s21: moogen should be generating load now
 	
-	perf-collect "$perfstatfile" "$perfdataname" 10
+	#perf-collect "$perfstatfile" "$perfdataname" 10
+	sleep 10
 
 	pos_sync #s31: vpp side live data collection done
 	pos_sync #s32: moongen is now terminating
@@ -226,79 +227,89 @@ function vpp-find-sweetspot () {
 # vpp-find-sweetspot "l2_multimac_00015000" "$vppcmd" 15000
 # vpp-find-sweetspot "l2_multimac_00020000" "$vppcmd" 20000
 
+
+vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
+for s in {1..20}
+do
+	i=$((s*500))
+	istr=`printf "%06i" $i`
+	vpp-test "l3_latroutes1_${istr}_0" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 1"
+	vpp-test "l3_latroutes255k_${istr}_0" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 255116"
+done
+
 #### multimac throughput testing ####
 
-# 5 runs with 47 different l2fib sizes each = 235
-vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
-for run in {0..5}
-do
-	for s in {1..47}
-	do
-		i=`echo "1.4^$s" | bc`
-		i=`printf "%.0f" $i`
-		istr=`printf "%08i" $i`
-		vpp-test "l2_throughmac_${istr}_$run" "$vppcmd" $i
-	done
-done
+# # 6 runs with 47 different l2fib sizes each = 282
+# vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
+# for run in {0..5}
+# do
+# 	for s in {1..47}
+# 	do
+# 		i=`echo "1.4^$s" | bc`
+# 		i=`printf "%.0f" $i`
+# 		istr=`printf "%08i" $i`
+# 		vpp-test "l2_throughmac_${istr}_$run" "$vppcmd" $i
+# 	done
+# done
 
-#### l3 ip4 multicore testing ####
+# #### l3 ip4 multicore testing ####
 
-vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-flows.sh"
-for run in {0..5}
-do
-	max=6
-	for s in $(seq 0 $max)
-	do
-		sstr=`printf "%02i" $s`
-		j=$((1+$s))
-		vpp-test "l3_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
-	done
-done
+# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-flows.sh"
+# for run in {0..5}
+# do
+# 	max=6
+# 	for s in $(seq 0 $max)
+# 	do
+# 		sstr=`printf "%02i" $s`
+# 		j=$((1+$s))
+# 		vpp-test "l3_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
+# 	done
+# done
 
-#### l3 ip6 multicore testing ####
+# #### l3 ip6 multicore testing ####
 
-vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-flows.sh"
-for run in {0..5}
-do
-	max=6
-	for s in $(seq 0 $max)
-	do
-		sstr=`printf "%02i" $s`
-		j=$((1+$s))
-		vpp-test "l3v6_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
-	done
-done
+# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-flows.sh"
+# for run in {0..5}
+# do
+# 	max=6
+# 	for s in $(seq 0 $max)
+# 	do
+# 		sstr=`printf "%02i" $s`
+# 		j=$((1+$s))
+# 		vpp-test "l3v6_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
+# 	done
+# done
 
 
-#### l3 ip4 routing ####
+# #### l3 ip4 routing ####
 
-# 5 runs with 47 different l2fib sizes each = 235
-vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
-for run in {0..5}
-do
-	for s in {1..37} # 47}
-	do
-		i=`echo "1.4^$s" | bc`
-		i=`printf "%.0f" $i`
-		istr=`printf "%08i" $i`
-		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-	done
-done
+# # 6 runs with 37 different l2fib sizes each = 222
+# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
+# for run in {0..5}
+# do
+# 	for s in {1..37} # 47}
+# 	do
+# 		i=`echo "1.4^$s" | bc`
+# 		i=`printf "%.0f" $i`
+# 		istr=`printf "%08i" $i`
+# 		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+# 	done
+# done
 
-#### l3 ip6 routing ####
+# #### l3 ip6 routing ####
 
-# 5 runs with 47 different l2fib sizes each = 235
-vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-routing.sh"
-for run in {0..5}
-do
-	for s in {1..37} # 47}
-	do
-		i=`echo "1.4^$s" | bc`
-		i=`printf "%.0f" $i`
-		istr=`printf "%08i" $i`
-		vpp-test "l3v6_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-	done
-done
+# # 6 runs with 37 different l2fib sizes each = 222
+# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-routing.sh"
+# for run in {0..5}
+# do
+# 	for s in {1..37} # 47}
+# 	do
+# 		i=`echo "1.4^$s" | bc`
+# 		i=`printf "%.0f" $i`
+# 		istr=`printf "%08i" $i`
+# 		vpp-test "l3v6_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+# 	done
+# done
 
 #### l3 ip4 routing legacy: v16.09 ####
 

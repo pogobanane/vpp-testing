@@ -33,8 +33,9 @@ function master(args)
   local rxDev = device.config({port = args.rxDev, rxQueues = 4, txQueues = 4})
   device.waitForLinks()
   if args.rate > 0 then
-    txDev:getTxQueue(1):setRate(args.rate)
-    txDev:getTxQueue(2):setRate(args.rate)
+    -- rate - timestamped packets
+    txDev:getTxQueue(1):setRate((args.rate  - (args.pktSize + 4) * 8 / 1000) / 2)
+    txDev:getTxQueue(2):setRate((args.rate  - (args.pktSize + 4) * 8 / 1000) / 2)
   end
   local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
   txWarmup(recTask, txDev:getTxQueue(0), args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize)

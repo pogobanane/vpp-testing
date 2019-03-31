@@ -196,71 +196,79 @@ function l2-throughput-sweetspot () {
 # l2-throughput-sweetspot "l2_multimac_00015000" 15000
 # l2-throughput-sweetspot "l2_multimac_00020000" 20000
 
+for s in {1..20}
+do
+	i=$((s*500))
+	istr=`printf "%06i" $i`
+	l3-throughput-routes "l3_latroutes1_${istr}_0" $i 1
+	l3-throughput-routes "l3_latroutes255k_${istr}_0" $i 255116
+done
+
 #### multimac throughput testing ####
 
-# 5 runs with 47 different l2fib sizes each = 235
-for run in {0..5}
-do
-	for s in {1..47}
-	do
-		i=`echo "1.4^$s" | bc`
-		i=`printf "%.0f" $i`
-		istr=`printf "%08i" $i`
-		l2-throughput-complex "l2_throughmac_${istr}_$run" 100000 $i
-	done
-done
+# # 6 runs with 47 different l2fib sizes each = 282
+# for run in {0..5}
+# do
+# 	for s in {1..47}
+# 	do
+# 		i=`echo "1.4^$s" | bc`
+# 		i=`printf "%.0f" $i`
+# 		istr=`printf "%08i" $i`
+# 		l2-throughput-complex "l2_throughmac_${istr}_$run" 100000 $i
+# 	done
+# done
 
-#### l3 ip4 multicore testing ####
+# #### l3 ip4 multicore testing ####
 
-for run in {0..5}
-do
-	max=6
-	for s in $(seq 0 $max)
-	do
-		sstr=`printf "%02i" $s`
-		l3-throughput-complex "l3_multicore_${sstr}_$run" 100000 $(($max*4))
-	done
-done
+# for run in {0..5}
+# do
+# 	max=6
+# 	for s in $(seq 0 $max)
+# 	do
+# 		sstr=`printf "%02i" $s`
+# 		l3-throughput-complex "l3_multicore_${sstr}_$run" 100000 $(($max*4))
+# 	done
+# done
 
-#### l3 ip6 multicore testing ####
+# #### l3 ip6 multicore testing ####
 
-for run in {0..5}
-do
-	max=6
-	for s in $(seq 0 $max)
-	do
-		sstr=`printf "%02i" $s`
-		test-throughput "l3v6_multicore_${sstr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3v6-throughput.lua $TX_DEV $RX_DEV --rate 100000 --flows $(($max*4))"
-	done
-done
+# for run in {0..5}
+# do
+# 	max=6
+# 	for s in $(seq 0 $max)
+# 	do
+# 		sstr=`printf "%02i" $s`
+# 		test-throughput "l3v6_multicore_${sstr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3v6-throughput.lua $TX_DEV $RX_DEV --rate 100000 --flows $(($max*4))"
+# 	done
+# done
 
-#### l3 ip4 routing ####
+# #### l3 ip4 routing ####
 
-# 5 runs with 47 different l2fib sizes each = 235
-for run in {0..5}
-do
-	for s in {1..37} # 47}
-	do
-		i=`echo "1.4^$s" | bc`
-		i=`printf "%.0f" $i`
-		istr=`printf "%08i" $i`
-		l3-throughput-routes "l3_routes_${istr}_$run" 100000 $i
-	done
-done
+# # 6 runs with 37 different l2fib sizes each = 222
+# for run in {0..5}
+# do
+# 	for s in {1..37} # 47}
+# 	do
+# 		i=`echo "1.4^$s" | bc`
+# 		i=`printf "%.0f" $i`
+# 		istr=`printf "%08i" $i`
+# 		l3-throughput-routes "l3_routes_${istr}_$run" 100000 $i
+# 	done
+# done
 
-#### l3 ip6 routing ####
+# #### l3 ip6 routing ####
 
-# 5 runs with 47 different l2fib sizes each = 235
-for run in {0..5}
-do
-	for s in {1..37} # 47}
-	do
-		i=`echo "1.4^$s" | bc`
-		i=`printf "%.0f" $i`
-		istr=`printf "%08i" $i`
-		test-throughput "l3v6_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3v6-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $i --ipDst ::3:0:0:0:2"
-	done
-done
+# # 6 runs with 37 different l2fib sizes each = 222
+# for run in {0..5}
+# do
+# 	for s in {1..37} # 47}
+# 	do
+# 		i=`echo "1.4^$s" | bc`
+# 		i=`printf "%.0f" $i`
+# 		istr=`printf "%08i" $i`
+# 		test-throughput "l3v6_routes_${istr}_$run" "${BINDIR}/MoonGen moongen-scripts/l3v6-throughput.lua $TX_DEV $RX_DEV --rate 100000 --routes $i --ipDst ::3:0:0:0:2"
+# 	done
+# done
 
 #### l3 ip4 routing legacy: v16.09 ####
 
