@@ -5,6 +5,7 @@ local ts     = require "timestamping"
 local stats  = require "stats"
 local hist   = require "histogram"
 local log    = require "log"
+local timer  = require "timer"
 local random = math.random
 
 package.path = package.path .. ";./throughput-util.lua"
@@ -28,12 +29,12 @@ function configure(parser)
 end
 
 function master(args)
-  local txDev = device.config({port = args.txDev, rxQueues = 3, txQueues = 3})
-  local rxDev = device.config({port = args.rxDev, rxQueues = 3, txQueues = 3})
+  local txDev = device.config({port = args.txDev, rxQueues = 4, txQueues = 4})
+  local rxDev = device.config({port = args.rxDev, rxQueues = 4, txQueues = 4})
   device.waitForLinks()
   if args.rate > 0 then
-    txDev:getTxQueue(0):setRate(args.rate)
-    rxDev:getTxQueue(0):setRate(args.rate)
+    txDev:getTxQueue(1):setRate(args.rate)
+    txDev:getTxQueue(2):setRate(args.rate)
   end
   local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
   txWarmup(recTask, txDev:getTxQueue(0), args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize)
@@ -42,7 +43,7 @@ function master(args)
   mg.startSharedTask("statsTask", txDev, rxDev, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(1), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.routes, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(2), rxDev, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.pktSize, args.flows, args.routes, args.thfile)
-  mg.startSharedTask("timerSlave", txDev:getTxQueue(0), rxDev:getRxQueue(0), args.pktSize, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.hifile, args.lafile)
+  mg.startSharedTask("timerSlave", txDev:getTxQueue(3), rxDev:getRxQueue(3), args.pktSize, args.ethSrc, args.ethDst, args.ipSrc, args.ipDst, args.hifile, args.lafile)
   mg.waitForTasks()
 end
 
@@ -174,11 +175,14 @@ function timerSlave(txQueue, rxQueue, size, eth_src, eth_dst, ip_src, ip_dst, hi
   end
 	local timestamper = ts:newUdpTimestamper(txQueue, rxQueue)
 	local hist = hist:new()
+  local rateLimit = timer:new(0.001)
 	mg.sleepMillis(1000) -- ensure that the load task is running
 	while mg.running() do
 		hist:update(timestamper:measureLatency(size, function(buf)
       fillUdpPacket(buf, eth_src, eth_dst, ip_src, ip_dst, size)
     end))
+    rateLimit:wait()
+    rateLimit:reset()
 	end
 	hist:print()
 	hist:save(histfile)
