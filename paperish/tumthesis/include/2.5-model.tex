@@ -138,7 +138,123 @@ due to the \Ac{nic} performance limit described in section
 
 \subsection{Forwarding Tables (Model)}
 
-$2^{24}$
+% present measurement results_
+% - l2fib
+% - ip4
+% - ip6
+% - v16.09 ip4
+
+
+\subsubsection{L2 \Ac{fib}}
+
+The layer 2 \Ac{fib} is tested by configuring \Ac{vpp} with varying
+amounts of l2fib entries and sending packets to random destinations
+using a single worker.
+
+Figure \ref{graph:l2fib} shows that with only one l2fib entry you get
+0.5 Mpps more throughput compared with two l2fib entries. This is due
+to the simple caching mechanism of the l2fib-lookup function: It
+stores the last looked up information locally, so that when the next
+packet goes to the same destination, the local values can be used and
+a hash table lookup can be skipped.
+
+From there on there are three key points when the CPU's L1, L2 and L3
+cache are full. We can model the BiHash l2fib lookup table takes 64
+bit values as input and returns a 64 bit result. Assuming the table
+only contains keys and values, the maximum \Ac{fib} size fitting into
+cache of $n$ bytes is:
+
+$$ f_{l2fib}(x) = n * \frac{8}{2 * 64} = n * \frac{1}{16}  $$
+
+This formula is used to create the l1, l2 and l3 cache marks in figure
+\ref{graph:l2fib} as a upper bound for how many fib entries could fit
+into the respective caches.
+
+As the increase of layer 3 data cache misses around the layer 3 cache
+upper bound mark indicates, the throughput actually decreases at those
+predicted points because of the respective caches.
+
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v2.pdf}
+\caption{Testing \Ac{vpp} v18.10 with different layer 2 \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+\label{graph:l2fib}
+\end{figure}
+
+
+
+\subsubsection{\Ac{ip6} \Ac{fib}}
+
+Figure \ref{graph:ip6fib} shows the results of \Ac{ip6} routing with
+different l2fib sizes. It's maximum size is remarkably smaller than
+the layer 2 \Ac{fib} and also each lookup table key and value together
+are only 64 bit in size. Assuming the table only contains keys and
+values, the maximum \Ac{fib} size fitting into cache of $n$ bytes is:
+
+$$ f_{ip6fib}(x) = n * \frac{8}{2 * 32} = n * \frac{1}{8}  $$
+
+This means for a layer 1 cache size of 32KB ($2^{15}$) at most 4096
+could fit into it. At this \Ac{fib} size there is no change in
+throughput, nor a drastic change in layer 1 data cache load misses.
+
+% TODO there is a change before 4096 in omastar 
+
+% l2 cache size of 256k (2^18) at most 32,768 routes -> right after the big drop
+
+Nevertheless it can be assumed the massive drop in performance upwards
+from 20,000 \Ac{fib} entries is because of the BiHash table and the
+table which correlates the BiHash table result to actual information
+are not efficiently accessible anymore for traffic with random
+destinations.
+
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3v6_routes_klaipeda32ghz_v2.pdf}
+\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip6} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+\label{graph:ip6fib}
+\end{figure}
+
+
+
+
+\subsubsection{\Ac{ip4} \Ac{fib}}
+\label{sec:ip4fib}
+
+
+
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda32ghz_v2.pdf}
+\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions.}
+\label{graph:ip4fib}
+\end{figure}
+
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda_v1609_32ghz_v2.pdf}
+\caption{Testing \Ac{vpp} v16.09 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+\label{graph:legacyip4fib}
+\end{figure}
+
+% model the performance decrease according to causes
+
+% cpu scaling and live inserts
+
+% TODO fix perf stack plot script
+
+\subsection{Latencies (Model)}
+
+
+% dropped frames
+% histograms
+% sonstwas
+
+
+\subsection{Bottleneck Analysis}
+
+- fib: memory cache speed
+- cpu cycles
+- other hardware bottleneck? but this was already written about in analysis
+
+\subsection{performance decrease over versions}
+
+\subsection{comparison}
 
 % TODO fix nachkommastellen
 
@@ -167,32 +283,3 @@ $2^{24}$
 	\caption{Comparison of maximum \Ac{ip4} forwarding throughput with a single worker on klaipeda (see table \ref{table:hardware}). Non-VPP results are from \cite{chair:architecture}}
 	\label{table:comparison}
 \end{table}
-
-% present measurement results_
-% - l2fib
-% - v18.10
-% 	- ip4
-% 	- ip6
-% - v16.09
-
-% model the performance decrease according to causes
-
-% cpu scaling and live inserts
-
-% TODO fix perf stack plot script
-
-\subsection{Latencies (Model)}
-
-
-% dropped frames
-% histograms
-% sonstwas
-
-
-\subsection{Bottleneck Analysis}
-
-- fib: memory cache speed
-- cpu cycles
-- other hardware bottleneck? but this was already written about in analysis
-
-\subsection{performance decrease over versions}
