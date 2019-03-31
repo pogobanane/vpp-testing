@@ -17,8 +17,8 @@ import re
 from scipy.ndimage.filters import gaussian_filter1d
 
 hmac = ''
-DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-25_19-52-28_296008/klaipeda/',
-        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-25_19-52-28_296008/narva/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-31_00-31-18_748886/klaipeda/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-31_00-31-18_748886/narva/']
 
 GREEN = "#3f9852"
 BLUE = "#3869b1"
@@ -136,6 +136,20 @@ def parse_perfstats(statfile, key):
                 ret = 0
                 try:
                     ret = float(row[0])
+                    return ret
+                except:
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    return -1.0
+    return -1.0
+
+def parse_perfrecord(statfile, key):
+    with open(statfile, "r") as f:
+        reader = csv.reader(f, delimiter=";")
+        for row in reader: 
+            if len(row) >= 4 and key in row[3]:
+                ret = 0
+                try:
+                    ret = float(row[0].strip().strip('%'))
                     return ret
                 except:
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -304,14 +318,20 @@ def throughput_per_macs(fileprefix):
     cachemisses1_stddevs = []
     cachemisses3 = []
     cachemisses3_stddevs = []
+    fn1pcts = []
+    fn1pct_stddevs = []
+    fn2pcts = []
+    fn2pct_stddevs = []
     for throughfile in fthroughput: 
             filename = os.path.basename(throughfile)
             if fileprefix in filename and "_0." in filename:
                 macs = int(filename.split(fileprefix)[1][0:8])
-                runs = 14
+                runs = 6
                 runresults = []
                 runresults_cache1 = []
                 runresults_cache3 = []
+                runrestults_fn1 = []
+                runrestults_fn2 = []
                 for run in range(0,runs):
                     print(run)
                     postfix = filename.split(fileprefix)[1]
@@ -323,22 +343,33 @@ def throughput_per_macs(fileprefix):
                     statfile = "{}{}".format(nextfile[:-15], ".perfstat.csv")
                     print(statfile)
                     statfilepath = next(filter(lambda x: x.endswith(os.path.basename(statfile)), fstat))
-                    misses1 = parse_perfstats(statfilepath, "L1-dcache-load-misses")
-                    misses3 = parse_perfstats(statfilepath, "LLC-load-misses")
+                    recordfilepath = "{}{}".format(statfilepath[:-13], ".perfrecord.csv")
+                    misses1 = parse_perfstats(statfilepath, "L1-dcache-load-misses") * 0.1 # WATCH OUT THIS *0.1 CAN BE EVIL because it serves beautification purpose. 
+                    misses3 = parse_perfstats(statfilepath, "cache-misses")
+                    fn1 = parse_perfrecord(recordfilepath, "l2fwd_node")
+                    fn2 = 0 #fn2 = parse_perfrecord(recordfilepath, "ip6_rewrite")
                     runresults.append(throughput)
                     runresults_cache1.append(misses1)
                     runresults_cache3.append(misses3)
+                    if fn1 > 0:
+                        runrestults_fn1.append(fn1)
+                    if fn2 > 0:
+                        runrestults_fn2.append(fn2)
 
                 macss.append(macs)
                 through_avg = np.average(runresults)
                 throughputs.append(through_avg)
                 through_stddevs.append(np.std(runresults))
+                fn1pcts.append(np.average(runrestults_fn1))
+                fn1pct_stddevs.append(np.std(runrestults_fn1))
+                fn2pcts.append(np.average(runrestults_fn2))
+                fn2pct_stddevs.append(np.std(runrestults_fn2))
                 print(runresults_cache1)
                 print(runresults_cache3)
-                cachemisses1.append(np.average(runresults_cache1) / through_avg * 256 / 1000000)
-                cachemisses1_stddevs.append(np.std(runresults_cache1) / through_avg * 256 / 1000000)
-                cachemisses3.append(np.average(runresults_cache3) / through_avg * 256 / 1000000)
-                cachemisses3_stddevs.append(np.std(runresults_cache3) / through_avg * 256 / 1000000)
+                cachemisses1.append(np.average(runresults_cache1) / through_avg / 1000000)
+                cachemisses1_stddevs.append(np.std(runresults_cache1) / through_avg / 1000000)
+                cachemisses3.append(np.average(runresults_cache3) / through_avg / 1000000)
+                cachemisses3_stddevs.append(np.std(runresults_cache3) / through_avg / 1000000)
     print(macss)
     print(throughputs)
     print(cachemisses1)
@@ -351,26 +382,28 @@ def throughput_per_macs(fileprefix):
     #axes.set_ylim([0,150])
     #axes.set_xlim([0, 10000000])
     #axes.set_yscale("log")
-    ax2.set_yscale('log')
+    #ax2.set_yscale('log')
     axes.set_xscale("log", basex=10)
     axes.axvline(color="gray", x=2048)
-    axes.text(2048, 8.4, " l1 cache")
+    axes.text(2048, 11.7, " l1 cache")
     axes.axvline(color="gray", x=16384)
-    axes.text(16384, 8.4, " l2 cache")
+    axes.text(16384, 11.7, " l2 cache")
     axes.axvline(color="gray", x=2097152)
     axes.text(2097152, 8.4, " l3 cache")
 
     #ax2.axhline(color="gray", linewidth=0.5, y=15)
     g2,n0,n1 = ax2.errorbar(macss, cachemisses1, cachemisses1_stddevs, elinewidth=0.5, color=BLUE)
-    n2,n0,n1 = ax2.errorbar(macss, cachemisses1_smooth, elinewidth=0.5, color=BLUE, linestyle=":")
+    #n2,n0,n1 = ax2.errorbar(macss, cachemisses1_smooth, elinewidth=0.5, color=BLUE, linestyle=":")
     g1,n0,n1 = ax2.errorbar(macss, cachemisses3, cachemisses3_stddevs, elinewidth=0.5, color=ORANGE)
-    n2,n0,n1 = ax2.errorbar(macss, cachemisses3_smooth, elinewidth=0.5, color=ORANGE, linestyle=":")
+    #n2,n0,n1 = ax2.errorbar(macss, cachemisses3_smooth, elinewidth=0.5, color=ORANGE, linestyle=":")
+    g3,n0,n1 = ax2.errorbar(macss, fn1pcts, fn1pct_stddevs, elinewidth=0.5, color=PURPLE)
+    #g4,n0,n1 = ax2.errorbar(macss, fn2pcts, fn2pct_stddevs, elinewidth=0.5, color=RED)
     g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs, linewidth=3, elinewidth=0.5, color=GREEN) #, linestyle="-", marker=".")
     plt.title("sending to many destinations")
     axes.set_ylabel("throughput (Mpps)")
     axes.set_xlabel("l2fib entries")
-    ax2.set_ylabel("cache misses per 256-packet vector")
-    plt.legend([g0,g1, g2], ["throughput", "L3 load misses", "L1d load misses"], loc="center left")
+    ax2.set_ylabel("cache-misses/packet & CPU time percentage")
+    plt.legend([g0,g1, g2, g3], ["throughput", "LLC load misses", "1/10 * L1d load misses", "fn l2fwd_node"], loc="lower left")
     fig.tight_layout()
     #plt.grid(True)
 
@@ -387,6 +420,10 @@ def throughput_per_routes(fileprefix):
     cachemisses1_stddevs = []
     cachemisses3 = []
     cachemisses3_stddevs = []
+    fn1pcts = []
+    fn1pct_stddevs = []
+    fn2pcts = []
+    fn2pct_stddevs = []
     for throughfile in fthroughput: 
             filename = os.path.basename(throughfile)
             if fileprefix in filename and "_0." in filename:
@@ -395,6 +432,8 @@ def throughput_per_routes(fileprefix):
                 runresults = []
                 runresults_cache1 = []
                 runresults_cache3 = []
+                runrestults_fn1 = []
+                runrestults_fn2 = []
                 for run in range(0,runs):
                     print(run)
                     postfix = filename.split(fileprefix)[1]
@@ -406,22 +445,36 @@ def throughput_per_routes(fileprefix):
                     statfile = "{}{}".format(nextfile[:-15], ".perfstat.csv")
                     print(statfile)
                     statfilepath = next(filter(lambda x: x.endswith(os.path.basename(statfile)), fstat))
-                    misses1 = parse_perfstats(statfilepath, "L1-dcache-load-misses")
-                    misses3 = parse_perfstats(statfilepath, "LLC-load-misses")
+                    recordfilepath = "{}{}".format(statfilepath[:-13], ".perfrecord.csv")
+                    misses1 = parse_perfstats(statfilepath, "L1-dcache-load-misses") * 0.1 # WATCH OUT THIS *0.1 CAN BE EVIL because it serves beautification purpose. 
+                    # misses3 = parse_perfstats(statfilepath, "LLC-load-misses")
+                    misses3 = parse_perfstats(statfilepath, "cache-misses")
+                    # fn1 = parse_perfrecord(recordfilepath, "ip4_lookup")
+                    # fn2 = parse_perfrecord(recordfilepath, "ip4_rewrite")
+                    fn1 = parse_perfrecord(recordfilepath, "ip6_lookup")
+                    fn2 = parse_perfrecord(recordfilepath, "ip6_rewrite")
                     runresults.append(throughput)
                     runresults_cache1.append(misses1)
                     runresults_cache3.append(misses3)
+                    if fn1 > 0:
+                        runrestults_fn1.append(fn1)
+                    if fn2 > 0:
+                        runrestults_fn2.append(fn2)
 
                 macss.append(macs)
                 through_avg = np.average(runresults)
                 throughputs.append(through_avg)
                 through_stddevs.append(np.std(runresults))
+                fn1pcts.append(np.average(runrestults_fn1))
+                fn1pct_stddevs.append(np.std(runrestults_fn1))
+                fn2pcts.append(np.average(runrestults_fn2))
+                fn2pct_stddevs.append(np.std(runrestults_fn2))
                 print(runresults_cache1)
                 print(runresults_cache3)
-                cachemisses1.append(np.average(runresults_cache1) / through_avg * 256 / 1000000)
-                cachemisses1_stddevs.append(np.std(runresults_cache1) / through_avg * 256 / 1000000)
-                cachemisses3.append(np.average(runresults_cache3) / through_avg * 256 / 1000000)
-                cachemisses3_stddevs.append(np.std(runresults_cache3) / through_avg * 256 / 1000000)
+                cachemisses1.append(np.average(runresults_cache1) / through_avg / 1000000)
+                cachemisses1_stddevs.append(np.std(runresults_cache1) / through_avg / 1000000)
+                cachemisses3.append(np.average(runresults_cache3) / through_avg / 1000000)
+                cachemisses3_stddevs.append(np.std(runresults_cache3) / through_avg / 1000000)
     print(macss)
     print(throughputs)
     print(cachemisses1)
@@ -434,7 +487,7 @@ def throughput_per_routes(fileprefix):
     #axes.set_ylim([0,150])
     #axes.set_xlim([0, 10000000])
     #axes.set_yscale("log")
-    ax2.set_yscale('log')
+    #ax2.set_yscale('log')
     axes.set_xscale("log", basex=10)
     #axes.axvline(color="gray", x=2048)
     #axes.text(2048, 8.4, " l1 cache")
@@ -445,15 +498,17 @@ def throughput_per_routes(fileprefix):
 
     #ax2.axhline(color="gray", linewidth=0.5, y=15)
     g2,n0,n1 = ax2.errorbar(macss, cachemisses1, cachemisses1_stddevs, elinewidth=0.5, color=BLUE)
-    n2,n0,n1 = ax2.errorbar(macss, cachemisses1_smooth, elinewidth=0.5, color=BLUE, linestyle=":")
+    #n2,n0,n1 = ax2.errorbar(macss, cachemisses1_smooth, elinewidth=0.5, color=BLUE, linestyle=":")
     g1,n0,n1 = ax2.errorbar(macss, cachemisses3, cachemisses3_stddevs, elinewidth=0.5, color=ORANGE)
-    n2,n0,n1 = ax2.errorbar(macss, cachemisses3_smooth, elinewidth=0.5, color=ORANGE, linestyle=":")
+    g3,n0,n1 = ax2.errorbar(macss, fn1pcts, fn1pct_stddevs, elinewidth=0.5, color=PURPLE)
+    g4,n0,n1 = ax2.errorbar(macss, fn2pcts, fn2pct_stddevs, elinewidth=0.5, color=RED)
+    #n2,n0,n1 = ax2.errorbar(macss, cachemisses3_smooth, elinewidth=0.5, color=ORANGE, linestyle=":")
     g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs, linewidth=3, elinewidth=0.5, color=GREEN) #, linestyle="-", marker=".")
     plt.title("sending to many destinations")
     axes.set_ylabel("throughput (Mpps)")
     axes.set_xlabel("l3fib entries")
-    ax2.set_ylabel("cache misses per 256-packet vector")
-    plt.legend([g0,g1, g2], ["throughput", "L3 load misses", "L1d load misses"], loc="center left")
+    ax2.set_ylabel("cache-misses/packet & CPU time percentage")
+    plt.legend([g0,g1, g2, g3, g4], ["throughput", "LLC load misses", "1/10 * L1d load misses", "fn ip4_lookup", "fn ip4_rewrite"], loc="lower left")
     fig.tight_layout()
     #plt.grid(True)
 
@@ -663,8 +718,9 @@ def throughput_per_cores_summary():
     plt.show()
 
 
-throughput_per_cores_summary()
+#throughput_per_cores_summary()
 #throughput_per_routes("l3_routes_")
 #throughput_per_cores("l3_multicore_")
 #throughput_per_routes("l3v6_routes_")
 #throughput_per_cores("l3v6_multicore_")
+throughput_per_macs("l2_throughmac_")
