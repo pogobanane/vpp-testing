@@ -152,7 +152,7 @@ function vpp-test () {
 
 	pos_sync #s21: moogen should be generating load now
 	
-	#perf-collect "$perfstatfile" "$perfdataname" 10
+	# !!! perf-collect "$perfstatfile" "$perfdataname" 10
 	sleep 10
 
 	pos_sync #s31: vpp side live data collection done
@@ -160,8 +160,8 @@ function vpp-test () {
 	
 	echo "collecting vpp info and upload files..."
 	vpp-collect "$vppfile"
-	pos_upload ${perfdataname}.csv
-	pos_upload $perfstatfile
+	# !!! pos_upload ${perfdataname}.csv
+	# !!! pos_upload $perfstatfile
 	pos_upload $vppfile
 
 	# wait for test done signal
