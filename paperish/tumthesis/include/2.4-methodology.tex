@@ -95,7 +95,7 @@ can be conveniently used with the tool "vppctl" to connect and
 interact with the fifo. In earlier versions like v16.09 this tool
 worked differently. In order to be able to read those counters
 nevertheless, the tool "socat" was used to connect to the \Ac{cli}
-fifo.
+fifo filedescriptor.
 
 
 \subsection{Test Procedure}
@@ -104,7 +104,8 @@ One test run tests one vpp configuration. After each test run, vpp is
 beeing restarted. After each restart, the performance of VPP varies
 significantly more than within one testrun. Therefore in order to get
 an insight in how spread the variance is, each test run is repeated 6
-times. 
+times. Only for latency measurements like histograms test results rely
+on a single run.
 
 As figure \ref{testsequence} shows, the \Ac{dut} and \Ac{loadgen}
 first read the remote configuration file, after the management server
@@ -175,7 +176,9 @@ For this paper several scenarios were tested:
 
 \paragraph{XConnect} 
 
-The most simple configuration is linking two network interfaces via cross connect (xconnect). This is a static mapping from one interfaces input to another interfaces output and vice versa. 
+The most simple configuration is linking two network interfaces via
+cross connect (xconnect). This is a static mapping from one
+interface's input to another interface's output and vice versa.
 
 \paragraph{L2 bridging}
 
@@ -210,9 +213,9 @@ vxlan-tunnel endpoint via IP.
 \label{sec:hardware}
 
 Test are conducted on different test systems listed in table
-\ref{table:hardware}. All of the used systems (even the \Ac{loadgen}
-ones) are configured via the Intel Pstate driver to disable turbo
-boost in order to maintain a close to constanct clock speed.
+\ref{table:hardware}. All of the used systems (the \Ac{loadgen} ones,
+too) are configured via the Intel Pstate driver to disable turbo boost
+in order to maintain a close to constanct clock speed.
 
 % lscpu
 % lshw -C memory

@@ -275,6 +275,59 @@ def parse_histogramfile(latfile):
     weights = dflat['weight'].tolist()
     return latencies, weights
 
+def histogram_overview():
+    latencies1, weights1 = parse_histogramfile(flatency[0])
+    latencies2, weights2 = parse_histogramfile(flatency[5])
+    #latencies3, weights3 = parse_histogramfile(flatency[8])
+    #latencies3, weights3 = parse_histogramfile(flatency[9])
+    latencies3, weights3 = parse_histogramfile(flatency[10])
+    latencies4, weights4 = parse_histogramfile(flatency[20])
+    latencies5, weights5 = parse_histogramfile(flatency[23])
+    latencies6, weights6 = parse_histogramfile(flatency[26])
+
+    rate = -1
+    psize = -1
+
+    fig = plt.subplots(figsize=(7, 4), dpi=160)
+    fig = plt.subplot(211)
+    fig.set_title("IPv4 1 route")
+    #plt.legend(loc=0)
+    plt.ylabel("Number of events")
+    axes = plt.gca()
+    axes.set_xlim([0, 50000])
+    #y_formatter = tick.ScalarFormatter(useOffset=True)
+    #y_formatter.set_powerlimits((1,2))
+    #axes.yaxis.set_major_formatter(y_formatter)
+    #axes.yaxis.set_major_formatter(tick.FuncFormatter(lambda x,y: str(x)))
+    #axes.get_yaxis().get_major_formatter().set_powerlimits((3,3))
+    axes.get_xaxis().get_major_formatter().set_powerlimits((3,3))
+    plt.hist(latencies3, weights=weights3, bins=400)
+    plt.hist(latencies2, weights=weights2, bins=200)
+    plt.hist(latencies1, weights=weights1, bins=400)
+
+
+    fig = plt.subplot(212)
+    fig.set_title("IPv6 255k routes")
+    axes = plt.gca()
+    axes.set_xlim([0, 50000])
+    axes.get_xaxis().get_major_formatter().set_powerlimits((3,3))
+    plt.hist(latencies6, weights=weights6, bins=4000)
+    plt.hist(latencies5, weights=weights5, bins=300)
+    plt.hist(latencies4, weights=weights4, bins=400)
+    #plt.title('Rate {} Mbit/s - Packet size: {} B'.format(rate, psize))
+    plt.xlabel("Processing latency (ns)")
+    #fig.tight_layout()
+
+    # quantiles = weighted_quantile(latencies, [0.0, 0.25, 0.5, 0.75, 0.90, 0.99, 0.999], sample_weight=weights, values_sorted=True)
+    # quantiles = list(map(lambda u: (u / 1000), quantiles))
+    # quartilestr = "{}{:10.2f}{:10.2f}{:10.2f}{:10.2f}{:10.2f}{:10.2f}{:10.2f}".format(os.path.basename(latfile).ljust(60), quantiles[0], quantiles[1], quantiles[2], quantiles[3], quantiles[4], quantiles[5], quantiles[6])
+    # print(quartilestr)
+
+    #return (get_tikz_code(outf, show_info=False, figurewidth="48cm", figureheight="7cm"), quartilestr)
+    plt.tight_layout()
+    plt.savefig("latency_histogram_overview_ip4.pdf")
+    plt.show()
+
 def latency_per_macs(fileprefix):
     macss = []
     q0 = []
@@ -802,4 +855,5 @@ def throughput_per_cores_summary():
 #throughput_per_routes("l3v6_routes_")
 #throughput_per_cores("l3v6_multicore_")
 #throughput_per_macs("l2_throughmac_")
-latency_per_throughput() # for "l3_latroutes1_" and "l3_latroutes255k_"
+#latency_per_throughput() # for "l3_latroutes1_" and "l3_latroutes255k_"
+histogram_overview()

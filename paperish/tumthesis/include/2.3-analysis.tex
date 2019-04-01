@@ -11,7 +11,7 @@ One connecting it to a management server, and two connected to the
 corresponding \Ac{dut} or loadgen (load generator). The management
 server (kauas) uses pos tools to set boot images, boot, run setup and
 testing scripts on the testbed devices and collect script output and
-artifact files containing test results.
+artifact files containing test results. % TODO quotation for pos needed
 
 As figure \ref{setup} shows, each test contains two devices. The
 \Ac{dut}, running \Ac{vpp}, and the loadgen, running MoonGen and
@@ -74,7 +74,7 @@ deviation: 0.22). This was observed with an Intel E5-2620 v3
 reducing the CPU clock speed by 10\% or 50\% results in 12\% and 52\%
 smaller packet rate, it can be assumed, that this bottleneck lies
 within the load generator. Previous work confirms that theory
-\cite{emmerich2015moongen}.
+\cite{emmerich2015moongen}. % TODO move this to link speed subsection
 
 \subsubsection{Internal Bandwidth}
 
@@ -266,6 +266,7 @@ like the ip4-rewrite node does.
 % table size problems
 
 \subsection{Vectorization}
+\label{sec:vectorization}
 
 % - vectorization
 % 	- low level optimization for caches
@@ -307,7 +308,7 @@ batches, too. The packet processing function of a graph node may take
 typically up to four packets as parameters to process them
 simultaniously. This results in the minimum
 \lstinline|VLIB_FRAME_SIZE| beeing four. Not all nodes implement this
-feature, sometimes called "\textit{multi-loop}" though, because not
+feature, sometimes called "\textit{multi-loop}", though because not
 all processing functions profit from it: While the profit in the
 xconnect processing path is negligible, the \Ac{ip4} lookup node is
 23\% faster with quad loop than with single loop processing. The

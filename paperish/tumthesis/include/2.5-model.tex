@@ -11,7 +11,7 @@
 % how well does the fantastic memory alignment of vpp work in numa?
 
 
-\subsection{CPU as the Bottleneck}
+\subsection{CPU as Bottleneck}
 \label{sec:cpubottleneck}
 
 Table \ref{bottleneck} presents maximum throughput of all
@@ -70,7 +70,7 @@ frequency.
 % With offered Mpps beeing 100\%, "Relative" is the maximum packet throughput in relation to the offered one.
 
 
-\subsection{Throughput and CPU Scaling (Model)}
+\subsection{CPU Scaling Model}
 
 Since the CPU is a bottleneck in all tested configurations, the
 ability to distribute the load over multiple CPU cores is
@@ -107,6 +107,8 @@ The virtual ("hyper threading") cores are used for workers three to
 six within the 10GbE system which results in lower performance gain
 and even slight performance loss in the end.
 
+$$ TODO trivial function $$
+
 Using the 40GbE system at maximum CPU clock two cores can just not
 saturate the limits of the \Ac{nic}. Both 40GbE scaling tests show
 that doubeling the amount of workers doubles the throughput until line
@@ -136,7 +138,7 @@ due to the \Ac{nic} performance limit described in section
 \end{figure}
 
 
-\subsection{Forwarding Tables (Model)}
+\subsection{Lookup Performance Model}
 
 % present measurement results_
 % - l2fib
@@ -178,11 +180,7 @@ the layer 3 mark, the respective data cache misses rise, the
 throughput drops further and close to 40\% of the CPU time is spent
 inside the lookup node.
 
-\begin{figure}[!ht]
-\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v2.pdf}
-\caption{Testing \Ac{vpp} v18.10 with different layer 2 \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
-\label{graph:l2fib}
-\end{figure}
+
 
 
 
@@ -210,11 +208,7 @@ Nevertheless it can be assumed the massive drop in performance
 from 20,000 \Ac{fib} entries upwards is because of the BiHash table lookups taking longer because of cache size limitations, since the big drop of throughput closely correlates to the layer 3 cache misses and the time spent in the lookup function. 
 
 
-\begin{figure}[!ht]
-\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3v6_routes_klaipeda32ghz_v2.pdf}
-\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip6} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
-\label{graph:ip6fib}
-\end{figure}
+
 
 
 
@@ -231,6 +225,20 @@ entries which is well above $2^{23}$.
 
 Figure \ref{graph:ip4fib} and \ref{graph:ip4fiblegacy} show test results of \Ac{vpp} v18.10 with up to 255,000 entries and of v16.09 with up to 10,300,000 entries. Both show similar behaviour to the \Ac{ip6} \Ac{fib} tests with one big throughput drop torwards the end of the graph. 
 
+% TODO point out, that index lookup is not the performance issue
+
+
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v2.pdf}
+\caption{Testing \Ac{vpp} v18.10 with different layer 2 \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+\label{graph:l2fib}
+\end{figure}
+
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3v6_routes_klaipeda32ghz_v2.pdf}
+\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip6} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+\label{graph:ip6fib}
+\end{figure}
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda32ghz_v2.pdf}
@@ -250,65 +258,136 @@ Figure \ref{graph:ip4fib} and \ref{graph:ip4fiblegacy} show test results of \Ac{
 
 % TODO fix perf stack plot script
 
-\subsection{Latencies (Model)}
+\subsection{Latencies}
 
+\subsubsection{Average Latencies}
 
-histogram
-ip4 1route low, 90\% and max load (0.1, 0.5, 0.9)
-ip4 255routes low, 90\% and max load
+% dropped frames per throughput, latency: avg, 99.999 percentile per throughput
 
-dropped frames per throughput, latency: avg, 99.999 percentile per throughput
+Measuring the latency should be done with reduced offered load,
+because when offering the load at full link speed, the average latency
+hits a worst case which is orders of magnitude higher than at lower
+packet rates. Figure \ref{graph:latencyoverview} shows the average
+latency and the packet loss at different packet rates for \Ac{ip4}
+routing with 1 and with 255,000 routes. It shows that the latency is
+around $\SC{5}{\mu s}$ for low line rates and slowly increases
+torwards reaching the maximum throughput. When this maximum is
+reached, the packet drop rates immediately go up, because not all
+packets can be forwarded. This is also exactly the point where the
+latency explodes to around $\SC{600}{\mu s}$ because packet queues
+fill up.
 
+The qualitative latency behaviour described in figure
+\ref{graph:latencyoverview} between 1 and 255k routes is similar. The
+following function can approximate the average latency for different
+packet rates $t \in (0, t_{max})$ for a known maximum packet
+throughput $t_{max}$. 
 
+$$ l(t) = t_{max} * (45- 44 * (-t+1)^{\frac{1}{10t}}) $$ 
 
+% this is already said in Latency Distribution
 
-
-% dropped frames
-% histograms
-% sonstwas
-
+% Generally speaking, an increase in latency with growing load is
+% expected, because of \Ac{vpp}'s vectorization. As explained in section
+% \ref{sec:vectorization}, the lower the packet rate, the earlier
+% batches are closed and processed even if the batch is hardly filled.
+% Therefore individual packets have to wait less time at average to be
+% processed.
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/latencies_per_throughput_summary_ip4.pdf}
-\caption{Latencies and packet drops of \Ac{ip4} routing with a single route (1 r) and 255k routes (255k r).  }
+\caption{Latencies in $\mu s$ and packet drops of \Ac{ip4} routing with a single route (1 r) and 255k routes (255k r). }
 \label{graph:latencyoverview}
 \end{figure}
 
+\subsubsection{Latency Distribution}
 
-\subsection{Bottleneck Analysis}
+Figure \ref{graph:latencyhistogram} shows histograms of latency for
+\Ac{ip4} routing at approximately 10\%, 50\% and 90\% of the maximum
+throughput rate. It shows that under very low load the latency
+distribution peaks in the beginning. Later on the distribution can be
+approximated as a standard distribution but with growing average and
+standard deviation. The reason for this is lies within \Ac{vpp}
+closing the batches as long as the packet processing is not stressed
+to it's limits (see \ref{sec:vectorization}). This results in earlier
+processing of packets at low loads and explains why at 50\% of the
+maximum load the latency is the same, even though the lookup load is
+different. \cite{linguaglossa2017high}
 
-- fib: memory cache speed
-- cpu cycles
-- other hardware bottleneck? but this was already written about in analysis
 
-\subsection{performance decrease over versions}
+% histogram
+% ip4 1route low, 90\% and max load (0.1, 0.5, 0.9)
+% ip4 255routes low, 90\% and max load
 
-\subsection{comparison}
+% 1r 7.8mpps 50% 8502.523457,		 35% 992.510538			28% ixgbe_xmit_pkts 31736245724cycles
+% 1r 10.86mpps 90% 25631.480224,	100% 2790.657240
 
-% TODO fix nachkommastellen
+% 255r 5.87mpps 50% 11283.178205,2072.334996		18% ixgbe_xmit_pkts 31488860702
+% 255r 7.28mpps 90% 911243.365558,9960.445080
+
+% serialization takes 30% of time -> ( cycles/s / packets/s ) * 0.3 * cycles/s => 0.3 * latency = 3ys tx time
+% => tx time is approximately latency stdDev
+% Each batch spends 30\% of it's time in the tx node. This means the first packet will be sent approximately 0.3*latency before the last one. This is the latency. 
+% As figure \ref{graph:latencyhistogram} shows, this holds true for high packet throughputs when batches are always nearly full. For very low throughput the histogram does not resemble the standarddeviation and indicates that many packets get their very own vector. Thus the big spike at the beginning of the distribution. 
+
+% TODO: test traffic patterns. 
+% TODO: check back l2 bridge histograms which were more interesting.
+
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/latency_histogram_overview_ip4.pdf}
+\caption{Latency histogram for \Ac{ip4} routing with a single route and 255k routes at approximately 10\%, 50\% and 90\% of the maximum throughput rate. }
+\label{graph:latencyhistogram}
+\end{figure}
+
+
+% \subsection{Bottleneck Analysis}
+
+% - fib: memory cache speed
+% - cpu cycles
+% - other hardware bottleneck? but this was already written about in analysis
+
+
+\subsection{Comparison}
+
+Tests showed that there are big performance differences even between
+\Ac{vpp} versions. While v16.09 is slower when using litte \Ac{ip4}
+routes, it doesn't have the maximum \Ac{fib} size of 255k which is
+exceptionally low compared to other software routers. Generally
+speaking though, it is at least twice as fast as Click DPDK and has
+similar performance to FastClick DPDK. \Ac{vpp} v18.10 beeing 1.2 mpps
+faster than FastClick DPDK indicates better optimizations and higher
+potential for \Ac{vpp} v18.10 - but for routing tables with 30,000 to
+1,000,000 entries FastClick DPDK has a very clear lead.
+
+% vectorization of vpp and fastclick and not the others
 
 \begin{table}[!ht]
 	\vspace{5ex}
 	\begin{tabular}[]{ l r r r }
-		Implementation & FIB size & Mpps & Relative \\ 
+		Implementation	 & FIB sizes & Mpps		& Relative \\ 
 		\midrule
-		MoonRoute & 1 & 14.6 & 100\% \\
-		MoonRoute & $2^{20}$ & 14.2 & 97\% \\
-		MoonRoute & $2^{24}$ & 11.6 & 79\% \\
-		VPP v18.10 & 1 & 11.56 & 79\% \\
-		FastClick DPDK & 1 & 10.4 & 72\% \\
-		FastClick DPDK & $2^{20}$ & 10.4 & 72\% \\
-		VPP v16.09 & 1 & 9.69 & \\
-		VPP v16.09 & 255k & 9.20 & \\
-		VPP v16.09 & $2^{20}$ & 8.50 & \\
-		VPP v18.10 & 255k & 7.23 & 50\% \\
-		VPP v16.09 & $2^{23}$ & 6.53 & \\
-		Click DPDK & 1 & 4.3 & 29\% \\
-		Click DPDK & $2^{20}$ & 4.2 & 28\% \\
-		Linux 3.7 & 1 & 1.5 & 11\% \\
+		MoonRoute		 & 1		 & 14.6		& 100\% \\
+		MoonRoute		 & $2^{20}$	 & 14.2		& 97\% \\
+		MoonRoute		 & $2^{24}$	 & 11.6		& 79\% \\
+		VPP v18.10		 & 1		 & 11.6		& 79\% \\
+		FastClick DPDK	 & 1		 & 10.4 	& 72\% \\
+		FastClick DPDK	 & $2^{20}$	 & 10.4 	& 72\% \\
+		VPP v16.09		 & 1		 & 9.7	 	& 71\% \\
+		VPP v16.09		 & 255k		 & 9.2	 	& 63\% \\
+		VPP v16.09		 & $2^{20}$	 & 8.5	 	& 58\% \\
+		VPP v18.10		 & 255k		 & 7.2	 	& 50\% \\
+		VPP v16.09		 & $2^{23}$	 & 6.5	 	& 45\% \\
+		Click DPDK		 & 1		 & 4.3 		& 29\% \\
+		Click DPDK		 & $2^{20}$	 & 4.2 		& 28\% \\
+		Linux 3.7		 & 1		 & 1.5 		& 11\% \\
 
 		\midrule
 	\end{tabular}
 	\caption{Comparison of maximum \Ac{ip4} forwarding throughput with a single worker on klaipeda (see table \ref{table:hardware}). Non-VPP results are from \cite{chair:architecture}}
 	\label{table:comparison}
 \end{table}
+
+% \subsubsection{TODO sections:}
+
+% Compare own measurements with figure 5+6 regarding latencies (linux, microtik, freebsd) of revisiting benchmarking methodology for interconnected devices.
+% + frame losses (fig. 3):
