@@ -17,8 +17,8 @@ import re
 from scipy.ndimage.filters import gaussian_filter1d
 
 hmac = ''
-DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-31_00-31-18_748886/klaipeda/',
-        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-03-31_00-31-18_748886/narva/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-04-01_01-08-16_986987/klaipeda/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-04-01_01-08-16_986987/narva/']
 
 GREEN = "#3f9852"
 BLUE = "#3869b1"
@@ -155,6 +155,22 @@ def parse_perfrecord(statfile, key):
                     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                     return -1.0
     return -1.0
+
+def parse_packetdrops(csvthroughputfile):
+    print("penis")
+    with open(csvthroughputfile, ) as f:
+        reader = csv.reader(f)
+        next(reader) # skip header line
+        tx = next(reader)
+        rx = next(reader)
+        print("{0:.2f}".format(float(rx[2])))
+        absdrops = int(float(tx[6])) - int(float(rx[6]))
+        print("asdasdasdasd")
+        print(absdrops)
+        if absdrops <= 0:
+            return 0
+        return absdrops #/ int(float(tx[6]))
+    return "err"
 
 # pasted from https://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates
 def tex_escape(text):
@@ -310,6 +326,68 @@ def latency_per_macs(fileprefix):
     fig.savefig("latency_{}.pdf".format(fileprefix))
     plt.show()
 
+def latency_per_throughput_collect(fileprefix):
+    rates = []
+    q0 = []
+    q25 = []
+    q5 = []
+    q75 = []
+    q90 = []
+    q99 = []
+    q999 = []
+    drops = []
+    for latfile in flatency: 
+        filename = os.path.basename(latfile)
+        if fileprefix in filename and not "mbit9000" in filename:
+            rate = float(filename.split(fileprefix)[1][0:6]) / (64*8)
+            # rate = int(filename[16:20]) # * 1000 / (64*8) # kbit / packetSize(byte) * 8bit
+            latencies, weights = parse_histogramfile(latfile)
+            csvthroughputfile = "{}.throughput.csv".format(latfile[:-14])
+            dropped = parse_packetdrops(csvthroughputfile)
+            tx,n2,throughput,n3 = parse_throughput(csvthroughputfile)
+            quantiles = weighted_quantile(latencies, [0.0, 0.25, 0.5, 0.75, 0.90, 0.99, 0.999], sample_weight=weights, values_sorted=True)
+            quantiles = list(map(lambda u: (u / 1000), quantiles))
+            rates.append(rate)
+            q0.append(quantiles[0])
+            q25.append(quantiles[1])
+            q5.append(quantiles[2])
+            q75.append(quantiles[3])
+            q90.append(quantiles[4])
+            q99.append(quantiles[5])
+            q999.append(quantiles[6])
+            drops.append(dropped)
+    return rates, q0, q5, q99, q999, drops
+
+def latency_per_throughput():
+
+    fig = plt.figure(figsize=(7, 4), dpi=160)
+    axes = plt.gca()
+    ax2 = axes.twinx()
+    axes.set_ylim([0,50])
+    ax2.set_yscale("log")
+    axes.set_xlim([0.5, 12])
+    axes.grid(True)
+    rates, q0, q5, q99, q999, drops = latency_per_throughput_collect("l3_latroutes1_")
+    axes.plot(rates, q0, linestyle=":", color=GREEN)
+    g0, = axes.plot(rates, q5, color=GREEN, marker="o")
+    g1, = axes.plot(rates, q99, linestyle=":", color=GREEN)
+    axes.plot(rates, q999, linestyle=":", color=GREEN)
+    g2, = ax2.plot(rates, drops, color=ORANGE, marker="1")
+    rates, q0, q5, q99, q999, drops = latency_per_throughput_collect("l3_latroutes255k_")
+    axes.plot(rates, q0, linestyle=":", color=BLUE)
+    g3, = axes.plot(rates, q5, color=BLUE, marker=">")
+    g4, = axes.plot(rates, q99, linestyle=":", color=BLUE)
+    axes.plot(rates, q999, linestyle=":", color=BLUE)
+    g5, = ax2.plot(rates, drops, color=PURPLE, marker="1")
+    plt.title("Latencies in IPv4 routing")
+    axes.set_ylabel("latency (ys)")
+    axes.set_xlabel("throughput (Mpps)")
+    ax2.set_ylabel("packet drops")
+    plt.legend([g0,g1, g2, g3, g4, g5], ["1 r latency", "1 r 0/99/99,9th percentile", "1 r packet drops", "255k r latency", "255k r 0/99/99,9th percentile", "255k r packet drops"]) #, loc="center left")
+    fig.tight_layout()
+    fig.savefig("latencies_per_throughput_summary_ip4.pdf")
+    plt.show()
+
 def throughput_per_macs(fileprefix):
     macss = []
     throughputs = []
@@ -392,7 +470,7 @@ def throughput_per_macs(fileprefix):
     axes.text(2097152, 8.4, " l3 cache")
 
     #ax2.axhline(color="gray", linewidth=0.5, y=15)
-    g2,n0,n1 = ax2.errorbar(macss, cachemisses1, cachemisses1_stddevs, elinewidth=0.5, color=BLUE)
+    g2,n0,n1 = ax2.errorbar(macss, cachemisses1, cachemisses1_stddevs, elinewidth=0.5, color=BLUE, marker="1")
     #n2,n0,n1 = ax2.errorbar(macss, cachemisses1_smooth, elinewidth=0.5, color=BLUE, linestyle=":")
     g1,n0,n1 = ax2.errorbar(macss, cachemisses3, cachemisses3_stddevs, elinewidth=0.5, color=ORANGE)
     #n2,n0,n1 = ax2.errorbar(macss, cachemisses3_smooth, elinewidth=0.5, color=ORANGE, linestyle=":")
@@ -508,7 +586,7 @@ def throughput_per_routes(fileprefix):
     axes.set_ylabel("throughput (Mpps)")
     axes.set_xlabel("l3fib entries")
     ax2.set_ylabel("cache-misses/packet & CPU time percentage")
-    plt.legend([g0,g1, g2, g3, g4], ["throughput", "LLC load misses", "1/10 * L1d load misses", "fn ip4_lookup", "fn ip4_rewrite"], loc="lower left")
+    plt.legend([g0,g1, g2, g3, g4], ["throughput", "LLC load misses", "1/10 * L1d load misses", "fn ip6_lookup", "fn ip6_rewrite"], loc="lower left")
     fig.tight_layout()
     #plt.grid(True)
 
@@ -723,4 +801,5 @@ def throughput_per_cores_summary():
 #throughput_per_cores("l3_multicore_")
 #throughput_per_routes("l3v6_routes_")
 #throughput_per_cores("l3v6_multicore_")
-throughput_per_macs("l2_throughmac_")
+#throughput_per_macs("l2_throughmac_")
+latency_per_throughput() # for "l3_latroutes1_" and "l3_latroutes255k_"
