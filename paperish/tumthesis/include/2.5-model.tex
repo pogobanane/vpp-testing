@@ -253,10 +253,26 @@ Figure \ref{graph:ip4fib} and \ref{graph:ip4fiblegacy} show test results of \Ac{
 \subsection{Latencies (Model)}
 
 
+histogram
+ip4 1route low, 90\% and max load (0.1, 0.5, 0.9)
+ip4 255routes low, 90\% and max load
+
+dropped frames per throughput, latency: avg, 99.999 percentile per throughput
+
+
+
+
 
 % dropped frames
 % histograms
 % sonstwas
+
+
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/latencies_per_throughput_summary_ip4.pdf}
+\caption{Latencies and packet drops of \Ac{ip4} routing with a single route (1 r) and 255k routes (255k r).  }
+\label{graph:latencyoverview}
+\end{figure}
 
 
 \subsection{Bottleneck Analysis}
