@@ -1,4 +1,4 @@
-% TODO high grade of automatation for reproducability
+% TODO i think this already contains the abstract
 
 \chapter{Introduction}
 
@@ -19,11 +19,14 @@ improved in many aspects. Especially frameworks like DPDK help in the
 making of fast software routers which can run on affordable commodity
 hardware. One of the routers built on that framework is \Ac{vpp} which
 was developed by Cisco and is now open source and maintained by
-\Ac{fdio}.
+\Ac{fdio}. \Ac{vpp} can be virtualized and has packet input nodes for
+NIC's handled by \Ac{dpdk} (dpdk-input), but can also use virtual
+links like virtual linux interfaces (tuntap, af-packet-input, tapcli)
+or memory map based interfaces (memif, netmap, vhost-user) which allow
+for good interoperability with local virtualized systems. Therefore it
+is promising for highly virtualized environments.
 
 % little indepencent and comparable benchmarks of vpp and others
-
-There is little independent performance analysis of \Ac{vpp} though and even less that allows for an accurate comparison between different software routers. 
 
 % therefore this work: well documented for comparison, automated for reproducability 
 
@@ -33,16 +36,20 @@ There is little independent performance analysis of \Ac{vpp} though and even les
 % - model to describe performance behaviour
 % - indentify/quantify bottlenecks
 
-Therefore this work presents well documented performance tests and
-results of \Ac{vpp} in different scenarios to enable comparability to
-other software routers. The tests procedures are as far as possible
+There is little independent performance analysis of \Ac{vpp} though
+and none that compares it to other software routers. Therefore this
+work presents well documented performance tests and results of
+\Ac{vpp} in different scenarios to enable comparability to other
+software routers. The tests procedures are as far as possible
 automated, to be as reproducable as possible. The resulting data is
-then analyzed to learn about the behaviour of \Ac{vpp} and it's
-performance bottlenecks. 
+then analyzed to learn and to create a model of the behaviour of
+\Ac{vpp} and it's performance bottlenecks.
 
 % summarize tests
 
-Namely the this paper tests the performance scaling on multiple cores, imapct of varying cpu clocks, ip version, l2fib and l3fib sizes and tasks like vxlan encapsulation. 
+Namely the this paper tests the performance scaling on multiple cores,
+imapct of varying cpu clocks, IP version, l2fib and l3fib sizes and
+tasks like vxlan encapsulation.
 
 % therefore the structure of this paper: 
 % 1. previous performance analysis of routers in general and vpp in particular
@@ -50,9 +57,9 @@ Namely the this paper tests the performance scaling on multiple cores, imapct of
 % 3. describe methodology and executed tests
 % 4. evaluate results and create model
 
-First, this paper will introduce previously existing methods for
-router perfomance analysis and existing benchmarking results for
-\Ac{vpp} in particular. Then challenges and perfomance critical
+First, this paper will introduce related work about existing methods
+for router perfomance analysis and about existing benchmarking results
+for \Ac{vpp} in particular. Then challenges and perfomance critical
 aspects of software routing and \Ac{vpp} are analyzed. In section
 \ref{sec:methodology} the methodology and the executed tests are
 desrcibed in detail. Finally the results are evaluated to create a

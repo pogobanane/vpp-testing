@@ -16,7 +16,7 @@ and latency which can be measured by the MoonGen
 bottlenecks and limiting factors, \Ac{perf} is used to measure metrics
 like cache misses and clock cycle counts. Furthermore \Ac{vpp}'s error
 counters are collected after each run, to detect problems in the
-packet processing.
+packet processing tests.
 
 
 \subsection{Measurement Results}
@@ -41,11 +41,10 @@ Additionally the scripts grant \Ac{vpp} some warmup time: Only when
 the first packet is successfully forwarded, the actual test begins.
 This is necessary, because \Ac{vpp} v18.10 tends to drop packets in
 the interface-tx node for a few seconds when it is not warmed up which
-drasically distorts the average throughput and latency. After the
+could drasically distort the average throughput and latency. After the
 other components have settled into the high load situation which takes
-around a second, the throughput average over the last minute stays
-about constant and can thus be properly described by the average and
-standard deviation.
+around a second, the throughput average stays about constant and can
+thus be properly described by the average and standard deviation.
 
 To measure the latency, occasional, timestamped packets are sent by
 MoonGen between the load generating packets. This is used to calculate
@@ -69,10 +68,10 @@ The command \lstinline|perf record| is used to attatch to the first
 worker thread of \Ac{vpp} or if vpp runs singlethreaded, to the main
 thread. This records the cpu time spent per function (symbol). It is
 important to connect to a thread processing the packet in \Ac{vpp}'s
-graph (not necessarily the main process) to get significant results to
-identify performance limiting factors. After the test run the record
-has to be parsed with \lstinline|perf report| to associate function
-names to the symbols. 
+graph (not necessarily the main process) to get significant results
+for identifying performance limiting factors. After the test run, the
+record has to be parsed with \lstinline|perf report| to associate
+function names to the symbols.
 
 \paragraph{Performance Impact}
 
@@ -88,24 +87,24 @@ time spent per function.
 
 Additionally \Ac{vpp} internal counters, usually used for error
 counting, are saved into the test's report for test quality assurance
-and debugging. The counters can be read via the \lstinline|show errors|
- \Ac{cli} command. Therefore \Ac{vpp} is configured to listen
-at a unix file fifo for it's \Ac{cli}. This interface \Ac{vpp} v18.10
-can be conveniently used with the tool "vppctl" to connect and
-interact with the fifo. In earlier versions like v16.09 this tool
+and debugging. The counters can be read via the \lstinline|show
+errors|  \Ac{cli} command. Therefore \Ac{vpp} is configured to listen
+at a unix file fifo for it's \Ac{cli}. This interface can be
+conveniently used with the tool "vppctl" in \Ac{vpp} v18.10 to connect
+and interact with the fifo. In earlier versions like v16.09 this tool
 worked differently. In order to be able to read those counters
 nevertheless, the tool "socat" was used to connect to the \Ac{cli}
-fifo filedescriptor.
+fifo file.
 
 
 \subsection{Test Procedure}
 
-One test run tests one vpp configuration. After each test run, vpp is
-beeing restarted. After each restart, the performance of VPP varies
-significantly more than within one testrun. Therefore in order to get
-an insight in how spread the variance is, each test run is repeated 6
-times. Only for latency measurements like histograms test results rely
-on a single run.
+One test run tests one \Ac{vpp} configuration. After each test run,
+\Ac{vpp} is beeing restarted. After each restart, the performance of
+\Ac{vpp} varies significantly more than within one testrun. Therefore
+in order to get an insight in how spread the variance is, each test
+run is repeated 6 times. Only for latency measurements like histograms
+test results rely on a single run.
 
 As figure \ref{testsequence} shows, the \Ac{dut} and \Ac{loadgen}
 first read the remote configuration file, after the management server
@@ -121,7 +120,7 @@ daemon will take at most a few seconds to set itself up, so both
 devices are synchronized again and MoonGen is already beeing started,
 because it's setup takes longer. When MoonGen is set up and starts
 it's warmup loadgen-phase, \Ac{vpp} is already online. \textit{20
-seconds} after MoonGen started both systems are \textit{running and
+seconds} after MoonGen started, both systems are \textit{running and
 have stabilized}.
 
 Now, after both systems synchronized again, \textit{\Ac{perf} data is
@@ -150,10 +149,10 @@ Configuring \Ac{vpp} consists of two steps: Setting the startup
 parameters which is done using a \Ac{config} - and executing \Ac{cli}
 commands to configure the routing settings on runtime. For the latter
 a file containing the \Ac{cli} commands can be specified in the
-startup configuration file to be executed. 
+startup \Ac{config} to be executed. 
 
-The vpp starting scripts used for this paper therefore creates
-temporary a \Ac{config} and \Ac{exec} for example according to the
+The \Ac{vpp} starting scripts used for this paper therefore create
+temporary \Ac{config} and \Ac{exec} for example according to the
 number of \Ac{ip4} routes specified in the starting script's
 parameters. The \Ac{ip4} and \Ac{ip6} scripts also support arbitrary
 multicore (-pinning) configurations.
@@ -165,9 +164,9 @@ Adding millions of \Ac{ip4} or \Ac{ip6} entries to the layer 3
 parameter to add any number of entries through a single command. The
 \Ac{cli} commands for the layer 2 \Ac{fib} don't support this though.
 Adding millions of entries via the command line would be too time
-consuming though. That's why this paper uses an own \Ac{vpp} plugin
-which extends the \Ac{cli} by a command with this functionality. In
-terms of speed it is comparable with the built-in commands.
+consuming. That's why this paper uses an own \Ac{vpp} plugin which
+extends the \Ac{cli} by a command with this functionality. In terms of
+speed it is comparable with the built-in commands.
 
 
 \subsection{\Ac{vpp} configurations}
@@ -187,21 +186,23 @@ bridge features mac-learning and mac-aging impact performance when
 activated, even when not specifially tested. Other features like
 flooding settings have no significant performance impact when not
 directly tested. Therefore in section \ref{sec:cpubottleneck} results
-are presented with and without those features enabled.
+are presented with and without the impacting features enabled.
 
 \paragraph{L3 routing}
 
-The \Ac{ip4} and \Ac{ip6} routing tests use multiple routes which all point to the same destination, conforming RFC2544.
+The \Ac{ip4} and \Ac{ip6} routing tests use multiple routes which all
+point to the same destination, conforming RFC2544.
 
 \paragraph{\Ac{vxlan}}
 
-Setting \Ac{vpp} up to encapsulate \Ac{vxlan} packets takes amongh others the following steps: 
+Setting \Ac{vpp} up to encapsulate \Ac{vxlan} packets takes amongh
+others the following steps:
 
 \begin{enumerate}
 	\item Add a dedicated IP \Ac{fib} table and configure it to route to the \Ac{vxlan} decapsulation endpoint.
-	\item Create a bridge domain belonging to the dedicated ip table.
-	\item Setup the tunnel using the bridge domain and the dedicated ip table.
-	\item Add the new virtual vxlan-tunnel interface and all other necessary interfaces to the bridge domain and take care of all of their l2fib entries. 
+	\item Create a bridge domain belonging to the dedicated IP table.
+	\item Setup the tunnel using the bridge domain and the dedicated IP table.
+	\item Add the new virtual \lstinline|vxlan-tunnel*| interface and all other necessary interfaces to the bridge domain and take care of all of their l2fib entries. 
 \end{enumerate}
 
 This means all packets arrive in the bridge domain, are forwarded to
