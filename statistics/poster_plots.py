@@ -20,11 +20,11 @@ hmac = ''
 DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-04-01_01-08-16_986987/klaipeda/',
         '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-04-01_01-08-16_986987/narva/']
 
-GREEN = "#3f9852"
-BLUE = "#3869b1"
-ORANGE = "#da7e30"
-RED = "#cc2428"
-PURPLE = "#6b4c9a"
+RED = "#9c0d17" ##990000
+ORANGE = "#ff590d"
+BLUE = "#005c9a"
+GREEN = "#85cc00"
+PURPLE = "#ffb300"
 
 USED = """
 l2_multimac_00000100_mbit4149hires.histogram.csv
@@ -301,19 +301,29 @@ def histogram_overview():
     #axes.yaxis.set_major_formatter(tick.FuncFormatter(lambda x,y: str(x)))
     #axes.get_yaxis().get_major_formatter().set_powerlimits((3,3))
     axes.get_xaxis().get_major_formatter().set_powerlimits((3,3))
-    plt.hist(latencies3, weights=weights3, bins=400)
-    plt.hist(latencies2, weights=weights2, bins=200)
-    plt.hist(latencies1, weights=weights1, bins=400)
+    plt.hist(latencies3, weights=weights3, bins=400, color=GREEN)
+    plt.hist(latencies2, weights=weights2, bins=200, color=BLUE)
+    plt.hist(latencies1, weights=weights1, bins=400, color=ORANGE)
+    #create legend
+    from matplotlib.patches import Rectangle
+    handles = [Rectangle((0,0),1,1,color=c,ec="k") for c in [ORANGE,BLUE,GREEN]]
+    labels = ["latency at 10%","latency at 50%", "latency at 90%"]
+    plt.legend(handles, labels)
 
 
     fig = plt.subplot(212)
-    fig.set_title("IPv6 255k routes")
+    fig.set_title("IPv4 255k routes")
     axes = plt.gca()
     axes.set_xlim([0, 50000])
     axes.get_xaxis().get_major_formatter().set_powerlimits((3,3))
-    plt.hist(latencies6, weights=weights6, bins=4000)
-    plt.hist(latencies5, weights=weights5, bins=300)
-    plt.hist(latencies4, weights=weights4, bins=400)
+    plt.hist(latencies6, weights=weights6, bins=4000, color=GREEN)
+    plt.hist(latencies5, weights=weights5, bins=300, color=BLUE)
+    plt.hist(latencies4, weights=weights4, bins=400, color=ORANGE)
+    #create legend
+    from matplotlib.patches import Rectangle
+    handles = [Rectangle((0,0),1,1,color=c,ec="k") for c in [ORANGE,BLUE,GREEN]]
+    labels = ["latency at 10%","latency at 50%", "latency at 90%"]
+    plt.legend(handles, labels)
     #plt.title('Rate {} Mbit/s - Packet size: {} B'.format(rate, psize))
     plt.xlabel("Processing latency (ns)")
     #fig.tight_layout()
@@ -523,13 +533,13 @@ def throughput_per_macs(fileprefix):
     axes.text(2097152, 8.4, " l3 cache")
 
     #ax2.axhline(color="gray", linewidth=0.5, y=15)
-    g2,n0,n1 = ax2.errorbar(macss, cachemisses1, cachemisses1_stddevs, elinewidth=0.5, color=BLUE, marker="1")
+    g2,n0,n1 = ax2.errorbar(macss, cachemisses1, cachemisses1_stddevs, elinewidth=0.5, color=ORANGE, marker="4")
     #n2,n0,n1 = ax2.errorbar(macss, cachemisses1_smooth, elinewidth=0.5, color=BLUE, linestyle=":")
-    g1,n0,n1 = ax2.errorbar(macss, cachemisses3, cachemisses3_stddevs, elinewidth=0.5, color=ORANGE)
+    g1,n0,n1 = ax2.errorbar(macss, cachemisses3, cachemisses3_stddevs, elinewidth=0.5, color=BLUE, marker="3")
     #n2,n0,n1 = ax2.errorbar(macss, cachemisses3_smooth, elinewidth=0.5, color=ORANGE, linestyle=":")
-    g3,n0,n1 = ax2.errorbar(macss, fn1pcts, fn1pct_stddevs, elinewidth=0.5, color=PURPLE)
+    g3,n0,n1 = ax2.errorbar(macss, fn1pcts, fn1pct_stddevs, elinewidth=0.5, color=PURPLE, marker="1")
     #g4,n0,n1 = ax2.errorbar(macss, fn2pcts, fn2pct_stddevs, elinewidth=0.5, color=RED)
-    g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs, linewidth=3, elinewidth=0.5, color=GREEN) #, linestyle="-", marker=".")
+    g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs, linewidth=3, elinewidth=0.5, color=GREEN, marker="x") #, linestyle="-", marker=".")
     plt.title("sending to many destinations")
     axes.set_ylabel("throughput (Mpps)")
     axes.set_xlabel("l2fib entries")
@@ -543,7 +553,7 @@ def throughput_per_macs(fileprefix):
     plt.show()
 
 
-def throughput_per_routes(fileprefix):
+def throughput_per_routes(fileprefix, ipversionstring):
     macss = []
     throughputs = []
     through_stddevs = []
@@ -582,8 +592,8 @@ def throughput_per_routes(fileprefix):
                     misses3 = parse_perfstats(statfilepath, "cache-misses")
                     # fn1 = parse_perfrecord(recordfilepath, "ip4_lookup")
                     # fn2 = parse_perfrecord(recordfilepath, "ip4_rewrite")
-                    fn1 = parse_perfrecord(recordfilepath, "ip6_lookup")
-                    fn2 = parse_perfrecord(recordfilepath, "ip6_rewrite")
+                    fn1 = parse_perfrecord(recordfilepath, "{}_lookup".format(ipversionstring))
+                    fn2 = parse_perfrecord(recordfilepath, "{}_rewrite".format(ipversionstring))
                     runresults.append(throughput)
                     runresults_cache1.append(misses1)
                     runresults_cache3.append(misses3)
@@ -628,18 +638,18 @@ def throughput_per_routes(fileprefix):
     #axes.text(2097152, 8.4, " l3 cache")
 
     #ax2.axhline(color="gray", linewidth=0.5, y=15)
-    g2,n0,n1 = ax2.errorbar(macss, cachemisses1, cachemisses1_stddevs, elinewidth=0.5, color=BLUE)
+    g2,n0,n1 = ax2.errorbar(macss, cachemisses1, cachemisses1_stddevs, elinewidth=0.5, color=ORANGE, marker="4")
     #n2,n0,n1 = ax2.errorbar(macss, cachemisses1_smooth, elinewidth=0.5, color=BLUE, linestyle=":")
-    g1,n0,n1 = ax2.errorbar(macss, cachemisses3, cachemisses3_stddevs, elinewidth=0.5, color=ORANGE)
-    g3,n0,n1 = ax2.errorbar(macss, fn1pcts, fn1pct_stddevs, elinewidth=0.5, color=PURPLE)
-    g4,n0,n1 = ax2.errorbar(macss, fn2pcts, fn2pct_stddevs, elinewidth=0.5, color=RED)
+    g1,n0,n1 = ax2.errorbar(macss, cachemisses3, cachemisses3_stddevs, elinewidth=0.5, color=BLUE, marker="3")
+    g3,n0,n1 = ax2.errorbar(macss, fn1pcts, fn1pct_stddevs, elinewidth=0.5, color=PURPLE, marker="2")
+    g4,n0,n1 = ax2.errorbar(macss, fn2pcts, fn2pct_stddevs, elinewidth=0.5, color=RED, marker="1")
     #n2,n0,n1 = ax2.errorbar(macss, cachemisses3_smooth, elinewidth=0.5, color=ORANGE, linestyle=":")
-    g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs, linewidth=3, elinewidth=0.5, color=GREEN) #, linestyle="-", marker=".")
+    g0,n0,n1 = axes.errorbar(macss, throughputs, through_stddevs, linewidth=3, elinewidth=0.5, color=GREEN, marker="x") #, linestyle="-", marker=".")
     plt.title("sending to many destinations")
     axes.set_ylabel("throughput (Mpps)")
     axes.set_xlabel("l3fib entries")
     ax2.set_ylabel("cache-misses/packet & CPU time percentage")
-    plt.legend([g0,g1, g2, g3, g4], ["throughput", "LLC load misses", "1/10 * L1d load misses", "fn ip6_lookup", "fn ip6_rewrite"], loc="lower left")
+    plt.legend([g0,g1, g2, g3, g4], ["throughput", "LLC load misses", "1/10 * L1d load misses", "fn {}_lookup".format(ipversionstring), "fn {}_rewrite".format(ipversionstring)], loc="lower left")
     fig.tight_layout()
     #plt.grid(True)
 
@@ -821,26 +831,26 @@ def throughput_per_cores_summary():
     #axes.axvline(color="gray", x=2097152)
     #axes.text(2097152, 8.4, " l3 cache")
 
-    n1,n1,n1 = axes.errorbar(macss1, txmin1, np.zeros(len(macss1)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
-    n1,n1,n1 = axes.errorbar(macss2, txmin2, np.zeros(len(macss2)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
-    n1,n1,n1 = axes.errorbar(macss3, txmin3, np.zeros(len(macss3)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
-    n1,n1,n1 = axes.errorbar(macss4, txmin4, np.zeros(len(macss4)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
+    #n1,n1,n1 = axes.errorbar(macss1, txmin1, np.zeros(len(macss1)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
+    #n1,n1,n1 = axes.errorbar(macss2, txmin2, np.zeros(len(macss2)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
+    #n1,n1,n1 = axes.errorbar(macss3, txmin3, np.zeros(len(macss3)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
+    #n1,n1,n1 = axes.errorbar(macss4, txmin4, np.zeros(len(macss4)), linewidth=1, elinewidth=0.5, color="gray") #, linestyle="-", marker=".")
 
-    g1,n1,n1 = axes.errorbar(macss1, throughputs1, through_stddevs1, linewidth=2, elinewidth=0.5, color=GREEN) #, linestyle="-", marker=".")
-    g2,n2,n2 = axes.errorbar(macss2, throughputs2, through_stddevs2, linewidth=2, elinewidth=0.5, color=BLUE) #, linestyle="-", marker=".")
-    g3,n1,n1 = axes.errorbar(macss3, throughputs3, through_stddevs3, linewidth=2, elinewidth=0.5, color=ORANGE) #, linestyle="-", marker=".")
-    g4,n1,n1 = axes.errorbar(macss4, throughputs4, through_stddevs4, linewidth=2, elinewidth=0.5, color=PURPLE) #, linestyle="-", marker=".")
+    g1,n1,n1 = axes.errorbar(macss1, throughputs1, through_stddevs1, linewidth=2, elinewidth=0.5, color=GREEN, marker="o") #, linestyle="-", marker="1")
+    g2,n2,n2 = axes.errorbar(macss2, throughputs2, through_stddevs2, linewidth=2, elinewidth=0.5, color=BLUE, marker="v") #, linestyle="-", marker="2")
+    g3,n1,n1 = axes.errorbar(macss3, throughputs3, through_stddevs3, linewidth=2, elinewidth=0.5, color=ORANGE, marker="s") #, linestyle="-", marker="3")
+    g4,n1,n1 = axes.errorbar(macss4, throughputs4, through_stddevs4, linewidth=2, elinewidth=0.5, color=PURPLE, marker="D") #, linestyle="-", 
 
-    axes.text(0.1, 15.1, "klaipeda tx (10GbE)")
+    axes.text(5.3, 15.1, "E3-1230 tx (10GbE)")
     axes.axhline(color="gray", linewidth=1, y=14.88)
-    axes.text(0.1, 19, "omastar tx (40GbE)")
+    axes.text(0.1, 19.5, "E5-2630 tx (40GbE)")
     axes.axhline(color="gray", linewidth=1, y=20.5)
 
     plt.title("sending from a few ip's")
     axes.set_ylabel("throughput (Mpps)")
     axes.set_xlabel("vpp workers (rss)")
     #ax2.set_ylabel("cache misses per 256-packet vector")
-    plt.legend([g1, g2, g3, g4], ["klaipeda @ 3.2GHz", "klaipeda @ 1.6GHz", "omastar @ 2.2GHz", "omastar @ 1.2GHz"], loc="lower right")
+    plt.legend([g1, g2, g3, g4], ["Xeon E3-1230 @ 3.2GHz", "Xeon E3-1230 @ 1.6GHz", "Xeon E5-2630 @ 2.2GHz", "Xeon E5-2630 @ 1.2GHz"], loc="lower right")
     fig.tight_layout()
     #plt.grid(True)
 
@@ -849,11 +859,11 @@ def throughput_per_cores_summary():
     plt.show()
 
 
-#throughput_per_cores_summary()
-#throughput_per_routes("l3_routes_")
+throughput_per_cores_summary()
+#throughput_per_routes("l3_routes_", "ip4")
 #throughput_per_cores("l3_multicore_")
-#throughput_per_routes("l3v6_routes_")
+#throughput_per_routes("l3v6_routes_", "ip6")
 #throughput_per_cores("l3v6_multicore_")
 #throughput_per_macs("l2_throughmac_")
 #latency_per_throughput() # for "l3_latroutes1_" and "l3_latroutes255k_"
-histogram_overview()
+#histogram_overview()
