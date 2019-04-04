@@ -1,10 +1,10 @@
 
-\section{Analysis}
+\chapter{Analysis}
 
 % bring up features from #Background
 % features:
 
-\subsection{Experiment Setup}
+\section{Experiment Setup}
 
 Each device in the testbed has at least three active ethernet links:
 One connecting it to a management server, and two connected to the
@@ -32,9 +32,9 @@ and stats like cpu cycles or cache misses.
 \end{figure}
 
 
-\subsection{Possible Bottlenecks}
+\section{Possible Bottlenecks}
 
-\subsubsection{Physical Link Speed}
+\subsection{Physical Link Speed}
 \label{sec:linkspeed}
 
 % - in many cases: 
@@ -53,7 +53,7 @@ bottleneck on the CPU. The obvious solution, using a 40GbE link with
 more bandwidth, was used for this paper.
 
 
-\subsubsection{Loadgen Speed}
+\subsection{Loadgen Speed}
 
 % - loadgen speed
 % 	- can saturate a 10GbE link with minimum sized ethernet frames for all tests conducted (14.88mpps)
@@ -78,7 +78,7 @@ work showed that the cause for this are bottlenecks inside the NIC.
 
 % TODO move this to link speed subsection
 
-\subsubsection{Internal Bandwidth}
+\subsection{Internal Bandwidth}
 
 % pci bandwidth
 
@@ -100,7 +100,7 @@ typically supports between 1333 MT/s (the 10GbE system) or 2133 MT/s
 transfer rate of 85 GBit/s and 136 GBit/s. This should be sufficient
 for 10GbE networking, 40GbE links require at least 2133MT/s memory.
 
-\subsubsection{CPU time per Packet}
+\subsection{CPU time per Packet}
 
 As section \ref{sec:cpubottleneck} will show, the CPU time spent per
 packet is the biggest bottleneck. The following subsections describe
@@ -112,7 +112,7 @@ how this issue is dealt with in VPP.
 % - memory latency: latency increases cpu time, caches can improve latency
 
 
-\subsection{NICs with DPDK and VPP}
+\section{NICs with DPDK and VPP}
 
 For VPP to utilize NIC's up to their specified line rate, it relies on
 \Ac{dpdk}. This introduces a few noteworthy optimizations:
@@ -145,7 +145,7 @@ the hardware and kernel. \cite{vppdocs:rxmodes}
 % vpp's multithreading model: hqos, worker, main thread
 % placement
 
-\subsection{Packet Processing Graph}
+\section{Packet Processing Graph}
 
 % - modularity, feature rich
 %	- visualize the parsing done in the first step as in the vpp paper and explain 
@@ -207,7 +207,7 @@ nodes are implemented by the \lstinline|ip6_lookup| and the
 \end{figure}
 
  
-\subsection{Forwarding Datastructures}
+\section{Forwarding Datastructures}
 
 VPP implements several datastructures for it's packet forwarding. A
 BiHash table is used for the layer 2 \Ac{fib} and the ip6 \Ac{fib}
@@ -274,7 +274,7 @@ like the ip4-rewrite node does.
 
 % table size problems
 
-\subsection{Vectorization}
+\section{Vectorization}
 \label{sec:vectorization}
 
 % - vectorization

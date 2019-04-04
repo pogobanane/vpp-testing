@@ -1,4 +1,4 @@
-\section{Evaluation and Model}
+\chapter{Evaluation and Model}
 
 % show measurement results and explain that headers are parsed for xconnect/bridging even if they are not needed \ref{}
 
@@ -11,7 +11,7 @@
 % how well does the fantastic memory alignment of vpp work in numa?
 
 
-\subsection{CPU as Bottleneck}
+\section{CPU as Bottleneck}
 \label{sec:cpubottleneck}
 
 Table \ref{bottleneck} presents maximum throughput of all
@@ -70,7 +70,7 @@ frequency.
 % With offered Mpps beeing 100\%, "Relative" is the maximum packet throughput in relation to the offered one.
 
 
-\subsection{CPU Scaling Model}
+\section{CPU Scaling Model}
 
 Since the CPU is a bottleneck in all tested configurations, the
 ability to distribute the load over multiple CPU cores is
@@ -138,7 +138,7 @@ due to the \Ac{nic} performance limit described in section
 \end{figure}
 
 
-\subsection{Lookup Performance Model}
+\section{Lookup Performance Model}
 
 % present measurement results_
 % - l2fib
@@ -147,7 +147,7 @@ due to the \Ac{nic} performance limit described in section
 % - v16.09 ip4
 
 
-\subsubsection{L2 \Ac{fib}}
+\subsection{L2 \Ac{fib}}
 
 The layer 2 \Ac{fib} is tested by configuring \Ac{vpp} with varying
 amounts of l2fib entries and sending packets to random destinations
@@ -184,7 +184,7 @@ inside the lookup node.
 
 
 
-\subsubsection{\Ac{ip6} \Ac{fib}}
+\subsection{\Ac{ip6} \Ac{fib}}
 
 Figure \ref{graph:ip6fib} shows the results of \Ac{ip6} routing with
 different layer 3 \Ac{fib} sizes. It's maximum size is remarkably
@@ -213,7 +213,7 @@ from 20,000 \Ac{fib} entries upwards is because of the BiHash table lookups taki
 
 
 
-\subsubsection{\Ac{ip4} \Ac{fib}}
+\subsection{\Ac{ip4} \Ac{fib}}
 \label{sec:ip4fib}
 
 While the layer 2 \Ac{fib} can contain over $2^{23}$ entries, tests
@@ -258,9 +258,9 @@ Figure \ref{graph:ip4fib} and \ref{graph:ip4fiblegacy} show test results of \Ac{
 
 % TODO fix perf stack plot script
 
-\subsection{Latencies}
+\section{Latencies}
 
-\subsubsection{Average Latencies}
+\subsection{Average Latencies}
 
 % TODO: this section refferes to max throughput as NDR
 
@@ -302,7 +302,7 @@ $$ l(t) = t_{max} * (45- 44 * (-t+1)^{\frac{1}{10t}}) $$
 \label{graph:latencyoverview}
 \end{figure}
 
-\subsubsection{Latency Distribution}
+\subsection{Latency Distribution}
 
 Figure \ref{graph:latencyhistogram} shows histograms of latency for
 \Ac{ip4} routing at approximately 10\%, 50\% and 90\% of the maximum
@@ -349,7 +349,7 @@ different. \cite{linguaglossa2017high}
 % - other hardware bottleneck? but this was already written about in analysis
 
 
-\subsection{Comparison}
+\section{Comparison}
 
 Tests showed that there are big performance differences even between
 \Ac{vpp} versions. While v16.09 is slower when using litte \Ac{ip4}

@@ -1,5 +1,5 @@
 
-\section{Methodology}
+\chapter{Methodology}
 \label{sec:methodology}
 
 
@@ -19,13 +19,13 @@ counters are collected after each run, to detect problems in the
 packet processing tests.
 
 
-\subsection{Measurement Results}
+\section{Measurement Results}
 
 % methods of metric retrieval
 
 % moongen 
 
-\subsubsection{MoonGen (Throughput and Latency)} 
+\subsection{MoonGen (Throughput and Latency)} 
 
 % TODO talk about threading
 
@@ -51,7 +51,7 @@ MoonGen between the load generating packets. This is used to calculate
 average and standard deviation and create a histogram of latencies.
 
 
-\subsubsection{\Ac{perf}}
+\subsection{\Ac{perf}}
 
 \paragraph{perf-stat} 
 
@@ -82,7 +82,7 @@ the \Ac{perf} tools are only active for graphs showing cache misses or
 time spent per function. 
 
 
-\subsubsection{vpp counters: socat}
+\subsection{\Ac{vpp} Counters: socat}
 \label{sec:vppcounters}
 
 Additionally \Ac{vpp} internal counters, usually used for error
@@ -97,7 +97,7 @@ nevertheless, the tool "socat" was used to connect to the \Ac{cli}
 fifo file.
 
 
-\subsection{Test Procedure}
+\section{Test Procedure}
 
 One test run tests one \Ac{vpp} configuration. After each test run,
 \Ac{vpp} is beeing restarted. After each restart, the performance of
@@ -141,7 +141,7 @@ synchronization takes place an the \textit{next run can be started}.
 \end{figure}
 
 
-\subsection{Configuring \Ac{vpp}}
+\section{Configuring \Ac{vpp}}
 
 % describe/explain vpp configs/execs
 
@@ -169,7 +169,7 @@ extends the \Ac{cli} by a command with this functionality. In terms of
 speed it is comparable with the built-in commands.
 
 
-\subsection{\Ac{vpp} configurations}
+\section{\Ac{vpp} configurations}
 
 For this paper several scenarios were tested: 
 
@@ -210,7 +210,7 @@ the virtual vxlan-tunnel interface, then encapsulated and sent to the
 vxlan-tunnel endpoint via IP.
 
 
-\subsection{Testbed Hardware Setup}
+\section{Testbed Hardware Setup}
 \label{sec:hardware}
 
 Test are conducted on different test systems listed in table
