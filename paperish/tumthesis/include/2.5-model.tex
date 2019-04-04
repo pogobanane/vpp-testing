@@ -64,7 +64,7 @@ frequency.
 		IPv6 255k routes & 2.34 (62\%) & 3.72 (98\%) & 3.80 (100\%) \\ % 0.01 0.04 0.02
 		\midrule
 	\end{tabular}
-	\caption{Maximum througput (Mpps) in different scenarios with different CPU frequencies measured on klaipeda. }
+	\caption{Maximum througput (Mpps) in different scenarios with different CPU frequencies measured on the Xeon E3-1230 system. }
 	\label{bottleneck}
 \end{table}
 % With offered Mpps beeing 100\%, "Relative" is the maximum packet throughput in relation to the offered one.
@@ -133,7 +133,7 @@ due to the \Ac{nic} performance limit described in section
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_summary_multicore.pdf}
-\caption{VPP CPU scaling with \Ac{ip4} traffic with 10GbE, 40GbE and different CPU clock speeds. All workers (besides klaipeda 3-6) use physical CPU cores. }
+\caption{VPP CPU scaling with \Ac{ip4} traffic with 10GbE, 40GbE and different CPU clock speeds. All workers (besides E3-1230 core 3-6) use physical CPU cores. The 40GbE NIC bottlenecks at around 20Mpps (see section \ref{sec:40gbelimit}). }
 \label{graph:multicore}
 \end{figure}
 
@@ -229,25 +229,25 @@ Figure \ref{graph:ip4fib} and \ref{graph:ip4fiblegacy} show test results of \Ac{
 
 
 \begin{figure}[!ht]
-\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v2.pdf}
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v3.pdf}
 \caption{Testing \Ac{vpp} v18.10 with different layer 2 \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
 \label{graph:l2fib}
 \end{figure}
 
 \begin{figure}[!ht]
-\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3v6_routes_klaipeda32ghz_v2.pdf}
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3v6_routes_klaipeda32ghz_v3.pdf}
 \caption{Testing \Ac{vpp} v18.10 with different \Ac{ip6} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
 \label{graph:ip6fib}
 \end{figure}
 
 \begin{figure}[!ht]
-\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda32ghz_v2.pdf}
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda32ghz_v3.pdf}
 \caption{Testing \Ac{vpp} v18.10 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions.}
 \label{graph:ip4fib}
 \end{figure}
 
 \begin{figure}[!ht]
-\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda_v1609_32ghz_v2.pdf}
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda_v1609_32ghz_v3.pdf}
 \caption{Testing \Ac{vpp} v16.09 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
 \label{graph:ip4fiblegacy}
 \end{figure}
@@ -261,6 +261,8 @@ Figure \ref{graph:ip4fib} and \ref{graph:ip4fiblegacy} show test results of \Ac{
 \subsection{Latencies}
 
 \subsubsection{Average Latencies}
+
+% TODO: this section refferes to max throughput as NDR
 
 % dropped frames per throughput, latency: avg, 99.999 percentile per throughput
 
@@ -383,7 +385,7 @@ potential for \Ac{vpp} v18.10 - but for routing tables with 30,000 to
 
 		\midrule
 	\end{tabular}
-	\caption{Comparison of maximum \Ac{ip4} forwarding throughput with a single worker on klaipeda (see table \ref{table:hardware}). Non-VPP results are from \cite{chair:architecture}}
+	\caption{Comparison of maximum \Ac{ip4} forwarding throughput with a single worker on the Xeon E3-1230 system (see table \ref{table:hardware}). Non-VPP results are from \cite{chair:architecture} and are conducted on the same system. }
 	\label{table:comparison}
 \end{table}
 
