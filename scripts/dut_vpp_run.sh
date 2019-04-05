@@ -229,9 +229,9 @@ function vpp-find-sweetspot () {
 
 
 vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
-for s in {1..20}
+for s in {1..100}
 do
-	i=$((s*500))
+	i=$((s*100))
 	istr=`printf "%06i" $i`
 	vpp-test "l3_latroutes1_${istr}_0" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 1"
 	vpp-test "l3_latroutes255k_${istr}_0" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 255116"

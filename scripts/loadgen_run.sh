@@ -196,9 +196,9 @@ function l2-throughput-sweetspot () {
 # l2-throughput-sweetspot "l2_multimac_00015000" 15000
 # l2-throughput-sweetspot "l2_multimac_00020000" 20000
 
-for s in {1..20}
+for s in {1..100}
 do
-	i=$((s*500))
+	i=$((s*100))
 	istr=`printf "%06i" $i`
 	l3-throughput-routes "l3_latroutes1_${istr}_0" $i 1
 	l3-throughput-routes "l3_latroutes255k_${istr}_0" $i 255116
