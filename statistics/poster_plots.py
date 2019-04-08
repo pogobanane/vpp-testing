@@ -469,20 +469,24 @@ def latency_per_throughput():
     axes.set_ylim([0,50])
     ax2.set_yscale("log")
     axes.set_xlim([0.5, 12])
-    axes.grid(True)
+    #axes.grid(True)
     rates, q0, q5, q99, q999, drops, err_q0, err_q5, err_q99, err_q999, err_drops = latency_per_throughput_collect("l3_latroutes1_")
     theory1 = []
     theory2 = []
-    theoryX= []
+    theory1X= []
+    theory2X= []
     for i in range(1, 1200):
         t = 0.0001 + 0.01 * i
-        theoryX.append(t)
         s = 10.9
-        y = 58.0-62.0* (-(float(t)/s)+1.0) ** ((1.0 * s) / (7.0 * float(t)))
-        theory1.append(y)
+        y = 59.0-62.0* (-(float(t)/s)+1.0) ** ((1.0 * s) / (8.0 * float(t)))
+        if t <= s+0.01:
+            theory1.append(y)
+            theory1X.append(t)
         s = 7.0
-        y = 58.0-62.0* (-(float(t)/s)+1.0) ** ((1.0 * s) / (7.0 * float(t)))
-        theory2.append(y)
+        y = 59.0-62.0* (-(float(t)/s)+1.0) ** ((1.0 * s) / (8.0 * float(t)))
+        if t <= s+0.01:
+            theory2.append(y)
+            theory2X.append(t)
     axes.plot(rates, q0, linestyle=":", color=GREEN)
     g0,n0,n0 = axes.errorbar(rates, q5, err_q5, elinewidth=0.5, color=GREEN, marker="o")
     g1, = axes.plot(rates, q99, linestyle=":", color=GREEN)
@@ -496,13 +500,13 @@ def latency_per_throughput():
     g4,= axes.plot(rates, q99, linestyle=":", color=BLUE)
     axes.plot(rates, q999, linestyle=":", color=BLUE)
     g5,n0,n0 = ax2.errorbar(rates, drops, err_drops, elinewidth=0.5, color=PURPLE, marker="1")
-    g8, = axes.plot(theoryX, theory1, color=RED) # , marker="1")
-    g8, = axes.plot(theoryX, theory2, color=RED) # , marker="1")
+    g8, = axes.plot(theory1X, theory1, color=RED) # , marker="1")
+    g8, = axes.plot(theory2X, theory2, color=RED) # , marker="1")
     plt.title("Latencies in IPv4 routing")
     axes.set_ylabel("latency (ys)")
     axes.set_xlabel("throughput (Mpps)")
     ax2.set_ylabel("packet drops")
-    plt.legend([g0,g1, g2, g3, g4, g5], ["1 r latency", "1 r 0/99/99,9th percentile", "1 r packet drops", "255k r latency", "255k r 0/99/99,9th percentile", "255k r packet drops"]) #, loc="center left")
+    plt.legend([g0,g1, g2, g3, g4, g5, g8], ["1 r latency", "1 r 0/99/99,9th percentile", "1 r packet drops", "255k r latency", "255k r 0/99/99,9th percentile", "255k r packet drops", "l(t)"]) #, loc="center left")
     fig.tight_layout()
     fig.savefig("latencies_per_throughput_summary_ip4.pdf")
     plt.show()

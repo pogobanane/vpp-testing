@@ -107,13 +107,12 @@ The virtual ("hyper threading") cores are used for workers three to
 six within the 10GbE system which results in lower performance gain
 and even slight performance loss in the end.
 
-$$ TODO trivial function $$
-
 Using the 40GbE system at maximum CPU clock two cores can just not
 saturate the limits of the \Ac{nic}. Both 40GbE scaling tests show
-that doubeling the amount of workers doubles the throughput until line
-rate is hit at around two and four workers, respectively (using
-pysical cores).
+that for a workers's maximum throughput $w_{t}$ the overall maximum
+throughput depending on the number of workers $w$ is $f(w) = w *
+w_{t}$. This holds true until line rate is hit at around two and four
+workers, respectively (using pysical cores).
 
 At around 20 Mpps the measured throughput can be unstable by around 0.4
 Mpps, because of unstable MoonGen packet generation rates. This is
@@ -204,8 +203,11 @@ for layer 2 \Ac{fib}s seem not to apply to \Ac{ip6} \Ac{fib}s.
 
 % l2 cache size of 256k (2^18) at most 32,768 routes -> right after the big drop
 
-Nevertheless it can be assumed the massive drop in performance
-from 20,000 \Ac{fib} entries upwards is because of the BiHash table lookups taking longer because of cache size limitations, since the big drop of throughput closely correlates to the layer 3 cache misses and the time spent in the lookup function. 
+Nevertheless it can be assumed the massive drop in performance from
+20,000 \Ac{fib} entries upwards is because of the BiHash table lookups
+taking longer because of cache size limitations, since the big drop of
+throughput closely correlates to the layer 3 cache misses and the time
+spent in the lookup function.
 
 
 
@@ -223,10 +225,30 @@ software routers nevertheless, tests conducted with v16.09 show that
 this version is able to handle up to around 12,580,000 \Ac{fib}
 entries which is well above $2^{23}$.
 
-Figure \ref{graph:ip4fib} and \ref{graph:ip4fiblegacy} show test results of \Ac{vpp} v18.10 with up to 255,000 entries and of v16.09 with up to 10,300,000 entries. Both show similar behaviour to the \Ac{ip6} \Ac{fib} tests with one big throughput drop torwards the end of the graph. 
+Figure \ref{graph:ip4fib} and \ref{graph:ip4fiblegacy} show test
+results of \Ac{vpp} v18.10 with up to 255,000 entries and of v16.09
+with up to 10,300,000 entries. Both show similar behaviour to the
+\Ac{ip6} \Ac{fib} tests with one big throughput drop torwards the end
+of the graph.
 
 % TODO point out, that index lookup is not the performance issue
 
+\subsection{Lookup Nodes as Bottleneck}
+
+With big lookup tables, the throughput drops a lot with every kind of
+lookup table because for every additional CPU cycle spent for the
+lookup in relation to the available cycles, the throughput will drop
+by the same ratio. Thus the maximum throughput $f$ can be modeled
+depending on the relative time $d_{lookup}$ spent in the lookup node
+function for a known maximum throughput $t_{max}$ with one or two
+routes:
+
+$$ f(x) = t_{max} * ( 1 - d_{lookup} ) $$
+
+The measurements closely resemble this model. They proof that the
+lookup is basically exclusively responsible for the performance
+decrease of bigger \Ac{fib}s and thus a limiting factor scenarios with
+big routing tables.
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v3.pdf}
@@ -254,7 +276,7 @@ Figure \ref{graph:ip4fib} and \ref{graph:ip4fiblegacy} show test results of \Ac{
 
 % model the performance decrease according to causes
 
-% cpu scaling and live inserts
+% cpu scaling
 
 % TODO fix perf stack plot script
 
@@ -285,7 +307,7 @@ following function can approximate the average latency for different
 packet rates $t \in (0, t_{max})$ for a known maximum packet
 throughput $t_{max}$. 
 
-$$ l(t) = t_{max} * (45- 44 * (-t+1)^{\frac{1}{10t}}) $$ 
+$$ l(t) = 59 - 62 * (-\frac{t}{t_{max}}+1)^{\frac{t_{max}}{8t}} $$ 
 
 % this is already said in Latency Distribution
 
