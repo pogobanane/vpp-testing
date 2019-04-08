@@ -26,6 +26,8 @@ or memory map based interfaces (memif, netmap, vhost-user) which allow
 for good interoperability with local virtualized systems. Therefore it
 is promising for highly virtualized environments.
 
+% TODO: DPDK citation
+
 % little indepencent and comparable benchmarks of vpp and others
 
 % therefore this work: well documented for comparison, automated for reproducability 
@@ -42,14 +44,10 @@ work presents well documented performance tests and results of
 \Ac{vpp} in different scenarios to enable comparability to other
 software routers. The tests procedures are as far as possible
 automated, to be as reproducable as possible. The resulting data is
-then analyzed to learn and to create a model of the behaviour of
-\Ac{vpp} and it's performance bottlenecks.
+then analyzed to learn about the behaviour of \Ac{vpp} and it's
+performance bottlenecks.
 
-% summarize tests
-
-Namely the this paper tests the performance scaling on multiple cores,
-imapct of varying cpu clocks, IP version, l2fib and l3fib sizes and
-tasks like vxlan encapsulation.
+% TODO well documented: link code
 
 % therefore the structure of this paper: 
 % 1. previous performance analysis of routers in general and vpp in particular
@@ -62,5 +60,8 @@ for router perfomance analysis and about existing benchmarking results
 for \Ac{vpp} in particular. Then challenges and perfomance critical
 aspects of software routing and \Ac{vpp} are analyzed. In section
 \ref{sec:methodology} the methodology and the executed tests are
-desrcibed in detail. Finally the results are evaluated to create a
-model to describe \Ac{vpp}'s performance behaviour.
+desrcibed in detail. This paper presents measured performance for
+scaling on multiple cores, imapct of varying cpu clocks, IP version,
+l2fib and l3fib sizes and tasks like \Ac{vxlan} encapsulation. Finally
+the results are evaluated to create a model to describe \Ac{vpp}'s
+performance behaviour.

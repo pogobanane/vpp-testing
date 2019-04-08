@@ -22,10 +22,11 @@ move the main thread to a dedicated CPU core which in turn allows live
 inserts of 255k routing table entries with a throughput impact of less
 than a percent.
 
-In combination with the rich options to connect \Ac{vpp} to virtual
-machines, containers or local high performance applications, it is
-well suited for building virtual networks for highly virtualized
-environments or implementation of \Ac{vnf}.
+Although \Ac{vpp} performs badly with very big routing tables, it's
+modularity in combination with the rich options to connect it to
+virtual machines, containers or local high performance applications,
+make it a well choice for building virtual networks for highly
+virtualized environments or implementation of \Ac{vnf}.
 
 Next research steps could include more specific benchmarks regarding
 specific protocol features like behavior on receiving control packets.

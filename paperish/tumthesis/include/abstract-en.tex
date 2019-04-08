@@ -1,7 +1,17 @@
 \small
 
-At the end this paper will attempt a brief comparison of \Ac{vpp} with a few other software routers. 
+With high performance, low level network packet processing frameworks
+like DPDK, software routers can reach throughput speeds almost
+saturating 10GbE links with minimum sized packets using a single CPU
+core. Examples for this are open source projects like \Ac{vpp},
+FastClick or MoonRoute. This paper analyzes how \Ac{vpp} can reach
+it's high packet throughput rates and describes possible bottlenecks.
+Tests to measure it's performance measurements are conducted and
+explained in detail. Results are presented for layer 2, \Ac{ip4},
+\Ac{ip6} and \Ac{vxlan} encapsulation scenarios. Especially different
+\Ac{fib} sizes are tested to find out whether \Ac{vpp} is capable of
+routing the internet. Forwarding latencies are analyzed and a brief
+comparison to other software routers will be made. Furthermore many
+measurement results are explained by creating models.
 
-\blindtext
-
-\blindtext
+% TODO: MoonRoute FastClick  vpp citation
