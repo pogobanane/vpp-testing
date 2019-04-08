@@ -17,8 +17,8 @@ import re
 from scipy.ndimage.filters import gaussian_filter1d
 
 hmac = ''
-DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-04-01_01-08-16_986987/klaipeda/',
-        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-04-01_01-08-16_986987/narva/']
+DIRS = ['/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-04-06_12-04-46_363667/klaipeda/',
+        '/home/pogobanane/dev/ba/ba-okelmann/statistics/data/2019-04-06_12-04-46_363667/narva/']
 
 RED = "#9c0d17" ##990000
 ORANGE = "#ff590d"
@@ -399,30 +399,70 @@ def latency_per_throughput_collect(fileprefix):
     q99 = []
     q999 = []
     drops = []
+    err_q0 = []
+    err_q25 = []
+    err_q5 = []
+    err_q75 = []
+    err_q90 = []
+    err_q99 = []
+    err_q999 = []
+    err_drops = []
+
     for latfile in flatency: 
         filename = os.path.basename(latfile)
-        if fileprefix in filename and not "mbit9000" in filename:
+        if fileprefix in filename and "_0." in filename:
             rate = float(filename.split(fileprefix)[1][0:6]) / (64*8)
             # rate = int(filename[16:20]) # * 1000 / (64*8) # kbit / packetSize(byte) * 8bit
-            latencies, weights = parse_histogramfile(latfile)
-            csvthroughputfile = "{}.throughput.csv".format(latfile[:-14])
-            dropped = parse_packetdrops(csvthroughputfile)
-            tx,n2,throughput,n3 = parse_throughput(csvthroughputfile)
-            quantiles = weighted_quantile(latencies, [0.0, 0.25, 0.5, 0.75, 0.90, 0.99, 0.999], sample_weight=weights, values_sorted=True)
-            quantiles = list(map(lambda u: (u / 1000), quantiles))
+            runs = 6
+            run_q0 = []
+            run_q25 = []
+            run_q5 = []
+            run_q75 = []
+            run_q90 = []
+            run_q99 = []
+            run_q999 = []
+            run_drops = []
+            for run in range(0,runs):
+                print(run)
+                postfix = filename.split(fileprefix)[1]
+                postfix = "{}{}{}".format(postfix[0:7], run, postfix[8:])
+                latfile = os.path.join(os.path.dirname(latfile), "{}{}".format(fileprefix, postfix))
+                print(latfile)
+                latencies, weights = parse_histogramfile(latfile)
+                csvthroughputfile = "{}.throughput.csv".format(latfile[:-14])
+                dropped = parse_packetdrops(csvthroughputfile)
+                tx,n2,throughput,n3 = parse_throughput(csvthroughputfile)
+                quantiles = weighted_quantile(latencies, [0.0, 0.25, 0.5, 0.75, 0.90, 0.99, 0.999], sample_weight=weights, values_sorted=True)
+                quantiles = list(map(lambda u: (u / 1000), quantiles))
+                run_q0.append(quantiles[0])
+                run_q25.append(quantiles[1])
+                run_q5.append(quantiles[2])
+                run_q75.append(quantiles[3])
+                run_q90.append(quantiles[4])
+                run_q99.append(quantiles[5])
+                run_q999.append(quantiles[6])
+                run_drops.append(dropped)
+
             rates.append(rate)
-            q0.append(quantiles[0])
-            q25.append(quantiles[1])
-            q5.append(quantiles[2])
-            q75.append(quantiles[3])
-            q90.append(quantiles[4])
-            q99.append(quantiles[5])
-            q999.append(quantiles[6])
-            drops.append(dropped)
-    return rates, q0, q5, q99, q999, drops
+            q0.append(np.average(run_q0))
+            q25.append(np.average(run_q25))
+            q5.append(np.average(run_q5))
+            q75.append(np.average(run_q75))
+            q90.append(np.average(run_q90))
+            q99.append(np.average(run_q99))
+            q999.append(np.average(run_q999))
+            drops.append(np.average(run_drops))
+            err_q0.append(np.std(run_q0))
+            err_q25.append(np.std(run_q25))
+            err_q5.append(np.std(run_q5))
+            err_q75.append(np.std(run_q75))
+            err_q90.append(np.std(run_q90))
+            err_q99.append(np.std(run_q99))
+            err_q999.append(np.std(run_q999))
+            err_drops.append(np.std(run_drops))
+    return rates, q0, q5, q99, q999, drops, err_q0, err_q5, err_q99, err_q999, err_drops
 
 def latency_per_throughput():
-
     fig = plt.figure(figsize=(7, 4), dpi=160)
     axes = plt.gca()
     ax2 = axes.twinx()
@@ -430,18 +470,34 @@ def latency_per_throughput():
     ax2.set_yscale("log")
     axes.set_xlim([0.5, 12])
     axes.grid(True)
-    rates, q0, q5, q99, q999, drops = latency_per_throughput_collect("l3_latroutes1_")
-    axes.plot(rates, q0, linestyle=":", color=GREEN)
-    g0, = axes.plot(rates, q5, color=GREEN, marker="o")
-    g1, = axes.plot(rates, q99, linestyle=":", color=GREEN)
-    axes.plot(rates, q999, linestyle=":", color=GREEN)
-    g2, = ax2.plot(rates, drops, color=ORANGE, marker="1")
-    rates, q0, q5, q99, q999, drops = latency_per_throughput_collect("l3_latroutes255k_")
-    axes.plot(rates, q0, linestyle=":", color=BLUE)
-    g3, = axes.plot(rates, q5, color=BLUE, marker=">")
-    g4, = axes.plot(rates, q99, linestyle=":", color=BLUE)
-    axes.plot(rates, q999, linestyle=":", color=BLUE)
-    g5, = ax2.plot(rates, drops, color=PURPLE, marker="1")
+    rates, q0, q5, q99, q999, drops, err_q0, err_q5, err_q99, err_q999, err_drops = latency_per_throughput_collect("l3_latroutes1_")
+    theory1 = []
+    theory2 = []
+    theoryX= []
+    for i in range(1, 1200):
+        t = 0.0001 + 0.01 * i
+        theoryX.append(t)
+        s = 11.0
+        y = 60.0-64.0* (-(float(t)/s)+1.0) ** ((1.0 * s) / (8.0 * float(t)))
+        theory1.append(y)
+        s = 7.4
+        y = 60.0-64.0* (-(float(t)/s)+1.0) ** ((1.0 * s) / (8.0 * float(t)))
+        theory2.append(y)
+    axes.errorbar(rates, q0, err_q0, elinewidth=0.5, linestyle=":", color=GREEN)
+    g0,n0,n0 = axes.errorbar(rates, q5, err_q5, elinewidth=0.5, color=GREEN, marker="o")
+    g1,n0,n0 = axes.errorbar(rates, q99, err_q99, elinewidth=0.5, linestyle=":", color=GREEN)
+    axes.errorbar(rates, q999, err_q999, elinewidth=0.5, linestyle=":", color=GREEN)
+    g2,n0,n0 = ax2.errorbar(rates, drops, err_drops, elinewidth=0.5, color=ORANGE, marker="1")
+    rates, q0, q5, q99, q999, drops, err_q0, err_q5, err_q99, err_q999, err_drops = latency_per_throughput_collect("l3_latroutes255k_")
+    print("8-)")
+    print(err_q0)
+    axes.errorbar(rates, q0, err_q0, elinewidth=0.5, linestyle=":", color=BLUE)
+    g3,n0,n0 = axes.errorbar(rates, q5, err_q5, elinewidth=0.5, color=BLUE, marker=">")
+    g4,n0,n0 = axes.errorbar(rates, q99, err_q99, elinewidth=0.5, linestyle=":", color=BLUE)
+    axes.errorbar(rates, q999, err_q999, elinewidth=0.5, linestyle=":", color=BLUE)
+    g5,n0,n0 = ax2.errorbar(rates, drops, err_drops, elinewidth=0.5, color=PURPLE, marker="1")
+    g8, = axes.plot(theoryX, theory1, color=RED) # , marker="1")
+    g8, = axes.plot(theoryX, theory2, color=RED) # , marker="1")
     plt.title("Latencies in IPv4 routing")
     axes.set_ylabel("latency (ys)")
     axes.set_xlabel("throughput (Mpps)")
@@ -859,11 +915,11 @@ def throughput_per_cores_summary():
     plt.show()
 
 
-throughput_per_cores_summary()
+#throughput_per_cores_summary()
 #throughput_per_routes("l3_routes_", "ip4")
 #throughput_per_cores("l3_multicore_")
 #throughput_per_routes("l3v6_routes_", "ip6")
 #throughput_per_cores("l3v6_multicore_")
 #throughput_per_macs("l2_throughmac_")
-#latency_per_throughput() # for "l3_latroutes1_" and "l3_latroutes255k_"
+latency_per_throughput() # for "l3_latroutes1_" and "l3_latroutes255k_"
 #histogram_overview()
