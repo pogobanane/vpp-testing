@@ -1,18 +1,36 @@
 \chapter{Conclusion}
 
-FastClick and \Ac{vpp} both vectorize packet in their processing and
-are the most direct competitors for each other performancewise.
-\Ac{vpp} v18.10 is a little faster with smaller routing tables while
-it's routing table implementation is clearly not suited for huge
-table sizes. % be more precise, say size numbers
+FastClick and \Ac{vpp} are both fast software routers which vectorize
+packets during processing and are close to each other performance
+wise. MoonRoute on the other hand has a significant performance
+advantage over both of them, being 20-30\% faster at routing.
 
-Next steps / low hangin fruit: futher steps to carry my research to Kappa
+While the performance of \Ac{vpp} v18.10 starts dropping at around 20
+\Ac{fib} entries, \Ac{vpp} v16.09 can hold it's highest performance
+with up to 200 \Ac{ip4} \Ac{fib} entries. 
 
-- virtualization scenarios: running vpp in containers?, benchmarking virtualized systems?, benchmarking virtual link interfaces
+Reaching the maximum number of entries \Ac{vpp}'s throughput nearly
+halves with \Ac{vpp} v18.10 only supporting up to around 255,000
+\Ac{ip4} \Ac{fib} entries. For this number of router table entries it
+is remarkably slower than FastClick with $2^{20}$ entries, even though
+it is slightly faster with little table entries.
 
+The best advantage of \Ac{vpp} over it's competitors is it's feature
+richness. It's during runtime configurable packet processing graph
+offers for example different tunneling protocols. Settings allow to
+move the main thread to a dedicated CPU core which in turn allows live
+inserts of 255k routing table entries with a throughput impact of less
+than a percent.
 
-performance decrease in vpp over time
+In combination with the rich options to connect \Ac{vpp} to virtual
+machines, containers or local high performance applications, it is
+well suited for building virtual networks for highly virtualized
+environments or implementation of \Ac{vnf}.
 
-live inserts super good because of multithreaded model
-
-vpp as full grown software router with many features, fully modular processing graph which can be adjusted at runtime
+Next research steps could include more specific benchmarks regarding
+specific protocol features like behavior on receiving control packets.
+Furthermore the performance change over different \Ac{vpp} versions
+can be analyzed closer by testing a version between 16.09 and 18.10
+and the latest v19.01 which was just released during the creation of
+this paper. Especially the code changes leading to the performance
+differences are of interest.
