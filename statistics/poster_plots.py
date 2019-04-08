@@ -477,11 +477,11 @@ def latency_per_throughput():
     for i in range(1, 1200):
         t = 0.0001 + 0.01 * i
         theoryX.append(t)
-        s = 11.0
-        y = 60.0-64.0* (-(float(t)/s)+1.0) ** ((1.0 * s) / (8.0 * float(t)))
+        s = 10.9
+        y = 58.0-62.0* (-(float(t)/s)+1.0) ** ((1.0 * s) / (7.0 * float(t)))
         theory1.append(y)
-        s = 7.4
-        y = 60.0-64.0* (-(float(t)/s)+1.0) ** ((1.0 * s) / (8.0 * float(t)))
+        s = 7.0
+        y = 58.0-62.0* (-(float(t)/s)+1.0) ** ((1.0 * s) / (7.0 * float(t)))
         theory2.append(y)
     axes.plot(rates, q0, linestyle=":", color=GREEN)
     g0,n0,n0 = axes.errorbar(rates, q5, err_q5, elinewidth=0.5, color=GREEN, marker="o")
