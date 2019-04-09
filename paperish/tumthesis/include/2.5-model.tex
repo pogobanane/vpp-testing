@@ -24,8 +24,7 @@ that when reducing the CPU clock speed by 3\%, the number of processed
 packets shrinks by around 3\%, too. This indicates, that the CPU
 cycles are bottlenecking the packet throughput of \Ac{vpp}.
 
-The same can be seen with other CPU's, too. (TODO reference) This
-means for layer 2 configurations the packet throughput $p$ can be
+This means for layer 2 configurations the packet throughput $p$ can be
 approximated depending on the clock speed $c$ for maxmimum packet
 rates $p_{max}$ and the maximum clock speed $c_{max}$:
 
@@ -278,13 +277,10 @@ big routing tables.
 
 % cpu scaling
 
-% TODO fix perf stack plot script
 
 \section{Latencies}
 
 \subsection{Average Latencies}
-
-% TODO: this section refferes to max throughput as NDR
 
 % dropped frames per throughput, latency: avg, 99.999 percentile per throughput
 
@@ -292,13 +288,13 @@ Measuring the latency should be done with reduced offered load,
 because when offering the load at full link speed, the average latency
 hits a worst case which is orders of magnitude higher than at lower
 packet rates. Figure \ref{graph:latencyoverview} shows the average
-latency and the packet loss at different packet rates for \Ac{ip4}
-routing with 1 and with 255,000 routes. It shows that the latency is
-around $\SC{5}{\mu s}$ for low line rates and slowly increases
-torwards reaching the maximum throughput. When this maximum is
-reached, the packet drop rates immediately go up, because not all
-packets can be forwarded. This is also exactly the point where the
-latency explodes to around $\SC{600}{\mu s}$ because packet queues
+latency and the packet loss at different packet rates relative to the
+\Ac{ndr} for \Ac{ip4} routing with 1 and with 255,000 routes. It shows
+that the latency is around $\SC{5}{\mu s}$ for low line rates and
+slowly increases torwards reaching the maximum throughput. When this
+maximum is reached, the packet drop rates immediately go up, because
+not all packets can be forwarded. This is also exactly the point where
+the latency explodes to around $\SC{600}{\mu s}$ because packet queues
 fill up.
 
 The qualitative latency behaviour described in figure

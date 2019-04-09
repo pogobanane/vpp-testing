@@ -29,9 +29,21 @@ make it a well choice for building virtual networks for highly
 virtualized environments or implementation of \Ac{vnf}.
 
 Next research steps could include more specific benchmarks regarding
-specific protocol features like behavior on receiving control packets.
+behavior on receiving control packets or \Ac{ip6} specific protocol
+specific benchmarking methodology like RFC 5180 \cite{rfc5180}.
 Furthermore the performance change over different \Ac{vpp} versions
 can be analyzed closer by testing a version between 16.09 and 18.10
 and the latest v19.01 which was just released during the creation of
 this paper. Especially the code changes leading to the performance
-differences are of interest.
+differences are of interest and how for example FastClick achieves it
+high performance with many routes.
+
+% TODO: this has to sound better
+
+% more next steps: 
+% - code based comparison of lookup table: v16.09, v18.10, fastclick
+% - more latency research. model/plain why latency
+%   per load graph looks like it does (read the relevant code)
+% - try to elaborate a better upper bound throughput model as in: 
+%   "Performance Exploration of Software-based Packet Processing Systems"
+% 	- test with different cpu's

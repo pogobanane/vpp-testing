@@ -147,15 +147,20 @@ report, to compare used cpu time off \Ac{vpp} functions.
 There is a paper \cite{revisiting-benchmarking:1} which aims to do
 RFC2544 compliant benchmarks with FreeBSD, Linux and an off-the-shelf
 MicroTik router. It summarizes existing methodology and benchmarking
-systems and presents relevant parts of the results.
+systems and presents relevant parts of the results. There is also a
+detailed analysis \cite{raumer2015performance} of the Linux network
+stack as a router which presents a model for upper bound throughput
+predictions.
 
 Another paper \cite{chair:architecture} presents benchmarking results
 about the MoonRoute software router and some comparative data to
-FastClick DPDK, Click DPDK and Linux 3.7.
+FastClick DPDK, Click DPDK and Linux 3.7.  
 
 There is also detailed analysis of the DPDK framework, comparison to
 other frameworks and a model describing it's performance. \cite
-{compare-highperf}
+{compare-highperf} Another work discusses more generally different
+ways of implementing fast user space packet processing and focuses
+especially on used concepts and optimizations. \cite{barbette2015fast}
 
 % rfc2544 not usable
 
@@ -231,10 +236,8 @@ accuracy.
 % TODO (if more text needed) - special frames: broadcast, management, routing update
 % mentioned in rfc, but not looked at in this paper
 
-% TODO: add info about additional testing methodology like ip6 https://www.rfc-editor.org/rfc/rfc5180.txt
-% Additionally RFC 5180 proposes \Ac{ip6} benchmarking methodology. 
-
-% TODO: https://wiki.fd.io/view/CSIT/csit-test-naming has no extensive
+% TODO: https://wiki.fd.io/view/CSIT/csit-test-naming
+% There is a testing suite used by \Ac{vpp} developers to detect perfomance regressions, has no extensive
 % fib testing. It seems like it's more about trying to cover all
 % features with at least one test than in depth performance analysis.
 % They also present the change of performance measurements over time

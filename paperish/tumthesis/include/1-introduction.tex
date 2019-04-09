@@ -1,4 +1,3 @@
-% TODO i think this already contains the abstract
 
 \chapter{Introduction}
 
@@ -15,18 +14,17 @@ routers can't keep up performancewise.
 % vpp: cisco
 
 There are software routers though which focus on performance and are
-improved in many aspects. Especially frameworks like DPDK help in the
-making of fast software routers which can run on affordable commodity
-hardware. One of the routers built on that framework is \Ac{vpp} which
-was developed by Cisco and is now open source and maintained by
-\Ac{fdio}. \Ac{vpp} can be virtualized and has packet input nodes for
-NIC's handled by \Ac{dpdk} (dpdk-input), but can also use virtual
-links like virtual linux interfaces (tuntap, af-packet-input, tapcli)
-or memory map based interfaces (memif, netmap, vhost-user) which allow
-for good interoperability with local virtualized systems. Therefore it
-is promising for highly virtualized environments.
-
-% TODO: DPDK citation
+improved in many aspects. Especially frameworks like DPDK
+\cite{inteldpdk} help in the making of fast software routers which can
+run on affordable commodity hardware. One of the routers built on that
+framework is \Ac{vpp} which was developed by Cisco and is now open
+source and maintained by \Ac{fdio}. \Ac{vpp} can be virtualized and
+has packet input nodes for NIC's handled by \Ac{dpdk} (dpdk-input),
+but can also use virtual links like virtual linux interfaces (tuntap,
+af-packet-input, tapcli) or memory map based interfaces (memif,
+netmap, vhost-user) which allow for good interoperability with local
+virtualized systems. Therefore it is promising for highly virtualized
+environments.
 
 % little indepencent and comparable benchmarks of vpp and others
 
@@ -40,14 +38,12 @@ is promising for highly virtualized environments.
 
 There is little independent performance analysis of \Ac{vpp} though
 and none that compares it to other software routers. Therefore this
-work presents well documented performance tests and results of
-\Ac{vpp} in different scenarios to enable comparability to other
-software routers. The tests procedures are as far as possible
+work presents well documented \cite{my:repo} performance tests and
+results of \Ac{vpp} in different scenarios to enable comparability to
+other software routers. The tests procedures are as far as possible
 automated, to be as reproducable as possible. The resulting data is
 then analyzed to learn about the behaviour of \Ac{vpp} and it's
 performance bottlenecks.
-
-% TODO well documented: link code
 
 % therefore the structure of this paper: 
 % 1. previous performance analysis of routers in general and vpp in particular
