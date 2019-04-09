@@ -34,15 +34,15 @@ milestones:  With the first label "F0" the API is frozen and
 development shall aim for stability. For the second label "RC1" only
 bug fix changes are accepted and a first artifact is released. Then
 the iteration repeats and a second "RC2" version is released. Those
-pre- releases are marked with a tag containing the version number and
+pre-releases are marked with a tag containing the version number and
 the iteration appendix (v18.10-rc1). The final release will have no
 extra tags in their name. The git tag marks the official release, but
 the version-specific branch can still receive occasional updates.
 \cite{vppwiki:releases}
 
-The oldest version of VPP available in the github repository is from
+The oldest version of VPP available in the GitHub repository is from
 2016. Unless otherwise specified this performance analysis used the
-v18.10 branch from 14th of december 2018\footnote{commit
+v18.10 branch from 14th of December 2018\footnote{commit
 a8e3001e68d8f5ea6cf526b131c92f5993597f81}.
 
 
@@ -51,7 +51,7 @@ a8e3001e68d8f5ea6cf526b131c92f5993597f81}.
 % interesting scenarios / use cases: 
 
 A developer once formulated the design goal of \Ac{vpp}: It shall
-seemlessly integrate into existing \Ac{sdn} stacks and it shall
+seamlessly integrate into existing \Ac{sdn} stacks and it shall
 "become the foundation of the future cloud native services"
 \cite{florincoras}. That is, because \Ac{vpp} can serve in quite some
 different scenarios and can connect to different control plane
@@ -68,7 +68,7 @@ it has to perform well with big routing tables. \cite{bgphelp:size}
 % - scale to multiple cpu's
 
 For handling high loads \Ac{vpp} helps spreading the computation
-intensive frame processing tasks to multiple cpu cores. Qosmos for
+intensive frame processing tasks to multiple CPU cores. Qosmos for
 example uses \Ac{vpp} to implement deep packet inspection
 \cite{qosmos}.
 
@@ -76,7 +76,7 @@ example uses \Ac{vpp} to implement deep packet inspection
 
 Viosoft on the other hand uses \Ac{vpp} in the context of embedded
 systems which might require stable or short latencies \cite{viosoft}.
-Therefore latency behaviour represents an important aspect of
+Therefore latency behavior represents an important aspect of
 performance analysis, too.
 
 % - TODO more complex tasks like vxlan encapsulation (only if i need more text)
@@ -99,9 +99,9 @@ Furthermore it can be assumed that Cisco's \Ac{vpe} product group uses
 VPP, because the term "vPE" can be found 39 times in the source code
 and many additional times in the official documentation
 \cite{vppdocs}. \Ac{vpe} is a collection of Cisco's concepts for
-\Ac{sdn}, virtualized datacenters and cloud native environments called
-\Ac{vmdc} 1.x to 4.x. Those \Ac{vpe} concepts are used in several
-Cisco products \cite{cisco:sdn}:
+\Ac{sdn}, virtualized data centers and cloud native environments
+called \Ac{vmdc} 1.x to 4.x. Those \Ac{vpe} concepts are used in
+several Cisco products \cite{cisco:sdn}:
 
 \begin{itemize}
 	\item Cisco VSG (Virtual Security Gateway)
@@ -116,7 +116,7 @@ Cisco products \cite{cisco:sdn}:
 % \cite{openvswitch:gym} u sure u wanna promote this?
 
 There has been a previous work analyzing and describing the design,
-architechture and performance of \Ac{vpp} \cite{linguaglossa2017high}.
+architecture and performance of \Ac{vpp} \cite{linguaglossa2017high}.
 It presents measurement results mainly regarding very specific
 properties like packet vector size or other optimization strategies
 but lacks results about the impact of hash table sizes. This paper on
@@ -132,11 +132,11 @@ routing scenario.
 % - more in-depth latency description and model
 % - more independenet
 
-For \cite{linguaglossa2017high} the vpp nodes were extended to collect
-stats, such as \Ac{perf} does, for all processing functions
+For \cite{linguaglossa2017high} the \Ac{vpp} nodes were extended to
+collect stats, such as \Ac{perf} does, for all processing functions
 individually which gives further insights. This paper on the other
 hand (see chapter \ref{sec:methodology}) uses perf-record and perf-
-report, to compare used cpu time off \Ac{vpp} functions.
+report, to compare used CPU time off \Ac{vpp} functions.
 
 % i really dont wanna admit this:
 
@@ -174,7 +174,7 @@ routers like \Ac{vpp}. \cite{revisiting-benchmarking:1}
 
 % frame sizes
 
-For example it stresses procedures to test different ethernet frame
+For example it stresses procedures to test different Ethernet frame
 sizes. Frame size is no limiting factor inside the \Ac{dut} though (in
 software routers with high packet rates) and is thus not necessary for
 upper bound performance analysis. \cite{emmerich2015assessing}
@@ -185,18 +185,18 @@ upper bound performance analysis. \cite{emmerich2015assessing}
 Furthermore the RFC states: "At the start of each trial a routing
 update MUST be sent to the DUT" \cite{rfc2544}. Adding up to several
 million routing entries using networking protocols before every test
-run doesn't appear to be a feasable approach. Instead \Ac{vpp}'s CLI
+run doesn't appear to be a feasible approach. Instead \Ac{vpp}'s CLI
 is used to add all table entries using a single command.
 
 % - each test-run SHOULD take over a minute. (no change after 20
 %   seconds with turbo boost disabled) latency measurement one packet
 % - per minute - to slow rate
 
-Generally speaking, the RFC's requirements torwards the duration of
+Generally speaking, the RFC's requirements towards the duration of
 test runs exceeds what was done for this paper. According to the RFC a
 test run should take longer than a minute - latency measurements shall
 only measure timings of a single packet per minute. Providing a
-constant level of CPU performance for example by disabling Intels
+constant level of CPU performance for example by disabling Intel's
 turbo-boost, \Ac{vpp} stabilizes after only 10 to 20 seconds of
 receiving load which allows for way shorter test runs.
 
@@ -208,7 +208,7 @@ receiving load which allows for way shorter test runs.
 RFC 2544 uses some definitions from RFC1242 \cite{rfc1242} like
 "Throughput": RFC 1242 defines throughput as the highest throughput
 without any packet loss, which is not the same as the maximum
-measurable throughput. This paper refferes to throughput as the
+measurable throughput. This paper refers to throughput as the
 maximum measurable throughput if not specified otherwise.
 
 % - latency measurement at the rfc1242 throughput rate -> doesnt work

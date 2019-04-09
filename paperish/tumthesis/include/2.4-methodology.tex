@@ -29,8 +29,8 @@ packet processing tests.
 
 % TODO talk about threading
 
-The \Ac{dut} sends test traffic using Moongen. There is a lua script
-determining MoonGen's behaviour for generating layer 2 ethernet
+The \Ac{dut} sends test traffic using MoonGen. There is a lua script
+determining MoonGen's behavior for generating layer 2 Ethernet
 packets, another one for layer 3 \Ac{ip4} packets, one for \Ac{ip6}
 packets and one for \Ac{vxlan} packets. All but the latter can be
 given command line parameters to cap the packet rate, change the
@@ -41,10 +41,10 @@ Additionally the scripts grant \Ac{vpp} some warmup time: Only when
 the first packet is successfully forwarded, the actual test begins.
 This is necessary, because \Ac{vpp} v18.10 tends to drop packets in
 the interface-tx node for a few seconds when it is not warmed up which
-could drasically distort the average throughput and latency. After the
-other components have settled into the high load situation which takes
-around a second, the throughput average stays about constant and can
-thus be properly described by the average and standard deviation.
+could drastically distort the average throughput and latency. After
+the other components have settled into the high load situation which
+takes around a second, the throughput average stays about constant and
+can thus be properly described by the average and standard deviation.
 
 To measure the latency, occasional, timestamped packets are sent by
 MoonGen between the load generating packets. This is used to calculate
@@ -55,7 +55,7 @@ average and standard deviation and create a histogram of latencies.
 
 \paragraph{perf-stat} 
 
-The command \lstinline|perf stat| is used to attatch to the
+The command \lstinline|perf stat| is used to attach to the
 \lstinline|vpp_main| process. This allows collection of hardware
 counter information about different types of cache events, cpu cycles
 used etc. The stats of all children are added up to the main thread's
@@ -64,14 +64,14 @@ ones.
 \paragraph{perf-record/perf-report}
 \label{sec:perf}
 
-The command \lstinline|perf record| is used to attatch to the first
-worker thread of \Ac{vpp} or if vpp runs singlethreaded, to the main
-thread. This records the cpu time spent per function (symbol). It is
-important to connect to a thread processing the packet in \Ac{vpp}'s
-graph (not necessarily the main process) to get significant results
-for identifying performance limiting factors. After the test run, the
-record has to be parsed with \lstinline|perf report| to associate
-function names to the symbols.
+The command \lstinline|perf record| is used to attach to the first
+worker thread of \Ac{vpp} or if \Ac{vpp} runs single threaded, to the
+main thread. This records the CPU time spent per function (symbol). It
+is important to connect to a thread processing the packet in
+\Ac{vpp}'s graph (not necessarily the main process) to get significant
+results for identifying performance limiting factors. After the test
+run, the record has to be parsed with \lstinline|perf report| to
+associate function names to the symbols.
 
 \paragraph{Performance Impact}
 
@@ -89,19 +89,19 @@ Additionally \Ac{vpp} internal counters, usually used for error
 counting, are saved into the test's report for test quality assurance
 and debugging. The counters can be read via the \lstinline|show
 errors|  \Ac{cli} command. Therefore \Ac{vpp} is configured to listen
-at a unix file fifo for it's \Ac{cli}. This interface can be
+at a Unix file FIFO for it's \Ac{cli}. This interface can be
 conveniently used with the tool "vppctl" in \Ac{vpp} v18.10 to connect
-and interact with the fifo. In earlier versions like v16.09 this tool
+and interact with the FIFO. In earlier versions like v16.09 this tool
 worked differently. In order to be able to read those counters
 nevertheless, the tool "socat" was used to connect to the \Ac{cli}
-fifo file.
+FIFO file.
 
 
 \section{Test Procedure}
 
 One test run tests one \Ac{vpp} configuration. After each test run,
-\Ac{vpp} is beeing restarted. After each restart, the performance of
-\Ac{vpp} varies significantly more than within one testrun. Therefore
+\Ac{vpp} is being restarted. After each restart, the performance of
+\Ac{vpp} varies significantly more than within one test run. Therefore
 in order to get an insight in how spread the variance is, each test
 run is repeated 6 times. Only histogram latency measurements rely on a
 single run.
@@ -117,9 +117,9 @@ complete}.
 Before starting the new \Ac{vpp} daemon, the old one is killed and
 some files which may contain global state are removed. The \Ac{vpp}
 daemon will take at most a few seconds to set itself up, so both
-devices are synchronized again and MoonGen is already beeing started,
+devices are synchronized again and MoonGen is already being started,
 because it's setup takes longer. When MoonGen is set up and starts
-it's warmup loadgen-phase, \Ac{vpp} is already online. \textit{20
+it's warmup \Ac{loadgen}-phase, \Ac{vpp} is already online. \textit{20
 seconds} after MoonGen started, both systems are \textit{running and
 have stabilized}.
 
@@ -184,7 +184,7 @@ interface's input to another interface's output and vice versa.
 
 For layer 2 switching \Ac{vpp} can create bridge domains. The optional
 bridge features mac-learning and mac-aging impact performance when
-activated, even when not specifially tested. Other features like
+activated, even when not specifically tested. Other features like
 flooding settings have no significant performance impact when not
 directly tested. Therefore in section \ref{sec:cpubottleneck} results
 are presented with and without the impacting features enabled.
@@ -196,7 +196,7 @@ point to the same destination, conforming RFC2544.
 
 \paragraph{\Ac{vxlan}}
 
-Setting \Ac{vpp} up to encapsulate \Ac{vxlan} packets takes amongh
+Setting \Ac{vpp} up to encapsulate \Ac{vxlan} packets takes among
 others the following steps:
 
 \begin{enumerate}
@@ -217,7 +217,7 @@ vxlan-tunnel endpoint via IP.
 Test are conducted on different test systems listed in table
 \ref{table:hardware}. All of the used systems (the \Ac{loadgen} ones,
 too) are configured via the Intel Pstate driver to disable turbo boost
-in order to maintain a close to constanct clock speed.
+in order to maintain a close to constant clock speed.
 
 % lscpu
 % lshw -C memory
@@ -237,7 +237,7 @@ in order to maintain a close to constanct clock speed.
 	% TODO check this for neccessarity and correctness
 	\vspace{2ex}
 	\begin{tabular}[]{ l | c | r | r | r | r }
-		DUT & CPU @ clock (GHz) & pyhsical cores & L1 cache & L2 cache & L3 cache \\ \hline
+		DUT & CPU @ clock (GHz) & physical cores & L1 cache & L2 cache & L3 cache \\ \hline
 		klaipeda & Xeon E3-1230 @ 1.6-3.2 & 4 & 32k & 256k & 8M \\ % 2^23
 		omastar & Xeon E5-2630 v4 @ 1.2-2.2 & 10 & 32k & 256k & 25M % 2^
 	\end{tabular}

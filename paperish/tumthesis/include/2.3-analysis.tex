@@ -6,7 +6,7 @@
 
 \section{Experiment Setup}
 
-Each device in the testbed has at least three active ethernet links:
+Each device in the testbed has at least three active Ethernet links:
 One connecting it to a management server, and two connected to the
 corresponding \Ac{dut} or \Ac{loadgen}. The management server (kaunas)
 uses \Ac{pos} \cite{GallScho18} to set boot images, boot, run setup
@@ -18,12 +18,12 @@ As figure \ref{setup} shows, each test contains two devices. The
 generating packets and sending them to the \Ac{dut} to test \Ac{vpp}.
 \Ac{vpp} then forwards the packets back to the \Ac{loadgen} which
 allows the \Ac{loadgen} to create accurate throughput and latency
-measurments.
+measurements.
 
-On the \Ac{dut} some debug information like error counts are beeing
+On the \Ac{dut} some debug information like error counts are being
 gathered from the \Ac{vpp} CLI interface and Linux perf tools
-\cite{perf} attach to the vpp process to collect time spent per symbol
-and stats like cpu cycles or cache misses.
+\cite{perf} attach to the \Ac{vpp} process to collect time spent per
+symbol and stats like CPU cycles or cache misses.
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/topology.png}
@@ -40,29 +40,29 @@ and stats like cpu cycles or cache misses.
 % - in many cases: 
 % 	- 10GbE
 
-Running VPP in with only one worker, the pysical link speed is never
+Running VPP in with only one worker, the physical link speed is never
 the limiting factor. Usually this is 10GbE in this paper. Only with
 multiple worker scenarios the 10Gb/s mark is quickly reached. A simple
 way to address this is by testing with bidirectional traffic - sending
 load to both of DUT's NIC's and expecting VPP to forward it to both
 NIC's again. This way, the load on a single CPU core to be tested can
 be doubled, without actually requiring faster links. Other options are
-to reduce CPU clock speed or increase the cpu load artificially on a
+to reduce CPU clock speed or increase the CPU load artificially on a
 per-packet basis, in order to create another, even more limiting
 bottleneck on the CPU. The obvious solution, using a 40GbE link with
 more bandwidth, was used for this paper.
 
 
-\subsection{Loadgen Speed}
+\subsection{\Ac{loadgen} Speed}
 
 % - loadgen speed
 % 	- can saturate a 10GbE link with minimum sized ethernet frames for all tests conducted (14.88mpps)
 
 Another limiting factor could be the load generator's speed of
-generating load. MoonGen, the loadgen used for this paper, can
-saturate a 10GbE link with minimum sized ethernet frames for all tests
+generating load. MoonGen, the \Ac{loadgen} used for this paper, can
+saturate a 10GbE link with minimum sized Ethernet frames for all tests
 conducted. For a simple unidirectional 10GbE link this results in
-14.88mpps \cite{emmerich2015assessing}.
+14.88 Mpps \cite{emmerich2015assessing}.
 
 % TODO: remove this if not relevant to the paper: 
 % TODO: move this to the "internal paragraph" section
@@ -70,7 +70,7 @@ conducted. For a simple unidirectional 10GbE link this results in
 \label{sec:40gbelimit}
 
 Using faster 40GbE with Intel XL710 NICs showed a soft throughput
-limit of about 22.81mpps (min. frame size, unidirectional, standard
+limit of about 22.81 Mpps (min. frame size, unidirectional, standard
 deviation: 0.22). This was observed with an Intel E5-2620 v3
 (2.40GHz). This limit varies when increasing the frame size. Previous
 work showed that the cause for this are bottlenecks inside the NIC.
@@ -87,14 +87,14 @@ NIC's are connected by a PCIe 2.0 x8 link with a maximum transfer rate
 of 32Gbit/s per direction. In theory a 40GbE link could exceed this
 transfer rate. Because the tests in this paper are only done with
 small packet sizes, the maximum reached packet generation rate of
-around 22.8mpps results in significantly less than 32Gbit/s. For
+around 22.8 Mpps results in significantly less than 32Gbit/s. For
 bigger frame sizes, the width PCI interfaces will have to be
 increased, because otherwise it will become a bottleneck for
 40GbE links.
 
 % ram bandwidth
 
-Sencondly the ethernet frames have to be moved to the main memory. It
+Secondly the Ethernet frames have to be moved to the main memory. It
 typically supports between 1333 MT/s (the 10GbE system) or 2133 MT/s
 (40GbE system) transmitting 64bit per message. This results in a
 transfer rate of 85 GBit/s and 136 GBit/s. This should be sufficient
@@ -120,8 +120,8 @@ For VPP to utilize NIC's up to their specified line rate, it relies on
 \paragraph{RSS (Receive Side Scaling)}
 \label{sec:rss}
 
-When the NIC recieves a packet, it can be configured to hash over
-specified packet header fields to assign the packet to a recieving
+When the NIC receives a packet, it can be configured to hash over
+specified packet header fields to assign the packet to a receiving
 queue. The idea is, to efficiently separate for example different IP
 traffic flows early which can then be processed by several VPP workers
 concurrently and independently. \cite{linguaglossa2017high}
@@ -130,15 +130,15 @@ concurrently and independently. \cite{linguaglossa2017high}
 
 Because memory bandwidth is actually limited, it is important not to
 move frames around unnecessarily. Therefore the NIC copies the
-recieved frames to memory shared with VPP which is their final fixed
+received frames to memory shared with VPP which is their final fixed
 location. \cite{linguaglossa2017high}
 
 \paragraph{Busy Polling}
 
 Newer VPP versions have options to be either notified about new
 packets in the shared memory via interrupts, or alternatively and
-better suited for high performance applications, vpp workers can be
-busy polling. The latter option reduces performance dependencies on
+better suited for high performance applications, \Ac{vpp} workers can
+be busy polling. The latter option reduces performance dependencies on
 the hardware and kernel. \cite{vppdocs:rxmodes}
 
 % TODO (no. this is already explained in the model)
@@ -185,7 +185,7 @@ looking up the next-hop destination and rewriting the packet header.
 Their predecessing node (ip4-input) is also predecessor for other ip4
 protocol nodes like for example ICMPv4. A lot of the header parsing
 happens before the ip4-input node though, even if this information may
-not be needed for the followup nodes. This means for example, that
+not be needed for the follow-up nodes. This means for example, that
 \Ac{vpp} even in layer 2 bridging configuration is slower with
 switching \Ac{udp} packets compared to switching packets of an unknown
 ethertype.
@@ -207,9 +207,9 @@ nodes are implemented by the \lstinline|ip6_lookup| and the
 \end{figure}
 
  
-\section{Forwarding Datastructures}
+\section{Forwarding Data Structures}
 
-VPP implements several datastructures for it's packet forwarding. A
+VPP implements several data structures for it's packet forwarding. A
 BiHash table is used for the layer 2 \Ac{fib} and the ip6 \Ac{fib}
 (\lstinline|vpp/src/vppinfra/bihash*|) \cite{vppwiki:bihash}. IPv4
 \Ac{fib} lookups use a mtrie
@@ -232,7 +232,7 @@ destination information.
 
 % one entry cache in l2fib_lookup
 
-\paragraph{ip4-fib}
+\paragraph{\Ac{ip4}-fib}
 
 % hashset vpp/vppinfra/hash.*
 
@@ -245,27 +245,27 @@ destination information.
 % ip_adjencency_t contains all information about the next hop
 % vpp/src/vnet/adj/adj.h
 
-The ip4 lookup is implemented by \lstinline|ip4_fib_table_lookup| in
-\lstinline|vpp/src/vnet/fib/ip4_fib.h|. The \Ac{fib} struct
+The \Ac{ip4} lookup is implemented by \lstinline|ip4_fib_table_lookup|
+in \lstinline|vpp/src/vnet/fib/ip4_fib.h|. The \Ac{fib} struct
 \lstinline|ip4_fib_t| contains two data structures. A list of hash
 tables (implemented in \lstinline|vpp/vppinfra/hash.h|), one for each
-ip prefix length, which is only used for \Ac{cli} status creation and
+IP prefix length, which is only used for \Ac{cli} status creation and
 to enforce unique inserts. The second data structure is used by the
 ip4-lookup node for \Ac{ip4} \Ac{fib} lookups. The mtrie lookup
-results in an adjecency index which is then used by the ip4-rewrite
+results in an adjacency index which is then used by the ip4-rewrite
 node to rewrite the destination. Therefore the rewrite node gets the
 \lstinline|ip_adjacency_t|\footnote{\lstinline|ip_adjecency_t| is
 defined in \lstinline|vpp/src/vnet/adj/adj.h|} information from the
-respective adjecency vector according to the adjecency index.
+respective adjacency vector according to the adjacency index.
 
 % ip4_lookup_inline prefetch header and frame for next packet badge
 
-\paragraph{ip6-fib}
+\paragraph{\Ac{ip6-fib}
 
 The \Ac{ip6} \Ac{fib} lookup itself is done by the ip6-lookup node and
 implemented by \lstinline|ip6_fib_table_fwding_lookup| in
 \lstinline|vpp/src/vnet/fib/ip6_fib.h| and uses the BiHash table for
-lookups in the ip6-lookup node. The lookup returns an 32 bit adjecency
+lookups in the ip6-lookup node. The lookup returns an 32 bit adjacency
 index which will be used by the ip6-rewrite node to get the next
 packet destination from the \lstinline|ip_adjencency_t| vector, just
 like the ip4-rewrite node does.
@@ -282,7 +282,7 @@ like the ip4-rewrite node does.
 %	- more efficient instruction cache usage?
 %	- VLIB_FRAME_SIZE
 
-Vectorization referres to \Ac{vpp} collecting incoming packets in
+Vectorization refers to \Ac{vpp} collecting incoming packets in
 batches. The input batch size is defined at compile time by
 \lstinline|VLIB_FRAME_SIZE| and per default set to 256. This is only
 the maximum size though. When packets don't arrive fast enough,
@@ -315,8 +315,8 @@ input batching for example through reuse of already allocated buffers.
 Furthermore the packet batch entering a node can be processed in
 batches, too. The packet processing function of a graph node may take
 typically up to four packets as parameters to process them
-simultaniously. This results in the minimum
-\lstinline|VLIB_FRAME_SIZE| beeing four. Not all nodes implement this
+simultaneously. This results in the minimum
+\lstinline|VLIB_FRAME_SIZE| being four. Not all nodes implement this
 feature, sometimes called "\textit{multi-loop}", though because not
 all processing functions profit from it: While the profit in the
 xconnect processing path is negligible, the \Ac{ip4} lookup node is

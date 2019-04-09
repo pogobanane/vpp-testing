@@ -25,7 +25,7 @@ packets shrinks by around 3\%, too. This indicates, that the CPU
 cycles are bottlenecking the packet throughput of \Ac{vpp}.
 
 This means for layer 2 configurations the packet throughput $p$ can be
-approximated depending on the clock speed $c$ for maxmimum packet
+approximated depending on the clock speed $c$ for maximum packet
 rates $p_{max}$ and the maximum clock speed $c_{max}$:
 
 % f(50%) = 55%
@@ -38,8 +38,8 @@ $$ f(c) = (0.9 * \frac{c}{c_{max}} + 0.1) * p_{max} $$
 This models approximates for 50\% of the maximum clock speed a
 throughput of 55\% of the maximum one. This does not exactly resemble
 the expected function $f(c) = \frac{c}{c_{max}} * p_{max}$ (half
-the performance at half the clockspeed) which were to be expected if
-the CPU cycles were the only limiting factor. This expected behaviour
+the performance at half the clock speed) which were to be expected if
+the CPU cycles were the only limiting factor. This expected behavior
 can be observed though with MoonRoute \cite{chair:architecture} which
 indicates another limiting factor, besides CPU
 frequency.
@@ -63,7 +63,7 @@ frequency.
 		IPv6 255k routes & 2.34 (62\%) & 3.72 (98\%) & 3.80 (100\%) \\ % 0.01 0.04 0.02
 		\midrule
 	\end{tabular}
-	\caption{Maximum througput (Mpps) in different scenarios with different CPU frequencies measured on the Xeon E3-1230 system. }
+	\caption{Maximum throughput (Mpps) in different scenarios with different CPU frequencies measured on the Xeon E3-1230 system. }
 	\label{bottleneck}
 \end{table}
 % With offered Mpps beeing 100\%, "Relative" is the maximum packet throughput in relation to the offered one.
@@ -76,9 +76,9 @@ ability to distribute the load over multiple CPU cores is
 essential. Not all \Ac{vpp} configurations support this though.
 
 \Ac{vpp} has two concepts for using multiple cores: It has workers for
-simultanous recieving and processing of packets over the processing
+simultaneous receiving and processing of packets over the processing
 graph - and it can be configured to use another set of workers for
-proiritized sending of packets (\Ac{hqos} \cite{vppdocs:qos}
+prioritized sending of packets (\Ac{hqos} \cite{vppdocs:qos}
 \cite{vppdocs:hqosplacement}). Only the first type of worker can be
 used to enhance the performance of raw processing throughput though.
 
@@ -90,28 +90,28 @@ field hashing can assign them to different queues. Using four
 different source addresses per queue is sufficient to hit all of them
 well.
 
-Layer 2 bridges on the other hand are completely singlethreaded.
-Because \Ac{vxlan} needs a bridge to recieve or send layer 2 traffic,
+Layer 2 bridges on the other hand are completely single threaded.
+Because \Ac{vxlan} needs a bridge to receive or send layer 2 traffic,
 it can't utilize multiple queues, too.
 
 Scaling measurements are conducted with a 10GbE and a 40GbE link with
 high and low CPU clock speed. Test begin with \Ac{vpp} in
-singlethreaded mode, having main core and worker in the same thread
+single threaded mode, having main core and worker in the same thread
 and continue with using unused physical cores for workers.
 
-As figure \ref{graph:multicore} shows, switching from singlethreaded
+As figure \ref{graph:multicore} shows, switching from single threaded
 mode to a dedicated worker increases throughput slightly, but barely
-noticable. Two cores are already enough to saturate the 10GbE link.
+noticeable. Two cores are already enough to saturate the 10GbE link.
 The virtual ("hyper threading") cores are used for workers three to
 six within the 10GbE system which results in lower performance gain
 and even slight performance loss in the end.
 
 Using the 40GbE system at maximum CPU clock two cores can just not
 saturate the limits of the \Ac{nic}. Both 40GbE scaling tests show
-that for a workers's maximum throughput $w_{t}$ the overall maximum
+that for a worker's maximum throughput $w_{t}$ the overall maximum
 throughput depending on the number of workers $w$ is $f(w) = w *
 w_{t}$. This holds true until line rate is hit at around two and four
-workers, respectively (using pysical cores).
+workers, respectively (using physical cores).
 
 At around 20 Mpps the measured throughput can be unstable by around 0.4
 Mpps, because of unstable MoonGen packet generation rates. This is
@@ -226,8 +226,8 @@ entries which is well above $2^{23}$.
 
 Figure \ref{graph:ip4fib} and \ref{graph:ip4fiblegacy} show test
 results of \Ac{vpp} v18.10 with up to 255,000 entries and of v16.09
-with up to 10,300,000 entries. Both show similar behaviour to the
-\Ac{ip6} \Ac{fib} tests with one big throughput drop torwards the end
+with up to 10,300,000 entries. Both show similar behavior to the
+\Ac{ip6} \Ac{fib} tests with one big throughput drop towards the end
 of the graph.
 
 % TODO point out, that index lookup is not the performance issue
@@ -251,25 +251,25 @@ big routing tables.
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v3.pdf}
-\caption{Testing \Ac{vpp} v18.10 with different layer 2 \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+\caption{Testing \Ac{vpp} v18.10 with different layer 2 \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
 \label{graph:l2fib}
 \end{figure}
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3v6_routes_klaipeda32ghz_v3.pdf}
-\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip6} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip6} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
 \label{graph:ip6fib}
 \end{figure}
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda32ghz_v3.pdf}
-\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions.}
+\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions.}
 \label{graph:ip4fib}
 \end{figure}
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda_v1609_32ghz_v3.pdf}
-\caption{Testing \Ac{vpp} v16.09 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (devided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+\caption{Testing \Ac{vpp} v16.09 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
 \label{graph:ip4fiblegacy}
 \end{figure}
 
@@ -291,13 +291,13 @@ packet rates. Figure \ref{graph:latencyoverview} shows the average
 latency and the packet loss at different packet rates relative to the
 \Ac{ndr} for \Ac{ip4} routing with 1 and with 255,000 routes. It shows
 that the latency is around $\SC{5}{\mu s}$ for low line rates and
-slowly increases torwards reaching the maximum throughput. When this
+slowly increases towards reaching the maximum throughput. When this
 maximum is reached, the packet drop rates immediately go up, because
 not all packets can be forwarded. This is also exactly the point where
 the latency explodes to around $\SC{600}{\mu s}$ because packet queues
 fill up.
 
-The qualitative latency behaviour described in figure
+The qualitative latency behavior described in figure
 \ref{graph:latencyoverview} between 1 and 255k routes is similar. The
 following function can approximate the average latency for different
 packet rates $t \in (0, t_{max})$ for a known maximum packet
@@ -370,11 +370,11 @@ different. \cite{linguaglossa2017high}
 \section{Comparison}
 
 Tests showed that there are big performance differences even between
-\Ac{vpp} versions. While v16.09 is slower when using litte \Ac{ip4}
+\Ac{vpp} versions. While v16.09 is slower when using little \Ac{ip4}
 routes, it doesn't have the maximum \Ac{fib} size of 255k which is
 exceptionally low compared to other software routers. Generally
 speaking though, it is at least twice as fast as Click DPDK and has
-similar performance to FastClick DPDK. \Ac{vpp} v18.10 beeing 1.2 mpps
+similar performance to FastClick DPDK. \Ac{vpp} v18.10 being 1.2 Mpps
 faster than FastClick DPDK indicates better optimizations and higher
 potential for \Ac{vpp} v18.10 - but for routing tables with 30,000 to
 1,000,000 entries FastClick DPDK has a very clear lead.
