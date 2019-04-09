@@ -24,9 +24,9 @@ that when reducing the CPU clock speed by 3\%, the number of processed
 packets shrinks by around 3\%, too. This indicates, that the CPU
 cycles are bottlenecking the packet throughput of \Ac{vpp}.
 
-This means for layer 2 configurations the packet throughput $p$ can be
-approximated depending on the clock speed $c$ for maximum packet
-rates $p_{max}$ and the maximum clock speed $c_{max}$:
+This means the packet throughput $f(c)$ can be approximated depending on
+the clock speed $c$ for maximum packet rates $p_{max}$ and the maximum
+clock speed $c_{max}$:
 
 % f(50%) = 55%
 % f(97%) = 98%
@@ -95,7 +95,7 @@ Because \Ac{vxlan} needs a bridge to receive or send layer 2 traffic,
 it can't utilize multiple queues, too.
 
 Scaling measurements are conducted with a 10GbE and a 40GbE link with
-high and low CPU clock speed. Test begin with \Ac{vpp} in
+high and low CPU clock speed. Tests begin with \Ac{vpp} in
 single threaded mode, having main core and worker in the same thread
 and continue with using unused physical cores for workers.
 
@@ -159,8 +159,8 @@ packet goes to the same destination, the local values can be used and
 a hash table lookup can be skipped.
 
 From there on there are three key points when the CPU's L1, L2 and L3
-cache are full. We can model the BiHash l2fib lookup table takes 64
-bit values as input and returns a 64 bit result. Assuming the table
+cache are full. We can model the BiHash l2fib lookup table. It takes
+64 bit values as input and returns a 64 bit result. Assuming the table
 only contains keys and values, the maximum \Ac{fib} size fitting into
 cache of $n$ bytes is:
 
@@ -235,7 +235,7 @@ of the graph.
 \subsection{Lookup Nodes as Bottleneck}
 
 With big lookup tables, the throughput drops a lot with every kind of
-lookup table because for every additional CPU cycle spent for the
+lookup table. For every additional CPU cycle spent for the
 lookup in relation to the available cycles, the throughput will drop
 by the same ratio. Thus the maximum throughput $f$ can be modeled
 depending on the relative time $d_{lookup}$ spent in the lookup node
@@ -246,7 +246,7 @@ $$ f(x) = t_{max} * ( 1 - d_{lookup} ) $$
 
 The measurements closely resemble this model. They proof that the
 lookup is basically exclusively responsible for the performance
-decrease of bigger \Ac{fib}s and thus a limiting factor scenarios with
+decrease of bigger \Ac{fib}s and thus a limiting factor for scenarios with
 big routing tables.
 
 \begin{figure}[!ht]
@@ -290,7 +290,7 @@ hits a worst case which is orders of magnitude higher than at lower
 packet rates. Figure \ref{graph:latencyoverview} shows the average
 latency and the packet loss at different packet rates relative to the
 \Ac{ndr} for \Ac{ip4} routing with 1 and with 255,000 routes. It shows
-that the latency is around $\SC{5}{\mu s}$ for low line rates and
+that the latency is around $\SC{5}{\mu s}$ for low packet rates and
 slowly increases towards reaching the maximum throughput. When this
 maximum is reached, the packet drop rates immediately go up, because
 not all packets can be forwarded. This is also exactly the point where
@@ -325,7 +325,7 @@ $$ l(t) = 59 - 62 * (-\frac{t}{t_{max}}+1)^{\frac{t_{max}}{8t}} $$
 Figure \ref{graph:latencyhistogram} shows histograms of latency for
 \Ac{ip4} routing at approximately 10\%, 50\% and 90\% of the maximum
 throughput rate. It shows that under very low load the latency
-distribution peaks in the beginning. Later on the distribution can be
+distribution peaks in the beginning. Later on, the distribution can be
 approximated as a standard distribution but with growing average and
 standard deviation. The reason for this is lies within \Ac{vpp}
 closing the batches as long as the packet processing is not stressed
@@ -371,7 +371,7 @@ different. \cite{linguaglossa2017high}
 
 Tests showed that there are big performance differences even between
 \Ac{vpp} versions. While v16.09 is slower when using little \Ac{ip4}
-routes, it doesn't have the maximum \Ac{fib} size of 255k which is
+routes, it doesn't have the \Ac{fib} size limit of 255k which is
 exceptionally low compared to other software routers. Generally
 speaking though, it is at least twice as fast as Click DPDK and has
 similar performance to FastClick DPDK. \Ac{vpp} v18.10 being 1.2 Mpps

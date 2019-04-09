@@ -14,8 +14,8 @@ Core features of \Ac{vpp} are...
 ... it's vectorized processing of packets in badges as the name
 indicates. This allows for better optimization.
 
-... it's support for \Ac{dpdk} with it's fast user-space NIC drivers.
-With it come also virtual packet interfaces for quick links to local
+... it's support for \Ac{dpdk} with it's fast, user-space NIC drivers.
+With it come also virtual packet interfaces for fast links to local
 virtualized systems.
 
 ... it's modular packet processing graph. Specific features are
@@ -101,7 +101,7 @@ and many additional times in the official documentation
 \cite{vppdocs}. \Ac{vpe} is a collection of Cisco's concepts for
 \Ac{sdn}, virtualized data centers and cloud native environments
 called \Ac{vmdc} 1.x to 4.x. Those \Ac{vpe} concepts are used in
-several Cisco products \cite{cisco:sdn}:
+several products \cite{cisco:sdn}:
 
 \begin{itemize}
 	\item Cisco VSG (Virtual Security Gateway)
@@ -136,7 +136,7 @@ For \cite{linguaglossa2017high} the \Ac{vpp} nodes were extended to
 collect stats, such as \Ac{perf} does, for all processing functions
 individually which gives further insights. This paper on the other
 hand (see chapter \ref{sec:methodology}) uses perf-record and perf-
-report, to compare used CPU time off \Ac{vpp} functions.
+report, to compare used CPU time of \Ac{vpp} functions.
 
 % i really dont wanna admit this:
 
@@ -175,9 +175,9 @@ routers like \Ac{vpp}. \cite{revisiting-benchmarking:1}
 % frame sizes
 
 For example it stresses procedures to test different Ethernet frame
-sizes. Frame size is no limiting factor inside the \Ac{dut} though (in
-software routers with high packet rates) and is thus not necessary for
-upper bound performance analysis. \cite{emmerich2015assessing}
+sizes. Frame size is typically no bottleneck for software routers and
+thus receives little attention in this paper.
+\cite{emmerich2015assessing}
 
 % - "At the start of each trial a routing update
 %    MUST be sent to the DUT." (long running, no good idea)

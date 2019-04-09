@@ -67,7 +67,7 @@ ones.
 The command \lstinline|perf record| is used to attach to the first
 worker thread of \Ac{vpp} or if \Ac{vpp} runs single threaded, to the
 main thread. This records the CPU time spent per function (symbol). It
-is important to connect to a thread processing the packet in
+is important to connect to a thread processing the packets in
 \Ac{vpp}'s graph (not necessarily the main process) to get significant
 results for identifying performance limiting factors. After the test
 run, the record has to be parsed with \lstinline|perf report| to
@@ -87,13 +87,13 @@ time spent per function.
 
 Additionally \Ac{vpp} internal counters, usually used for error
 counting, are saved into the test's report for test quality assurance
-and debugging. The counters can be read via the \lstinline|show
-errors|  \Ac{cli} command. Therefore \Ac{vpp} is configured to listen
+and debugging. The counters can be read via the \lstinline|show errors| 
+\Ac{cli} command. Therefore \Ac{vpp} is configured to listen
 at a Unix file FIFO for it's \Ac{cli}. This interface can be
 conveniently used with the tool "vppctl" in \Ac{vpp} v18.10 to connect
 and interact with the FIFO. In earlier versions like v16.09 this tool
 worked differently. In order to be able to read those counters
-nevertheless, the tool "socat" was used to connect to the \Ac{cli}
+nevertheless, the tool "socat" is used to connect to the \Ac{cli}
 FIFO file.
 
 
@@ -136,7 +136,7 @@ synchronization takes place an the \textit{next run can be started}.
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/procedure-sequence.png}
-\caption{Sequence of a single testrun. }
+\caption{Sequence of a single test run. }
 \label{testsequence}
 \end{figure}
 

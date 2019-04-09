@@ -40,11 +40,11 @@ symbol and stats like CPU cycles or cache misses.
 % - in many cases: 
 % 	- 10GbE
 
-Running VPP in with only one worker, the physical link speed is never
+Running \Ac{vpp} with only one worker, the physical link speed is never
 the limiting factor. Usually this is 10GbE in this paper. Only with
 multiple worker scenarios the 10Gb/s mark is quickly reached. A simple
 way to address this is by testing with bidirectional traffic - sending
-load to both of DUT's NIC's and expecting VPP to forward it to both
+load to both of DUT's NICs and expecting VPP to forward it to both
 NIC's again. This way, the load on a single CPU core to be tested can
 be doubled, without actually requiring faster links. Other options are
 to reduce CPU clock speed or increase the CPU load artificially on a
@@ -88,7 +88,7 @@ of 32Gbit/s per direction. In theory a 40GbE link could exceed this
 transfer rate. Because the tests in this paper are only done with
 small packet sizes, the maximum reached packet generation rate of
 around 22.8 Mpps results in significantly less than 32Gbit/s. For
-bigger frame sizes, the width PCI interfaces will have to be
+bigger frame sizes, the width of PCI interfaces will have to be
 increased, because otherwise it will become a bottleneck for
 40GbE links.
 
@@ -100,7 +100,7 @@ typically supports between 1333 MT/s (the 10GbE system) or 2133 MT/s
 transfer rate of 85 GBit/s and 136 GBit/s. This should be sufficient
 for 10GbE networking, 40GbE links require at least 2133MT/s memory.
 
-\subsection{CPU time per Packet}
+\subsection{CPU Time per Packet}
 
 As section \ref{sec:cpubottleneck} will show, the CPU time spent per
 packet is the biggest bottleneck. The following subsections describe
@@ -195,14 +195,14 @@ ethertype.
 The ip6 packet processing path differs completely from the previously
 discussed paths, because it implements it's own parsing in the
 ip6-input node. For lookup and forwarding purpose, there follow an
-ip6-lookup and an ip6-rewrite node, similar like the ip4 path. Those
-nodes are implemented by the \lstinline|ip6_lookup| and the
+ip6-lookup and an ip6-rewrite node, similar to the \Ac{ip4} path.
+Those nodes are implemented by the \lstinline|ip6_lookup| and the
 \lstinline|ip6_rewrite| function in
 \lstinline|vpp/src/vnet/ip/ip6_forward.c|.
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/vpp-nodes-horizontal.png}
-\caption{VPP packet processing graph for xconnect, bridging, ip4 routing and ip6 routing. Other paths are left out. }
+\caption{VPP packet processing graph for xconnect, bridging, \Ac{ip4} routing and \Ac{ip6} routing. Other paths are left out. }
 \label{nodegraph}
 \end{figure}
 
@@ -260,7 +260,7 @@ respective adjacency vector according to the adjacency index.
 
 % ip4_lookup_inline prefetch header and frame for next packet badge
 
-\paragraph{\Ac{ip6-fib}
+\paragraph{\Ac{ip6}-fib}
 
 The \Ac{ip6} \Ac{fib} lookup itself is done by the ip6-lookup node and
 implemented by \lstinline|ip6_fib_table_fwding_lookup| in
@@ -288,8 +288,8 @@ batches. The input batch size is defined at compile time by
 the maximum size though. When packets don't arrive fast enough,
 batches are closed and submitted to the processing graph, before the
 size limit is reached. Nodes which classify packets might split input
-batches allow packets to traverse to different subsequent nodes. In
-this case the batch size shrinks further.
+batches  to allow packets to traverse to different subsequent nodes.
+In this case the batch size shrinks further.
 
 This procedure reduces the number of \textit{instruction cache misses}, because
 a new node and it's associated function is loaded into the cache only
