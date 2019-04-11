@@ -106,10 +106,10 @@ in order to get an insight in how spread the variance is, each test
 run is repeated 6 times. Only histogram latency measurements rely on a
 single run.
 
-As figure \ref{testsequence} shows, the \Ac{dut} and \Ac{loadgen}
+As Figure \ref{testsequence} shows, the \Ac{dut} and \Ac{loadgen}
 first read the remote configuration file, after the management server
 has started the test. Afterwards both devices configure the Intel
-pstate driver  as described in section \ref{sec:hardware} and the
+pstate driver  as described in Section \ref{sec:hardware} and the
 \Ac{dut} loads the kernel module for the NIC's. Then \Ac{dut} and
 \Ac{loadgen} are synchronized as the pre-test \textit{setup is
 complete}.
@@ -124,9 +124,9 @@ seconds} after MoonGen started, both systems are \textit{running and
 have stabilized}.
 
 Now, after both systems synchronized again, \textit{\Ac{perf} data is
-collected} as described in section \ref{sec:perf} for a timespan of 10
+collected} as described in Section \ref{sec:perf} for a timespan of 10
 seconds. Then both systems synchronize again, \Ac{vpp}'s counters are
-queried (section \ref{sec:vppcounters}), MoonGen is killed and after
+queried (Section \ref{sec:vppcounters}), MoonGen is killed and after
 giving it 10 seconds time to finalize the throughput and latency
 histogram, all files containing test results are uploaded to the
 management server.
@@ -186,7 +186,7 @@ For layer 2 switching \Ac{vpp} can create bridge domains. The optional
 bridge features mac-learning and mac-aging impact performance when
 activated, even when not specifically tested. Other features like
 flooding settings have no significant performance impact when not
-directly tested. Therefore in section \ref{sec:cpubottleneck} results
+directly tested. Therefore in Section \ref{sec:cpubottleneck} results
 are presented with and without the impacting features enabled.
 
 \paragraph{L3 routing}
@@ -214,7 +214,7 @@ vxlan-tunnel endpoint via IP.
 \section{Testbed Hardware Setup}
 \label{sec:hardware}
 
-Test are conducted on different test systems listed in table
+Test are conducted on different test systems listed in Table
 \ref{table:hardware}. All of the used systems (the \Ac{loadgen} ones,
 too) are configured via the Intel Pstate driver to disable turbo boost
 in order to maintain a close to constant clock speed.

@@ -84,7 +84,7 @@ used to enhance the performance of raw processing throughput though.
 
 Many layer 3 processing nodes such as the \Ac{ip4} and the \Ac{ip6}
 processing path do support parallel packet processing using \Ac{rss}
-(see section \ref{sec:rss}). For the scaling to have effect, the
+(see Section \ref{sec:rss}). For the scaling to have effect, the
 packets need different packet headers though, so that \Ac{rss} header
 field hashing can assign them to different queues. Using four
 different source addresses per queue is sufficient to hit all of them
@@ -99,7 +99,7 @@ high and low CPU clock speed. Tests begin with \Ac{vpp} in
 single threaded mode, having main core and worker in the same thread
 and continue with using unused physical cores for workers.
 
-As figure \ref{graph:multicore} shows, switching from single threaded
+As Figure \ref{graph:multicore} shows, switching from single threaded
 mode to a dedicated worker increases throughput slightly, but barely
 noticeable. Two cores are already enough to saturate the 10GbE link.
 The virtual ("hyper threading") cores are used for workers three to
@@ -115,7 +115,7 @@ workers, respectively (using physical cores).
 
 At around 20 Mpps the measured throughput can be unstable by around 0.4
 Mpps, because of unstable MoonGen packet generation rates. This is
-due to the \Ac{nic} performance limit described in section
+due to the \Ac{nic} performance limit described in Section
 \ref{sec:40gbelimit}.
 
 % NAY what happens with different flows per core? low flows but high core count?
@@ -131,7 +131,7 @@ due to the \Ac{nic} performance limit described in section
 
 \begin{figure}[!ht]
 \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_summary_multicore.pdf}
-\caption{VPP CPU scaling with \Ac{ip4} traffic with 10GbE, 40GbE and different CPU clock speeds. All workers (besides E3-1230 core 3-6) use physical CPU cores. The 40GbE NIC bottlenecks at around 20Mpps (see section \ref{sec:40gbelimit}). }
+\caption{VPP CPU scaling with \Ac{ip4} traffic with 10GbE, 40GbE and different CPU clock speeds. All workers (besides E3-1230 core 3-6) use physical CPU cores. The 40GbE NIC bottlenecks at around 20Mpps (see Section \ref{sec:40gbelimit}). }
 \label{graph:multicore}
 \end{figure}
 
@@ -166,11 +166,11 @@ cache of $n$ bytes is:
 
 $$ f_{l2fib}(n) = n * \frac{8}{2 * 64} = n * \frac{1}{16}  $$
 
-This formula is used to create the l1, l2 and l3 cache marks in figure
+This formula is used to create the l1, l2 and l3 cache marks in Figure
 \ref{graph:l2fib} as a upper bound for how many fib entries could fit
 into the respective caches. 
 
-As figure \ref{graph:l2fib} shows, the throughput drops before the L1
+As Figure \ref{graph:l2fib} shows, the throughput drops before the L1
 cache as the L1 cache misses start rising. With the Layer 2 cache mark
 the throughput drops further and more CPU time is spent inside the
 \lstinline|l2fwd_node| function which does the lookup. Finally before
@@ -297,7 +297,7 @@ not all packets can be forwarded. This is also exactly the point where
 the latency explodes to around $\SC{600}{\mu s}$ because packet queues
 fill up.
 
-The qualitative latency behavior described in figure
+The qualitative latency behavior described in Figure
 \ref{graph:latencyoverview} between 1 and 255k routes is similar. The
 following function can approximate the average latency for different
 packet rates $t \in (0, t_{max})$ for a known maximum packet
@@ -329,7 +329,7 @@ distribution peaks in the beginning. Later on, the distribution can be
 approximated as a standard distribution but with growing average and
 standard deviation. The reason for this is lies within \Ac{vpp}
 closing the batches as long as the packet processing is not stressed
-to it's limits (see \ref{sec:vectorization}). This results in earlier
+to it's limits (see Section \ref{sec:vectorization}). This results in earlier
 processing of packets at low loads and explains why at 50\% of the
 maximum load the latency is the same, even though the lookup load is
 different. \cite{linguaglossa2017high}
@@ -403,7 +403,7 @@ potential for \Ac{vpp} v18.10 - but for routing tables with 30,000 to
 
 		\midrule
 	\end{tabular}
-	\caption{Comparison of maximum \Ac{ip4} forwarding throughput with a single worker on the Xeon E3-1230 system (see table \ref{table:hardware}). Non-VPP results are from \cite{chair:architecture} and are conducted on the same system. }
+	\caption{Comparison of maximum \Ac{ip4} forwarding throughput with a single worker on the Xeon E3-1230 system (see Table \ref{table:hardware}). Non-VPP results are from \cite{chair:architecture} and are conducted on the same system. }
 	\label{table:comparison}
 \end{table}
 
