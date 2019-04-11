@@ -9,20 +9,15 @@
 % - RSS
 % - dpdk: fast userspace NIC drivers
 
-Core features of \Ac{vpp} are... 
-
-... its vectorized processing of packets in badges as the name
-indicates. This allows for better optimization.
-
-... its support for \Ac{dpdk} with its fast, user-space NIC drivers.
-With it come also virtual packet interfaces for fast links to local
-virtualized systems.
-
-... its modular packet processing graph. Specific features are
-implemented in nodes for example like ip4-lookup, ip6-lookup or
-vxlan4-encap and vxlan6-encap. New features can be added with plugins
-extending the packet processing graph by new nodes, adding new
-processing paths and adding new CLI commands.
+Core features of \Ac{vpp} are its vectorized processing of packets in
+badges as the name indicates which allows for better optimization. Its
+support for \Ac{dpdk} with its fast, user-space NIC drivers comes with
+virtual packet interfaces for fast links to local virtualized systems.
+Finally specific packet processing features are implemented in a
+modular processing graph consisting of nodes for example like
+ip4-lookup, ip6-lookup or vxlan4-encap and vxlan6-encap. New features
+can be added with plugins extending the packet processing graph by new
+nodes, adding new processing paths and adding new CLI commands.
 
 
 \section{Releases}
@@ -60,24 +55,19 @@ tooling:
 \subsection{Data Plane}
 
 % - routing the internet: >500.000 routes
+% - scale to multiple cpu's
+% - latency behaviour
 
 The internet the BGP table size grew to 512,000 prefixes in 2014 and
 it continues growing. As \Ac{vpp} aims to be used for routing tasks,
 it has to perform well with big routing tables. \cite{bgphelp:size}
-
-% - scale to multiple cpu's
-
 For handling high loads \Ac{vpp} helps spreading the computation
 intensive frame processing tasks to multiple CPU cores. Qosmos for
 example uses \Ac{vpp} to implement deep packet inspection
-\cite{qosmos}.
-
-% - latency behaviour
-
-Viosoft on the other hand uses \Ac{vpp} in the context of embedded
-systems which might require stable or short latencies \cite{viosoft}.
-Therefore latency behavior represents an important aspect of
-performance analysis, too.
+\cite{qosmos}. Viosoft on the other hand uses \Ac{vpp} in the context
+of embedded systems which might require stable or short latencies
+\cite{viosoft}. Therefore latency behavior represents an important
+aspect of performance analysis, too.
 
 % - TODO more complex tasks like vxlan encapsulation (only if i need more text)
 % In \Ac{sdn} environments increasing virtualization of hardware also leads to a virtualization of physical links. P
@@ -95,10 +85,12 @@ OpenStack cloud computing platform \cite{fdio:integration}.
 % - Cisco Virtual Multiservice Data Center (VMDC)
 % - vPE (Virtual Provider Edge) provides VMDC 1-4.x
 
+
 Furthermore it can be assumed that Cisco's \Ac{vpe} product group uses
 VPP, because the term "vPE" can be found 39 times in the source code
 and many additional times in the official documentation
-\cite{vppdocs}. \Ac{vpe} is a collection of Cisco's concepts for
+\cite{vppdocs}. \newpage
+The term \Ac{vpe} describes a collection of Cisco's concepts for
 \Ac{sdn}, virtualized data centers and cloud native environments
 called \Ac{vmdc} 1.x to 4.x. Those \Ac{vpe} concepts are used in
 several products \cite{cisco:sdn}:

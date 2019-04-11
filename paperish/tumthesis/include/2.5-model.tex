@@ -98,7 +98,6 @@ Scaling measurements are conducted with a 10GbE and a 40GbE link with
 high and low CPU clock speed. Tests begin with \Ac{vpp} in
 single threaded mode, having main core and worker in the same thread
 and continue with using unused physical cores for workers.
-
 As Figure \ref{graph:multicore} shows, switching from single threaded
 mode to a dedicated worker increases throughput slightly, but barely
 noticeable. Two cores are already enough to saturate the 10GbE link.
@@ -168,9 +167,7 @@ $$ f_{l2fib}(n) = n * \frac{8}{2 * 64} = n * \frac{1}{16}  $$
 
 This formula is used to create the l1, l2 and l3 cache marks in Figure
 \ref{graph:l2fib} as a upper bound for how many fib entries could fit
-into the respective caches. 
-
-As Figure \ref{graph:l2fib} shows, the throughput drops before the L1
+into the respective caches. As Figure \ref{graph:l2fib} shows, the throughput drops before the L1
 cache as the L1 cache misses start rising. With the Layer 2 cache mark
 the throughput drops further and more CPU time is spent inside the
 \lstinline|l2fwd_node| function which does the lookup. Finally before
@@ -179,8 +176,13 @@ throughput drops further and close to 40\% of the CPU time is spent
 inside the lookup node.
 
 
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v3.pdf}
+\caption{Testing \Ac{vpp} v18.10 with different layer 2 \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+\label{graph:l2fib}
+\end{figure}
 
-
+\newpage
 
 \subsection{\Ac{ip6} \Ac{fib}}
 
@@ -210,6 +212,11 @@ spent in the lookup function.
 
 
 
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3v6_routes_klaipeda32ghz_v3.pdf}
+\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip6} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+\label{graph:ip6fib}
+\end{figure}
 
 
 
@@ -232,6 +239,18 @@ of the graph.
 
 % TODO point out, that index lookup is not the performance issue
 
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda32ghz_v3.pdf}
+\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions.}
+\label{graph:ip4fib}
+\end{figure}
+
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda_v1609_32ghz_v3.pdf}
+\caption{Testing \Ac{vpp} v16.09 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+\label{graph:ip4fiblegacy}
+\end{figure}
+
 \subsection{Lookup Nodes as Bottleneck}
 
 With big lookup tables, the throughput drops a lot with every kind of
@@ -249,29 +268,10 @@ lookup is basically exclusively responsible for the performance
 decrease of bigger \Ac{fib}s and thus a limiting factor for scenarios with
 big routing tables.
 
-\begin{figure}[!ht]
-\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v3.pdf}
-\caption{Testing \Ac{vpp} v18.10 with different layer 2 \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
-\label{graph:l2fib}
-\end{figure}
 
-\begin{figure}[!ht]
-\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3v6_routes_klaipeda32ghz_v3.pdf}
-\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip6} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
-\label{graph:ip6fib}
-\end{figure}
 
-\begin{figure}[!ht]
-\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda32ghz_v3.pdf}
-\caption{Testing \Ac{vpp} v18.10 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions.}
-\label{graph:ip4fib}
-\end{figure}
 
-\begin{figure}[!ht]
-\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda_v1609_32ghz_v3.pdf}
-\caption{Testing \Ac{vpp} v16.09 with different \Ac{ip4} \Ac{fib} sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
-\label{graph:ip4fiblegacy}
-\end{figure}
+
 
 % model the performance decrease according to causes
 

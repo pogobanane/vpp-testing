@@ -19,7 +19,6 @@ generating packets and sending them to the \Ac{dut} to test \Ac{vpp}.
 \Ac{vpp} then forwards the packets back to the \Ac{loadgen} which
 allows the \Ac{loadgen} to create accurate throughput and latency
 measurements.
-
 On the \Ac{dut} some debug information like error counts are being
 gathered from the \Ac{vpp} CLI interface and Linux perf tools
 \cite{perf} attach to the \Ac{vpp} process to collect time spent per
@@ -147,6 +146,12 @@ the hardware and kernel. \cite{vppdocs:rxmodes}
 
 \section{Packet Processing Graph}
 
+\begin{figure}[!ht]
+\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/vpp-nodes-horizontal.png}
+\caption{VPP packet processing graph for xconnect, bridging, \Ac{ip4} routing and \Ac{ip6} routing. Other paths are left out. }
+\label{nodegraph}
+\end{figure}
+
 % - modularity, feature rich
 %	- visualize the parsing done in the first step as in the vpp paper and explain 
 % 		bridging only: ip header parsing slowdown behaviour
@@ -200,12 +205,6 @@ Those nodes are implemented by the \lstinline|ip6_lookup| and the
 \lstinline|ip6_rewrite| function in
 \lstinline|vpp/src/vnet/ip/ip6_forward.c|.
 
-\begin{figure}[!ht]
-\noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/vpp-nodes-horizontal.png}
-\caption{VPP packet processing graph for xconnect, bridging, \Ac{ip4} routing and \Ac{ip6} routing. Other paths are left out. }
-\label{nodegraph}
-\end{figure}
-
  
 \section{Forwarding Data Structures}
 
@@ -224,7 +223,6 @@ BiHash table is used for the layer 2 \Ac{fib} and the ip6 \Ac{fib}
 For packets reaching the l2-fwd node, the destination lookup is done
 for example by \lstinline|l2fib_lookup_4| in
 \lstinline|vpp/src/vnet/l2/l2_fib.h|. 
-
 Each lookup takes a 64 bit \lstinline|l2fib_entry_key_t| containing
 the mac address and the bridge domain index of the incoming interface.
 It returns a 64 bit \lstinline|l2fib_entry_result_t| with the relevant
