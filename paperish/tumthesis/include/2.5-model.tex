@@ -35,9 +35,9 @@ clock speed $c_{max}$:
 
 $$ f(c) = (0.9 * \frac{c}{c_{max}} + 0.1) * p_{max} $$
 
-This models approximates for 50\% of the maximum clock speed a
+This model approximates for 50\% of the maximum clock speed a
 throughput of 55\% of the maximum one. This does not exactly resemble
-the expected function $f(c) = \frac{c}{c_{max}} * p_{max}$ (half
+the expected function \newline $f(c) = \frac{c}{c_{max}} * p_{max}$ (half
 the performance at half the clock speed) which were to be expected if
 the CPU cycles were the only limiting factor. This expected behavior
 can be observed though with MoonRoute \cite{chair:architecture} which
@@ -166,7 +166,7 @@ cache of $n$ bytes is:
 $$ f_{l2fib}(n) = n * \frac{8}{2 * 64} = n * \frac{1}{16}  $$
 
 This formula is used to create the l1, l2 and l3 cache marks in Figure
-\ref{graph:l2fib} as a upper bound for how many fib entries could fit
+\ref{graph:l2fib} as an upper bound for how many fib entries could fit
 into the respective caches. As Figure \ref{graph:l2fib} shows, the throughput drops before the L1
 cache as the L1 cache misses start rising. With the Layer 2 cache mark
 the throughput drops further and more CPU time is spent inside the

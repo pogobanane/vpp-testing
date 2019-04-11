@@ -39,17 +39,17 @@ symbol and stats like CPU cycles or cache misses.
 % - in many cases: 
 % 	- 10GbE
 
-Running \Ac{vpp} with only one worker, the physical link speed is never
-the limiting factor. Usually this is 10GbE in this paper. Only with
-multiple worker scenarios the 10Gb/s mark is quickly reached. A simple
-way to address this is by testing with bidirectional traffic - sending
-load to both of DUT's NICs and expecting VPP to forward it to both
-NICs again. This way, the load on a single CPU core to be tested can
-be doubled, without actually requiring faster links. Other options are
-to reduce CPU clock speed or increase the CPU load artificially on a
-per-packet basis, in order to create another, even more limiting
-bottleneck on the CPU. The obvious solution, using a 40GbE link with
-more bandwidth, was used for this paper.
+Running \Ac{vpp} with only one worker, the physical link speed is
+never the limiting factor. Usually this is 10GbE in this paper. Only
+with multiple worker scenarios the 10Gb/s mark is quickly reached. A
+simple way to address this is by testing with bidirectional traffic -
+sending load to both of DUT's NICs and expecting VPP to forward it to
+both NICs again. This way, the load on a single CPU core to be tested
+can be doubled, without actually requiring faster links. Other options
+are to reduce CPU clock speed or increase the CPU load artificially on
+a per-packet basis, in order to create another, even more limiting
+bottleneck on the CPU. The more obvious solution is using a 40GbE link
+with more bandwidth which was used for this paper.
 
 
 \subsection{\Ac{loadgen} Speed}
@@ -199,7 +199,7 @@ ethertype.
 
 The ip6 packet processing path differs completely from the previously
 discussed paths, because it implements its own parsing in the
-ip6-input node. For lookup and forwarding purpose, there follow an
+ip6-input node. For lookup and forwarding purpose there follow an
 ip6-lookup and an ip6-rewrite node, similar to the \Ac{ip4} path.
 Those nodes are implemented by the \lstinline|ip6_lookup| and the
 \lstinline|ip6_rewrite| function in

@@ -58,7 +58,7 @@ tooling:
 % - scale to multiple cpu's
 % - latency behaviour
 
-The internet the BGP table size grew to 512,000 prefixes in 2014 and
+The BGP table size of the internet grew to 512,000 prefixes in 2014 and
 it continues growing. As \Ac{vpp} aims to be used for routing tasks,
 it has to perform well with big routing tables. \cite{bgphelp:size}
 For handling high loads \Ac{vpp} helps spreading the computation
@@ -114,7 +114,7 @@ properties like packet vector size or other optimization strategies
 but lacks results about the impact of hash table sizes. This paper on
 the other hand presents detailed test results for the layer 2
 \Ac{fib}, \Ac{ip4} \Ac{fib} and \Ac{ip6} \Ac{fib} which allow for a
-quantitative performance comparison to other software router in a
+quantitative performance comparison to other software routers in a
 routing scenario.
 
 % differences: i haz:
@@ -127,8 +127,7 @@ routing scenario.
 For \cite{linguaglossa2017high} the \Ac{vpp} nodes were extended to
 collect stats, such as \Ac{perf} does, for all processing functions
 individually which gives further insights. This paper on the other
-hand (see Chapter \ref{sec:methodology}) uses perf-record and perf-
-report, to compare used CPU time of \Ac{vpp} functions.
+hand (see Chapter \ref{sec:methodology}) uses perf-record and perf-report, to compare used CPU time of \Ac{vpp} functions.
 
 % i really dont wanna admit this:
 
