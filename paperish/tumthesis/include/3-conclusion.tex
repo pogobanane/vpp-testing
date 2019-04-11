@@ -6,7 +6,7 @@ wise. MoonRoute on the other hand has a significant performance
 advantage over both of them, being 20-30\% faster at routing.
 
 While the performance of \Ac{vpp} v18.10 starts dropping at around 20
-\Ac{fib} entries, \Ac{vpp} v16.09 can hold it's highest performance
+\Ac{fib} entries, \Ac{vpp} v16.09 can hold its highest performance
 with up to 200 \Ac{ip4} \Ac{fib} entries. 
 
 Reaching the maximum number of entries, \Ac{vpp}'s throughput nearly
@@ -15,14 +15,14 @@ halves with \Ac{vpp} v18.10 only supporting up to around 287,000
 is remarkably slower than FastClick with $2^{20}$ entries, even though
 it is slightly faster with little table entries.
 
-The best advantage of \Ac{vpp} over it's competitors is it's feature
-richness. It's during runtime configurable packet processing graph
+The best advantage of \Ac{vpp} over its competitors is its feature
+richness. Its during runtime configurable packet processing graph
 offers for example different tunneling protocols. Settings allow to
 move the main thread to a dedicated CPU core which in turn allows live
 inserts of 255k routing table entries with a temporary throughput
 impact of less than a percent.
 
-Although \Ac{vpp} performs badly with very big routing tables, it's
+Although \Ac{vpp} performs badly with very big routing tables, its
 modularity in combination with the rich options to connect it to
 virtual machines, containers or local high performance applications,
 make it a well choice for building virtual networks for highly
@@ -35,7 +35,7 @@ performance change over different \Ac{vpp} versions can be analyzed
 closer by testing a version between 16.09 and 18.10 and the latest
 v19.01 which was just released during the creation of this paper.
 Especially the code changes leading to the performance differences and
-how for example FastClick achieves it's high performance with many
+how for example FastClick achieves its high performance with many
 routes is of interest.
 
 % TODO: this has to sound better
@@ -47,7 +47,7 @@ routes is of interest.
 %   per load graph looks like it does (read the relevant code)
 % - try to elaborate a better upper bound throughput model as in: 
 %   "Performance Exploration of Software-based Packet Processing Systems"
-% 	- test with different cpu's
+% 	- test with different cpus
 % - take a look at open daylight / open flow / open stack to find out 
 %   if there are good solutions to the terrible configuration problem 
 % - test "smart" numa memory alignment

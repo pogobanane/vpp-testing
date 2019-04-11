@@ -89,7 +89,7 @@ Additionally \Ac{vpp} internal counters, usually used for error
 counting, are saved into the test's report for test quality assurance
 and debugging. The counters can be read via the \lstinline|show errors| 
 \Ac{cli} command. Therefore \Ac{vpp} is configured to listen
-at a Unix file FIFO for it's \Ac{cli}. This interface can be
+at a Unix file FIFO for its \Ac{cli}. This interface can be
 conveniently used with the tool "vppctl" in \Ac{vpp} v18.10 to connect
 and interact with the FIFO. In earlier versions like v16.09 this tool
 worked differently. In order to be able to read those counters
@@ -110,7 +110,7 @@ As Figure \ref{testsequence} shows, the \Ac{dut} and \Ac{loadgen}
 first read the remote configuration file, after the management server
 has started the test. Afterwards both devices configure the Intel
 pstate driver  as described in Section \ref{sec:hardware} and the
-\Ac{dut} loads the kernel module for the NIC's. Then \Ac{dut} and
+\Ac{dut} loads the kernel module for the NICs. Then \Ac{dut} and
 \Ac{loadgen} are synchronized as the pre-test \textit{setup is
 complete}.
 
@@ -118,8 +118,8 @@ Before starting the new \Ac{vpp} daemon, the old one is killed and
 some files which may contain global state are removed. The \Ac{vpp}
 daemon will take at most a few seconds to set itself up, so both
 devices are synchronized again and MoonGen is already being started,
-because it's setup takes longer. When MoonGen is set up and starts
-it's warmup \Ac{loadgen}-phase, \Ac{vpp} is already online. \textit{20
+because its setup takes longer. When MoonGen is set up and starts
+its warmup \Ac{loadgen}-phase, \Ac{vpp} is already online. \textit{20
 seconds} after MoonGen started, both systems are \textit{running and
 have stabilized}.
 

@@ -185,7 +185,7 @@ inside the lookup node.
 \subsection{\Ac{ip6} \Ac{fib}}
 
 Figure \ref{graph:ip6fib} shows the results of \Ac{ip6} routing with
-different layer 3 \Ac{fib} sizes. It's maximum size is remarkably
+different layer 3 \Ac{fib} sizes. Its maximum size is remarkably
 smaller compared to the layer 2 \Ac{fib}. Each lookup table result
 value is only 32 bit in size. Assuming the table only contains those
 values and keys the size of an \Ac{ip6} address, the maximum \Ac{fib}
@@ -329,7 +329,7 @@ distribution peaks in the beginning. Later on, the distribution can be
 approximated as a standard distribution but with growing average and
 standard deviation. The reason for this is lies within \Ac{vpp}
 closing the batches as long as the packet processing is not stressed
-to it's limits (see Section \ref{sec:vectorization}). This results in earlier
+to its limits (see Section \ref{sec:vectorization}). This results in earlier
 processing of packets at low loads and explains why at 50\% of the
 maximum load the latency is the same, even though the lookup load is
 different. \cite{linguaglossa2017high}
@@ -347,7 +347,7 @@ different. \cite{linguaglossa2017high}
 
 % serialization takes 30% of time -> ( cycles/s / packets/s ) * 0.3 * cycles/s => 0.3 * latency = 3ys tx time
 % => tx time is approximately latency stdDev
-% Each batch spends 30\% of it's time in the tx node. This means the first packet will be sent approximately 0.3*latency before the last one. This is the latency. 
+% Each batch spends 30\% of its time in the tx node. This means the first packet will be sent approximately 0.3*latency before the last one. This is the latency. 
 % As figure \ref{graph:latencyhistogram} shows, this holds true for high packet throughputs when batches are always nearly full. For very low throughput the histogram does not resemble the standarddeviation and indicates that many packets get their very own vector. Thus the big spike at the beginning of the distribution. 
 
 % TODO: test traffic patterns. 

@@ -45,7 +45,7 @@ the limiting factor. Usually this is 10GbE in this paper. Only with
 multiple worker scenarios the 10Gb/s mark is quickly reached. A simple
 way to address this is by testing with bidirectional traffic - sending
 load to both of DUT's NICs and expecting VPP to forward it to both
-NIC's again. This way, the load on a single CPU core to be tested can
+NICs again. This way, the load on a single CPU core to be tested can
 be doubled, without actually requiring faster links. Other options are
 to reduce CPU clock speed or increase the CPU load artificially on a
 per-packet basis, in order to create another, even more limiting
@@ -83,7 +83,7 @@ work showed that the cause for this are bottlenecks inside the NIC.
 % pci bandwidth
 
 Inside the DUT there is first of all the PCI bandwidth. All tested
-NIC's are connected by a PCIe 2.0 x8 link with a maximum transfer rate
+NICs are connected by a PCIe 2.0 x8 link with a maximum transfer rate
 of 32Gbit/s per direction. In theory a 40GbE link could exceed this
 transfer rate. Because the tests in this paper are only done with
 small packet sizes, the maximum reached packet generation rate of
@@ -114,7 +114,7 @@ how this issue is dealt with in VPP.
 
 \section{NICs with DPDK and VPP}
 
-For VPP to utilize NIC's up to their specified line rate, it relies on
+For VPP to utilize NICs up to their specified line rate, it relies on
 \Ac{dpdk}. This introduces a few noteworthy optimizations:
 
 \paragraph{RSS (Receive Side Scaling)}
@@ -176,7 +176,7 @@ processed by the \lstinline|l2fwd_node_inline| function implemented in
 \paragraph{IPv4}
 \label{sec:headerparsing} 
 
-The \Ac{ip4} path shares it's packet header parsing with the layer 2
+The \Ac{ip4} path shares its packet header parsing with the layer 2
 processing graph. After the parsing of a \Ac{udp} packet, the
 ip4-lookup and ip4-rewrite nodes implemented by the
 \lstinline|ip4_lookup_inline| and the \lstinline|ip4_rewrite_inline|
@@ -193,7 +193,7 @@ ethertype.
 \paragraph{IPv6}
 
 The ip6 packet processing path differs completely from the previously
-discussed paths, because it implements it's own parsing in the
+discussed paths, because it implements its own parsing in the
 ip6-input node. For lookup and forwarding purpose, there follow an
 ip6-lookup and an ip6-rewrite node, similar to the \Ac{ip4} path.
 Those nodes are implemented by the \lstinline|ip6_lookup| and the
@@ -209,7 +209,7 @@ Those nodes are implemented by the \lstinline|ip6_lookup| and the
  
 \section{Forwarding Data Structures}
 
-VPP implements several data structures for it's packet forwarding. A
+VPP implements several data structures for its packet forwarding. A
 BiHash table is used for the layer 2 \Ac{fib} and the ip6 \Ac{fib}
 (\lstinline|vpp/src/vppinfra/bihash*|) \cite{vppwiki:bihash}. IPv4
 \Ac{fib} lookups use a mtrie
@@ -292,7 +292,7 @@ batches  to allow packets to traverse to different subsequent nodes.
 In this case the batch size shrinks further.
 
 This procedure reduces the number of \textit{instruction cache misses}, because
-a new node and it's associated function is loaded into the cache only
+a new node and its associated function is loaded into the cache only
 once for every batch, instead of once per processed packet, as long as
 the node is small enough to fit in the cache. The node switching
 overhead is therefore shared among all packets in a batch.
