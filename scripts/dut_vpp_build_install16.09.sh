@@ -31,28 +31,3 @@ echo 1 >   /sys/devices/system/cpu/intel_pstate/no_turbo
 # set preliminary frequency
 echo 100 > /sys/devices/system/cpu/intel_pstate/max_perf_pct
 echo 100 > /sys/devices/system/cpu/intel_pstate/min_perf_pct
-
-# Artifacts:
-# ls build-root/*.deb
-
-## install
-# dpkg -i build-root/vpp-lib_*_amd64.deb
-# dpkg -i build-root/vpp_*_amd64.deb
-# dpkg -i build-root/vpp-plugins_*_amd64.deb
-
-
-# running
-# essential functionality (as dpdk) is implemented as plugins. You need the
-# plugins.
-
-# Network interfaces deadlock busy waiting during vpp start when there is
-# insufficient memory for socket-mem!
-
-## verify/check installation
-# systemctl stop vpp
-# systemctl disable vpp
-# nvm this paragraph
-#`vpp.service`
-#`'linux-vdso.so.1': No such file or directory` is expected.
-#``
-#`vppctl show int` should work.
