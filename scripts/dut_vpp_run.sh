@@ -54,22 +54,6 @@ function cleanup_vpp () {
 	set -e
 }
 
-# does this work?
-# $1: basemac as hex number bigger 0x20 00 00 00 00 00
-# $2: nr. of macs to add
-function add_macs () {
-	upper=$(($1+$2-1))
-	for i in $(seq $1 $upper)
-	do
-		mac=`printf "%x" $i | sed 's/./&:/10;s/./&:/8;s/./&:/6;s/./&:/4;s/./&:/2'`
-		addmac="l2fib add $mac 1 $INT_DST"
-		echo "$addmac" | socat - UNIX-CONNECT:/tmp/vpptesting_cli
-	done
-}
-
-# load some variables
-# VPP_CONFIG=$(pos_get_variable vpp/config)
-
 echo 'Done setting up'
 pos_sync
 echo 'sync done'
@@ -79,9 +63,6 @@ echo 'sync done'
 # $2: filename for perf-record (without .csv or .data appendix)
 # $3: time to collect (in sec).
 function perf-collect () {
-	# TODO: 
-	# numastat
-	# sudo perf stat -x, -o perfstat.out thunar
 	hwevents="branch-instructions,\
 branch-misses,\
 cache-misses,\
@@ -143,12 +124,10 @@ function vpp-test () {
 
 	echo "Starting bridging test $1"
 
-	# pos_run COMMMAND_ID -- COMMAND
 	cleanup_vpp
-	# pos_sync
+	# pos_run COMMMAND_ID -- COMMAND ARGS
 	pos_run $jobname -- $2 $INT_SRC $INT_DST $3
 	pos_sync #s1 vpp is set up
-	# pos_run l2_bridging_0_whiteboxing -- ${GITDIR}/scripts/vpp_tests/whiteboxinfo.sh 10
 
 	pos_sync #s21: moogen should be generating load now
 	
@@ -173,7 +152,7 @@ function vpp-test () {
 	pos_kill $1
 }
 
-# does 9 test runs!
+# does 9 test runs to find the maximum throughput with low drop rates
 # $1: jobname
 # $2: cmd to run
 # $3: arg for cmd

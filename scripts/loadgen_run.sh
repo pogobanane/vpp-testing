@@ -39,6 +39,7 @@ echo 1 >   /sys/devices/system/cpu/intel_pstate/no_turbo
 echo 100 > /sys/devices/system/cpu/intel_pstate/max_perf_pct
 echo 100 > /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
+# read vars
 TX_DEV=`pos_get_variable -r moongen/tx`
 RX_DEV=`pos_get_variable -r moongen/rx`
 
@@ -51,7 +52,6 @@ echo 'sync done'
 function test-throughput () {
 	echo "Starting test"
 
-	# pos_run COMMMAND_ID -- COMMAND
 	echo "waiting for vpp setup"
 	pos_sync #s1: vvp is set up
 
@@ -62,7 +62,7 @@ function test-throughput () {
 	throughputfile="/tmp/$jobname.throughput.csv"
 	latencyfile="/tmp/$jobname.latency.csv"
 
-
+	# pos_run COMMMAND_ID -- COMMAND ARGS
 	pos_run $jobname -- $2 --hifile $historyfile --thfile $throughputfile --lafile $latencyfile
 
 	sleep 20
