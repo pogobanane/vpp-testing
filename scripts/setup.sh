@@ -14,10 +14,9 @@ VPPVERSION=$3 # can be empty or 16.09
 
 # exit on error
 set -e
-# log every command
-set -x
 
 # takes resolvable host as $1
+# blocks and pings host until he responds
 function posping() {
 	set +x
 	printf "%s" "waiting for $1 to come online"
@@ -37,10 +36,6 @@ function posping() {
 	set -x
 }
 
-# allocate all hosts for ONE experiment
-# echo "allocate hosts"
-# pos allocations allocate "$DUT" "$LOADGEN"
-
 echo "set images to debian stretch"
 pos nodes image "$DUT" debian-stretch
 pos nodes image "$LOADGEN" debian-stretch
@@ -49,10 +44,10 @@ echo "reboot experiment hosts..."
 # run reset blocking in background and wait for processes to end before continuing
 pos nodes reset "$DUT" &
 pos nodes reset "$LOADGEN" &
-#wait
-# give nodes time to shut down for next step to work
+# `wait` may not be enough because reset's wait might time out before nodes
+# are back online. 
+# give nodes time to shut down for posping to work
 sleep 30
-# better wait (longer timeout)
 posping "$DUT"
 posping "$LOADGEN"
 
@@ -82,12 +77,3 @@ wait
 echo "pos bootstraping"
 pos nodes bootstrap $DUT
 pos nodes bootstrap $LOADGEN
-
-echo "run test..."
-#pos nodes cmd --infile dut_vpp_run.sh "$DUT"
-echo "$DUT finished test"
-wait
-
-# echo "freeing nodes..."
-# pos allocations free "$DUT"
-# pos allocations free "$LOADGEN"
