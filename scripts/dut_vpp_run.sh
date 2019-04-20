@@ -131,6 +131,7 @@ function vpp-test () {
 
 	pos_sync #s21: moogen should be generating load now
 	
+	# !!! marks lines commented to disable perf-collect 
 	# !!! perf-collect "$perfstatfile" "$perfdataname" 10
 	sleep 10
 
@@ -182,146 +183,168 @@ function vpp-find-sweetspot () {
 }
 
 #### bridge config testing ####
+function bridge_config_testing () {
+	for i in {0..5}
+	do
+		vpp-find-sweetspot "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
+	done
 
-# for i in {0..5}
-# do
-# 	vpp-find-sweetspot "l2_bridging_cnf${i}" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "${i}"
-# done
-
-# vpp-find-sweetspot "l2_xconnect" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
+	vpp-find-sweetspot "l2_xconnect" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
+}
 
 #### multimac latency testing ####
-
-# vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
-# for s in {1..40}
-# do
-# 	i=$((s*25000))
-# 	istr=`printf "%08i" $i`
-# 	vpp-find-sweetspot "l2_multimac_$istr" "$vppcmd" $i
-# done
-# vpp-find-sweetspot "l2_multimac_00000100" "$vppcmd" 100
-# vpp-find-sweetspot "l2_multimac_00001000" "$vppcmd" 1000
-# vpp-find-sweetspot "l2_multimac_00005000" "$vppcmd" 5000
-# vpp-find-sweetspot "l2_multimac_00010000" "$vppcmd" 10000
-# vpp-find-sweetspot "l2_multimac_00015000" "$vppcmd" 15000
-# vpp-find-sweetspot "l2_multimac_00020000" "$vppcmd" 20000
-
-
-vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
-for run in {0..5}
-do
-	for s in {1..50}
+function multimac_latency_testing () {
+	vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
+	for s in {1..40}
 	do
-		i=$((s*200))
-		istr=`printf "%06i" $i`
-		vpp-test "l3_latroutes1_${istr}_${run}" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 1"
-		vpp-test "l3_latroutes255k_${istr}_${run}" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 255116"
+		i=$((s*25000))
+		istr=`printf "%08i" $i`
+		vpp-find-sweetspot "l2_multimac_$istr" "$vppcmd" $i
 	done
-done
+	vpp-find-sweetspot "l2_multimac_00000100" "$vppcmd" 100
+	vpp-find-sweetspot "l2_multimac_00001000" "$vppcmd" 1000
+	vpp-find-sweetspot "l2_multimac_00005000" "$vppcmd" 5000
+	vpp-find-sweetspot "l2_multimac_00010000" "$vppcmd" 10000
+	vpp-find-sweetspot "l2_multimac_00015000" "$vppcmd" 15000
+	vpp-find-sweetspot "l2_multimac_00020000" "$vppcmd" 20000
+}
+
+function multimac_latency_testing_hires () {
+	vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
+	for run in {0..5}
+	do
+		for s in {1..50}
+		do
+			i=$((s*200))
+			istr=`printf "%06i" $i`
+			vpp-test "l3_latroutes1_${istr}_${run}" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 1"
+			vpp-test "l3_latroutes255k_${istr}_${run}" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 255116"
+		done
+	done
+}
 
 #### multimac throughput testing ####
-
-# # 6 runs with 47 different l2fib sizes each = 282
-# vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
-# for run in {0..5}
-# do
-# 	for s in {1..47}
-# 	do
-# 		i=`echo "1.4^$s" | bc`
-# 		i=`printf "%.0f" $i`
-# 		istr=`printf "%08i" $i`
-# 		vpp-test "l2_throughmac_${istr}_$run" "$vppcmd" $i
-# 	done
-# done
+function multimac_throughput_testing () {
+	# 6 runs with 47 different l2fib sizes each = 282
+	vppcmd="${GITDIR}/scripts/vpp_tests/l2-multimac.sh"
+	for run in {0..5}
+	do
+		for s in {1..47}
+		do
+			i=`echo "1.4^$s" | bc`
+			i=`printf "%.0f" $i`
+			istr=`printf "%08i" $i`
+			vpp-test "l2_throughmac_${istr}_$run" "$vppcmd" $i
+		done
+	done
+}
 
 # #### l3 ip4 multicore testing ####
-
-# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-flows.sh"
-# for run in {0..5}
-# do
-# 	max=6
-# 	for s in $(seq 0 $max)
-# 	do
-# 		sstr=`printf "%02i" $s`
-# 		j=$((1+$s))
-# 		vpp-test "l3_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
-# 	done
-# done
+function l3ip4_multicore_testing () {
+	vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-flows.sh"
+	for run in {0..5}
+	do
+		max=6
+		for s in $(seq 0 $max)
+		do
+			sstr=`printf "%02i" $s`
+			j=$((1+$s))
+			vpp-test "l3_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
+		done
+	done
+}
 
 # #### l3 ip6 multicore testing ####
-
-# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-flows.sh"
-# for run in {0..5}
-# do
-# 	max=6
-# 	for s in $(seq 0 $max)
-# 	do
-# 		sstr=`printf "%02i" $s`
-# 		j=$((1+$s))
-# 		vpp-test "l3v6_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
-# 	done
-# done
-
+function l3ip6_multicore_testing () {
+	vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-flows.sh"
+	for run in {0..5}
+	do
+		max=6
+		for s in $(seq 0 $max)
+		do
+			sstr=`printf "%02i" $s`
+			j=$((1+$s))
+			vpp-test "l3v6_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
+		done
+	done
+}
 
 # #### l3 ip4 routing ####
-
-# # 6 runs with 37 different l2fib sizes each = 222
-# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
-# for run in {0..5}
-# do
-# 	for s in {1..37} # 47}
-# 	do
-# 		i=`echo "1.4^$s" | bc`
-# 		i=`printf "%.0f" $i`
-# 		istr=`printf "%08i" $i`
-# 		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-# 	done
-# done
+function l3ip4_routing_testing () {
+	# 6 runs with 37 different l2fib sizes each = 222
+	vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routing.sh"
+	for run in {0..5}
+	do
+		for s in {1..37} # 47}
+		do
+			i=`echo "1.4^$s" | bc`
+			i=`printf "%.0f" $i`
+			istr=`printf "%08i" $i`
+			vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+		done
+	done
+}
 
 # #### l3 ip6 routing ####
-
-# # 6 runs with 37 different l2fib sizes each = 222
-# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-routing.sh"
-# for run in {0..5}
-# do
-# 	for s in {1..37} # 47}
-# 	do
-# 		i=`echo "1.4^$s" | bc`
-# 		i=`printf "%.0f" $i`
-# 		istr=`printf "%08i" $i`
-# 		vpp-test "l3v6_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-# 	done
-# done
+function l3ip6_routing_testing () {
+	# 6 runs with 37 different l2fib sizes each = 222
+	vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip6-routing.sh"
+	for run in {0..5}
+	do
+		for s in {1..37} # 47}
+		do
+			i=`echo "1.4^$s" | bc`
+			i=`printf "%.0f" $i`
+			istr=`printf "%08i" $i`
+			vpp-test "l3v6_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+		done
+	done
+}
 
 #### l3 ip4 routing legacy: v16.09 ####
+function l3ip4_routing_legacy () {
+	6 runs with 50 different l3fib sizes each = 300
+	vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routinglegacy.sh"
+	for run in {0..5}
+	do
+		for s in {1..48} # 47}
+		do
+			i=`echo "1.4^$s" | bc`
+			i=`printf "%.0f" $i`
+			istr=`printf "%08i" $i`
+			vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+		done
 
-# 6 runs with 50 different l3fib sizes each = 300
-# vppcmd="${GITDIR}/scripts/vpp_tests/l3-ip4-routinglegacy.sh"
-# for run in {0..5}
-# do
-# 	for s in {1..48} # 47}
-# 	do
-# 		i=`echo "1.4^$s" | bc`
-# 		i=`printf "%.0f" $i`
-# 		istr=`printf "%08i" $i`
-# 		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-# 	done
+		# 2^20
+		i=`echo "2^20" | bc`
+		i=`printf "%.0f" $i`
+		istr=`printf "%08i" $i`
+		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
 
-# 	# 2^20
-# 	i=`echo "2^20" | bc`
-# 	i=`printf "%.0f" $i`
-# 	istr=`printf "%08i" $i`
-# 	vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-
-# 	# 2^23
-# 	i=`echo "2^23" | bc`
-# 	i=`printf "%.0f" $i`
-# 	istr=`printf "%08i" $i`
-# 	vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
-# done
+		# 2^23
+		i=`echo "2^23" | bc`
+		i=`printf "%.0f" $i`
+		istr=`printf "%08i" $i`
+		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+	done
+}
 
 #### vxlan throughput ####
+function vxlan_throughput_testing () {
+	vpp-test "vxlan_encap" "${GITDIR}/scripts/vpp_tests/vxlan-encapsulated.sh" "${INT_SRC_PCI} ${INT_DST_PCI}"
+}
 
-# vpp-test "vxlan_encap" "${GITDIR}/scripts/vpp_tests/vxlan-encapsulated.sh" "${INT_SRC_PCI} ${INT_DST_PCI}"
+#### run test functions ####
+
+# bridge_config_testing
+# multimac_latency_testing
+multimac_latency_testing_hires
+# multimac_throughput_testing
+# l3ip4_multicore_testing
+# l3ip6_multicore_testing
+# l3ip4_routing_testing
+# l3ip6_routing_testing
+# l3ip4_routing_legacy
+# vxlan_throughput_testing
 
 echo "all done"
