@@ -1,6 +1,0 @@
-ÿü"ÿþ"ÿûÿýÿûÿþÿýÿúÿðÿýÿúÿðshow err
-   Count                    Node                  Reason
- 167034830                l2-output               L2 output packets
- 167034830                l2-input                L2 input packets
-         2     TenGigabitEthernet5/0/1-output     interface is down
-vpp# 

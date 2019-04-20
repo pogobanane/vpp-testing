@@ -1,4 +1,0 @@
-# This is an example for the Makefile.inc
-
-DOCUMENT := slides.tex
-TARGET := slides

@@ -1,6 +1,0 @@
-[root] [DEBUG] pos_server: http://172.16.0.1:5000
-[root] [INFO] Start bootstrapping host: 2019-01-03 14:47:51
-[root] [INFO] Finished setting up variables: 2019-01-03 14:47:51
-zip_safe flag not set; analyzing archive contents...
-zip_safe flag not set; analyzing archive contents...
-[root] [INFO] Finished setting up postools: 2019-01-03 14:47:52
