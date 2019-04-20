@@ -1,3 +1,4 @@
+# vpp: klaipeda, moongen: narva
 moongen:
         tx: 0
         rx: 1
@@ -5,7 +6,6 @@ moongen:
 cpu-freq: 100
 
 vpp:
-        config: '/root/ba-okelmann/vpp-configs/simple1.conf'
         int_src: 'TenGigabitEthernet2/0/0'
         int_dst: 'TenGigabitEthernet2/0/1'
         int_src_pci: '0000:02:00.0'

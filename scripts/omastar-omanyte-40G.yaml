@@ -7,7 +7,6 @@ moongen:
 cpu-freq: 0
 
 vpp:
-        config: '/root/ba-okelmann/vpp-configs/simple1.conf'
         int_src: 'FortyGigabitEthernet3/0/0'
         int_dst: 'FortyGigabitEthernet3/0/1'
         int_src_pci: '0000:03:00.0'
