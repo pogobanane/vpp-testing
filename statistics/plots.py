@@ -116,7 +116,6 @@ def scrape_dirs(folder, other):
 flatency, fthroughput, fstat = scrape_dirs(DIRS[0], DIRS[1])
 
 def parse_throughput(csvfile):
-    print("penis")
     with open(csvfile, ) as f:
         reader = csv.reader(f)
         next(reader) # skip header line
@@ -157,7 +156,6 @@ def parse_perfrecord(statfile, key):
     return -1.0
 
 def parse_packetdrops(csvthroughputfile):
-    print("penis")
     with open(csvthroughputfile, ) as f:
         reader = csv.reader(f)
         next(reader) # skip header line
