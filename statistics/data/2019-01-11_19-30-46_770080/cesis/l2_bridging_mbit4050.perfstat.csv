@@ -1,0 +1,17 @@
+# started on Fri Jan 11 21:47:33 2019
+
+1747234;;branch-instructions;2425107;100.00;;
+43177;;branch-misses;5704585;100.00;2.47;of all branches
+427;;cache-misses;14931310;100.00;0.129;of all cache refs
+35408600;;ref-cycles;21411860;100.00;;
+331530;;cache-references;40839433;100.00;;
+685817;;L1-dcache-load-misses;55805840;95.84;1.54;of all L1-dcache hits
+44497325;;L1-dcache-loads;18445390;31.11;;
+322432;;L1-dcache-store-misses;16476070;22.05;;
+24269307;;L1-dcache-stores;15422194;20.64;;
+<not counted>;;LLC-load-misses;0;0.00;;
+<not counted>;;LLC-loads;0;100.00;;
+<not counted>;;LLC-store-misses;0;100.00;;
+<not counted>;;LLC-stores;0;100.00;;
+<not counted>;;branch-load-misses;0;100.00;;
+<not counted>;;branch-loads;0;100.00;;

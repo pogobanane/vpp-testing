@@ -1,0 +1,236 @@
+
+\chapter{Background}
+
+\section{Core Features}
+
+% features:
+% - modularity, feature rich
+% - vectorization
+% - RSS
+% - dpdk: fast userspace NIC drivers
+
+Core features of \Ac{vpp} are its vectorized processing of packets in
+badges as the name indicates which allows for better optimization. Its
+support for \Ac{dpdk} with its fast, user-space NIC drivers comes with
+virtual packet interfaces for fast links to local virtualized systems.
+Finally specific packet processing features are implemented in a
+modular processing graph consisting of nodes for example like
+ip4-lookup, ip6-lookup or vxlan4-encap and vxlan6-encap. New features
+can be added with plugins extending the packet processing graph by new
+nodes, adding new processing paths and adding new CLI commands.
+
+
+\section{Releases}
+
+% releases:
+
+Each release (such as v18.10) contains the following pre-release
+milestones:  With the first label "F0" the API is frozen and
+development shall aim for stability. For the second label "RC1" only
+bug fix changes are accepted and a first artifact is released. Then
+the iteration repeats and a second "RC2" version is released. Those
+pre-releases are marked with a tag containing the version number and
+the iteration appendix (v18.10-rc1). The final release will have no
+extra tags in their name. The git tag marks the official release, but
+the version-specific branch can still receive occasional updates.
+\cite{vppwiki:releases}
+
+The oldest version of VPP available in the GitHub repository is from
+2016. Unless otherwise specified this performance analysis used the
+v18.10 branch from 14th of December 2018\footnote{commit
+a8e3001e68d8f5ea6cf526b131c92f5993597f81}.
+
+
+\section{Use Cases}
+
+% interesting scenarios / use cases: 
+
+A developer once formulated the design goal of \Ac{vpp}: It shall
+seamlessly integrate into existing \Ac{sdn} stacks and it shall
+"become the foundation of the future cloud native services"
+\cite{florincoras}. That is, because \Ac{vpp} can serve in quite some
+different scenarios and can connect to different control plane
+tooling:
+
+\subsection{Data Plane}
+
+% - routing the internet: >500.000 routes
+% - scale to multiple cpu's
+% - latency behaviour
+
+The BGP table size of the internet grew to 512,000 prefixes in 2014 and
+it continues growing. As \Ac{vpp} aims to be used for routing tasks,
+it has to perform well with big routing tables. \cite{bgphelp:size}
+For handling high loads \Ac{vpp} helps spreading the computation
+intensive frame processing tasks to multiple CPU cores. Qosmos for
+example uses \Ac{vpp} to implement deep packet inspection
+\cite{qosmos}. Viosoft on the other hand uses \Ac{vpp} in the context
+of embedded systems which might require stable or short latencies
+\cite{viosoft}. Therefore latency behavior represents an important
+aspect of performance analysis, too.
+
+% - TODO more complex tasks like vxlan encapsulation (only if i need more text)
+% In \Ac{sdn} environments increasing virtualization of hardware also leads to a virtualization of physical links. P
+
+\subsection{Control Plane Integration}
+
+\Ac{vpp} integrates into open source control plane projects:
+OpenDaylight software can do some VPP management using an OpenFlow
+interface via \Ac{lisp} flow mapping \cite{opendaylight:lisp}. Using
+control plane software like OpenDaylight, \Ac{vpp} also integrates
+into OpenStack Neutron, a networking management software for the
+OpenStack cloud computing platform \cite{fdio:integration}.
+
+% vPE: 39 times in source code, 
+% - Cisco Virtual Multiservice Data Center (VMDC)
+% - vPE (Virtual Provider Edge) provides VMDC 1-4.x
+
+
+Furthermore it can be assumed that Cisco's \Ac{vpe} product group uses
+VPP, because the term "vPE" can be found 39 times in the source code
+and many additional times in the official documentation
+\cite{vppdocs}. \newpage
+The term \Ac{vpe} describes a collection of Cisco's concepts for
+\Ac{sdn}, virtualized data centers and cloud native environments
+called \Ac{vmdc} 1.x to 4.x. Those \Ac{vpe} concepts are used in
+several products \cite{cisco:sdn}:
+
+\begin{itemize}
+	\item Cisco VSG (Virtual Security Gateway)
+	\item Cisco ASA 1000v, a Cloud Firewall
+	\item Cisco vWAAS (Virtual Wide Area Applications Services)
+	\item Citrix ADC VPX, a SDN suite
+\end{itemize}
+
+
+\chapter{Related Work}
+
+% \cite{openvswitch:gym} u sure u wanna promote this?
+
+There has been a previous work analyzing and describing the design,
+architecture and performance of \Ac{vpp} \cite{linguaglossa2017high}.
+It presents measurement results mainly regarding very specific
+properties like packet vector size or other optimization strategies
+but lacks results about the impact of hash table sizes. This paper on
+the other hand presents detailed test results for the layer 2
+\Ac{fib}, \Ac{ip4} \Ac{fib} and \Ac{ip6} \Ac{fib} which allow for a
+quantitative performance comparison to other software routers in a
+routing scenario.
+
+% differences: i haz:
+% - l2fib, ip4/6 l3fib routing table entries
+% - high core count cpu scaling
+% - models describing performance behaviour
+% - more in-depth latency description and model
+% - more independenet
+
+For \cite{linguaglossa2017high} the \Ac{vpp} nodes were extended to
+collect stats, such as \Ac{perf} does, for all processing functions
+individually which gives further insights. This paper on the other
+hand (see Chapter \ref{sec:methodology}) uses perf-record and perf-report, to compare used CPU time of \Ac{vpp} functions.
+
+% i really dont wanna admit this:
+
+% There is also a repository \cite{github:vpp-bench} containing some
+% \Ac{vpp} startup and setup scripts used for
+% \cite{linguaglossa2017high}.
+
+There is a paper \cite{revisiting-benchmarking:1} which aims to do
+RFC2544 compliant benchmarks with FreeBSD, Linux and an off-the-shelf
+MicroTik router. It summarizes existing methodology and benchmarking
+systems and presents relevant parts of the results. There is also a
+detailed analysis \cite{raumer2015performance} of the Linux network
+stack as a router which presents a model for upper bound throughput
+predictions.
+
+Another paper \cite{chair:architecture} presents benchmarking results
+about the MoonRoute software router and some comparative data to
+FastClick DPDK, Click DPDK and Linux 3.7.  
+
+There is also detailed analysis of the DPDK framework, comparison to
+other frameworks and a model describing its performance. \cite
+{compare-highperf} Another work discusses more generally different
+ways of implementing fast user space packet processing and focuses
+especially on used concepts and optimizations. \cite{barbette2015fast}
+
+% rfc2544 not usable
+
+Unfortunately there is no universally fitting and established
+benchmarking routine. Even though RFC2544 \cite{rfc2544} describes
+"Benchmarking Methodology for Network Interconnect Devices", many of
+the suggestions done in it are not relevant or applicable to software
+routers like \Ac{vpp}. \cite{revisiting-benchmarking:1}
+
+% RFC bs begin: % TODO
+
+% frame sizes
+
+For example it stresses procedures to test different Ethernet frame
+sizes. Frame size is typically no bottleneck for software routers and
+thus receives little attention in this paper.
+\cite{emmerich2015assessing}
+
+% - "At the start of each trial a routing update
+%    MUST be sent to the DUT." (long running, no good idea)
+
+Furthermore the RFC states: "At the start of each trial a routing
+update MUST be sent to the DUT" \cite{rfc2544}. Adding up to several
+million routing entries using networking protocols before every test
+run doesn't appear to be a feasible approach. Instead \Ac{vpp}'s CLI
+is used to add all table entries using a single command.
+
+% - each test-run SHOULD take over a minute. (no change after 20
+%   seconds with turbo boost disabled) latency measurement one packet
+% - per minute - to slow rate
+
+Generally speaking, the RFC's requirements towards the duration of
+test runs exceeds what was done for this paper. According to the RFC a
+test run should take longer than a minute - latency measurements shall
+only measure timings of a single packet per minute. Providing a
+constant level of CPU performance for example by disabling Intel's
+turbo-boost, \Ac{vpp} stabilizes after only 10 to 20 seconds of
+receiving load which allows for way shorter test runs.
+
+% RFC bs end % TODO
+
+% this one uses definitions of rfc1242. 
+% usable: throughput and latency
+
+RFC 2544 uses some definitions from RFC1242 \cite{rfc1242} like
+"Throughput": RFC 1242 defines throughput as the highest throughput
+without any packet loss, which is not the same as the maximum
+measurable throughput. This paper refers to throughput as the
+maximum measurable throughput if not specified otherwise.
+
+% - latency measurement at the rfc1242 throughput rate -> doesnt work
+% because of variance
+
+% MoonGen:
+
+% this replaces the commented paragraph, because that was too
+% complicated to get correct.
+
+For deeper insights into how the throughput and latency is measured by
+MoonGen, a tool used for this paper, \cite{emmerich2015moongen}
+gives a lot of insight for example about the time measurement
+accuracy. 
+
+% "moongen latency measurement is science stadtard" - paul
+% RFC 1242's definition of latency conforms to the latency measured by
+% MoonGen which was used for this paper. RFC 2544 on the other hand
+% additionally requires to measure the latency at the throughput
+% according to RFC 1242. As this paper will show, the latency at very
+% high throughput rates without packet loss varies a lot. Instead in
+% order to get comparable latency results, a lower packet rate has to be
+% selected.
+
+% TODO (if more text needed) - special frames: broadcast, management, routing update
+% mentioned in rfc, but not looked at in this paper
+
+% TODO: https://wiki.fd.io/view/CSIT/csit-test-naming
+% There is a testing suite used by \Ac{vpp} developers to detect perfomance regressions, has no extensive
+% fib testing. It seems like its more about trying to cover all
+% features with at least one test than in depth performance analysis.
+% They also present the change of performance measurements over time
+% in "trend" graphs, but these only show measurements of the most
+% recent months.

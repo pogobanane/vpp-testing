@@ -1,0 +1,1 @@
+['/root/ba-okelmann/MoonGen/build/MoonGen', 'moongen-scripts/l2-throughput.lua', '2', '3', '--hifile', '/tmp/l2_bridging_cnf1_mbit4316_final.histogram.csv', '--thfile', '/tmp/l2_bridging_cnf1_mbit4316_final.throughput.csv', '--lafile', '/tmp/l2_bridging_cnf1_mbit4316_final.latency.csv', '--rate', '4316', '--macs', '0']

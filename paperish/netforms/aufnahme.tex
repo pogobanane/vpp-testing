@@ -1,0 +1,109 @@
+\documentclass[german,11pt,a4paper]{netforms}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+
+\input{studentdefs}
+
+\newgeometry{
+	top=2cm,
+	bottom=2.5cm,
+	left=2cm,
+	right=2cm,
+}
+
+\makeatletter
+\begin{document}
+\netformheader
+
+\vskip5mm
+
+\begin{center}
+	\bfseries\LARGE Aufnahmeformular f\"ur Studenten am\\
+	\NETname
+\end{center}
+
+\vskip5mm
+\textbf{Allgemeine Angaben}
+
+\vskip2mm
+\renewcommand\arraystretch{2}
+\begin{tabular}{|p{.5\textwidth}|p{.5\textwidth}|}
+	\hline
+	\emph{Name:} \thenachname & \emph{Vorname:} \thevorname\\
+	\hline
+	\multicolumn{2}{|l|}{\emph{%
+	Stra\ss{}e, Nr.: \thestudienstrasse%
+	\ifx\studien@appartment\@empty\else%
+	,\ \studien@appartment%
+	\fi%
+	\ifx\studien@adresszusatz\@empty\else%
+	,\ \studien@adresszusatz%
+	\fi}}\\
+	\hline
+	\multicolumn{2}{|l|}{\emph{%
+	PLZ, Ort: \thestudienstadt}}\\
+	\hline
+	\emph{Tel.:} \thestudientelefon & \emph{Tel. mobil:} \thestudienmobiltelefon\\
+	\hline
+	\emph{Sunhalle-Account:} & \texttt{\thesunhalle}\\
+	\hline
+\end{tabular}
+
+\vskip5mm
+\begin{tabular}{|p{.5\textwidth}|p{.5\textwidth}|}
+	\hline
+	\emph{Matrikel-Nr.:} \thematrikel & \thesemester-tes Fachsemester im %
+		\thecurrentsemester\\
+	\hline
+	\multicolumn{2}{|l|}{\emph{Studiengang:} \thestudiengang}\\
+	\hline
+\end{tabular}
+
+\vskip1cm
+\framebox{\makebox(8,8){%
+\ifhiwi%
+\Huge\texttimes%
+\fi%
+}}%
+\hskip2mm\textbf{Studentische/Wissenschaftliche Hilfskraft}
+
+\vskip1mm
+\begin{tabular}{|p{\textwidth}|}
+	\hline
+	\emph{Betreuer:} \ifhiwi\thebetreuer\fi \\
+	\hline
+	\emph{T\"atigkeit:} \ifhiwi\thetaetigkeit\fi \\
+	\hline
+\end{tabular}
+
+\vskip1cm
+\framebox{\makebox(8,8){\ifdiplom{}\Huge\texttimes\fi}}%
+\hskip2mm\textbf{Diplomarbeit}%
+\hskip5mm\framebox{\makebox(8,8){\ifbachelor{}\Huge\texttimes\fi}}%
+\hskip2mm\textbf{Bachelorarbeit}
+\hskip5mm\framebox{\makebox(8,8){\ifmaster{}\Huge\texttimes\fi}}%
+\hskip2mm\textbf{Masterarbeit}
+\hskip5mm\framebox{\makebox(8,8){\ifidp{}\Huge\texttimes\fi}}%
+\hskip2mm\textbf{IDP}
+\hskip5mm\framebox{\makebox(8,8){\ifgr\Huge\texttimes\fi}}%
+\hskip2mm\textbf{SEP}
+\hskip5mm\framebox{\makebox(8,8){\ifother{}\Huge\texttimes\fi}}%
+\hskip2mm\textbf{\ifother\thetype\else Other\fi}
+
+\vskip1mm
+\begin{tabular}{|p{\textwidth}|}
+	\hline
+	\emph{Betreuer:} \ifhiwi\else\thebetreuer\fi \\
+	\hline
+	\emph{Thema:} \ifhiwi\else\thetitleenglish\fi \\
+	\hline
+\end{tabular}
+
+\vskip1cm
+
+\vskip.5cm
+\netformfooter
+\end{document}
+\makeatother

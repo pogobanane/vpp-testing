@@ -1,0 +1,134 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{posterstlyle}[2018/06/18 poster style for student posters]
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{standalone}
+\usepackage{units}
+\usepackage{tikz}
+\usepackage{framed,color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{wrapfig}
+\usepackage{units}
+\usepackage[hidelinks]{hyperref}
+\usepackage{pgfplotstable}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.13}
+\usepgfmodule{shapes}
+\usepgfmodule{plot}
+\usepackage{qrcode}
+\usetikzlibrary{positioning,shapes,shadows,arrows,decorations}
+\usetikzlibrary{decorations.pathmorphing,shadows,arrows.meta}
+\usetikzlibrary{calc}
+\usepackage{tumcolor}
+\usepackage{tumcontact}
+\usepackage{tumlang}
+\usepackage{csquotes}
+\usepackage[noshading]{moeptikz}
+\usepackage{booktabs}
+
+\setlength\parindent{0pt}
+
+% Needed to calculate the margin within textboxes 
+\newlength{\boxtextwidth}
+
+\setlength{\fboxrule}{2pt}%
+\newcommand{\cfbox}[2]{%
+	\colorlet{currentcolor}{.}%
+	{\color{#1}%
+		\fbox{\color{currentcolor}#2}}%
+}
+
+% Weird hack to create a textbox
+\newcommand{\textbox}[5]{
+	\setlength{\boxtextwidth}{#1}
+	\addtolength{\boxtextwidth}{-4ex}
+	\ifthenelse{\equal{#5}{right}}{\hfill}{}
+	\tikz\node [color=white, fill=TUMDarkerBlue,minimum height = 3.3ex, text depth=-0.0ex] {\textbf{#3}};
+	
+	\vspace{-\lineskip}
+	\ifthenelse{\equal{#5}{right}}{\hfill}{}
+	\cfbox{TUMDarkerBlue!20}{%
+		\parbox[c][#2][t]{#1}{%
+			\vskip2ex
+			\centering
+			\begin{minipage}{\boxtextwidth}
+				#4
+			\end{minipage}
+			\vskip1ex%
+	}}%
+}
+
+\newcommand{\sgtextbox}[4]{
+	\setlength{\boxtextwidth}{#1}
+	\addtolength{\boxtextwidth}{-4ex}
+	
+	\vspace{-\lineskip}
+	\ifthenelse{\equal{#4}{right}}{\hfill}{}
+	\cfbox{TUMDarkerBlue!20}{%
+		\parbox[c][][t]{#1}{%
+			\vskip2ex
+			\centering
+			\begin{minipage}{\boxtextwidth}
+				#3
+			\end{minipage}
+			\vskip1ex%
+	}}%
+}
+
+% Wrapper for a single textbox spanning the whole poster width
+% @param1 height of the box
+% @param2 headline
+% @param3 text within the box
+\newcommand{\singletextbox}[3]{%
+	%\begin{minipage}{0.9962\textwidth-2pt}% A0 very bad FIXME but necessary for single/double box alignment
+	\begin{minipage}{0.9949\textwidth-2pt}% A1/I8 very bad FIXME but necessary for single/double box alignment
+		\textbox{\textwidth}{#1}{#2}{#3}{}
+	\end{minipage}%
+}
+
+% Wrapper for a single textbox spanning the whole poster width
+% @param1 height of the box
+% @param2 text within the box
+\newcommand{\notitlesingletextbox}[2]{%
+	%\begin{minipage}{0.9962\textwidth-2pt}% A0 very bad FIXME but necessary for single/double box alignment
+	\begin{minipage}{0.9949\textwidth-2pt}% A1/I8 very bad FIXME but necessary for single/double box alignment
+		\sgtextbox{\textwidth}{#1}{#2}{}
+	\end{minipage}%
+}
+
+% Wrapper for a text without box spanning the whole poster width
+\newcommand{\ssingletextbox}[1]{
+	\begin{minipage}{\textwidth}
+		#1	
+	\end{minipage}
+}
+
+% Wrapper to create two textboxes
+% @param1 height of the box
+% @param2 headline box 1
+% @param3 text within the box 1
+% @param4 headline box 2
+% @param5 text within the box 2
+\newcommand{\doubletextbox}[5]{%
+	\begin{minipage}{.491\textwidth}%
+		\textbox{.983\textwidth}{#1}{#2}{#3}{left}%
+	\end{minipage}%
+	\hfill%
+	\begin{minipage}{.491\textwidth}%
+		%\textbox{.983\textwidth}{#1}{#4}{#5}{right}% A0 very bad FIXME but necessary for box alignment
+		\textbox{.979\textwidth}{#1}{#4}{#5}{right}% A1/I8
+	\end{minipage}%
+}
+
+\renewcommand{\labelitemi}{\raisebox{.175ex}{\footnotesize$\blacktriangleright$}}
+\pagestyle{empty}
+
+\let\OLDthebibliography\thebibliography
+\renewcommand\thebibliography[1]{
+	\OLDthebibliography{#1}
+	\setlength{\parskip}{0pt}
+	\setlength{\itemsep}{0pt plus 0.1ex}
+}

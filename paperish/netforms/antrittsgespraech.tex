@@ -1,0 +1,108 @@
+\documentclass[NET,a4,12pt,ngerman]{netforms}
+
+\usepackage[utf8]{inputenc}
+\usepackage{tumlang}
+\usepackage{tumcontact}
+\usepackage{scrpage2}
+
+\geometry{%
+	top=10mm,
+	bottom=10mm,
+	left=25mm,
+	right=25mm,
+	headsep=1.5cm,
+	includehead,
+}
+\input{studentdefs}
+
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\chead{\TUMheader{1cm}}
+
+\renewcommand{\maketitle}{%
+	\begin{center}
+		\textbf{\introductoryheadline}%
+
+		\Large%
+		\textbf{\thetitle}%
+	\end{center}
+
+	\footnotesize%
+	\hrule
+	\vskip1ex
+	\begin{tabular}{ll}
+		\thenamelabel: & \thevorname{} \textbf{\thenachname}\\
+		\theadvisorlabel: & \hspace*{-.5ex}\thebetreuer\\
+		\thesupervisorlabel: & \chairhead\\
+		\thebeginlabel: & \thebeginnmonat/\thebeginnjahr\\
+		\theendlabel: & \theendmonat/\theendjahr\\
+	\end{tabular}
+	\vskip1ex
+	\hrule
+	\vskip4ex
+}
+
+\linespread{1.2}
+\setlength{\parskip}{.5\baselineskip}
+
+\begin{document}
+\maketitle
+
+\subsection*{Topic}
+
+VPP (Vector Packet Processing) \cite{vppwiki:1} is an open source software for
+providing efficient network switching and routing.
+In contrary to common hardware switches, the whole packet processing is done in
+software. This allows a more versatile use of the same router in different
+applications and provides flexibility regarding hardware it can run on.
+
+Typically hardware routers are expected to be faster than software routers, but
+VPP has several approaches to perform better compared to similar software
+projects like Open vSwitch \cite{openvswitch:1} or the Linux Router: As the name indicates, it
+processes packages in vectors, in other words, multiple packages at a time which
+reduces overhead per package. Furthermore it doesn't use the slow linux network drivers for it's interfaces, but an own one.
+
+The scope of this Bachelor's thesis shall be to measure the performance of VPP
+and to evaluate which scenarios are important to be tested.
+
+
+\subsection*{Approach}
+
+For this Bachelor's Thesis  automated tests shall be implemented to run test
+scenarios on the Baltikum testbed. Moongen \cite{moongen:1} shall be used on the
+tester to generate loads. The testing shall be reproducable by beeing automated
+and shall be comparable by documenting circumstances well.
+
+VPP shall be tested torwards IPv4 versus IPv6, packet sizes, test traffic
+patterns, cpu scaling (optionally multi socket NUMA architectures) and size of
+the Forwarding and Routing Information Base (BGP size \textgreater 600.000
+entries in 2017 \cite{bgphelp:1}). Optionally one advanced scenario can be
+analyzed, too, like tunneling, firewall, NAT or virtualization.
+
+Measurement results shall contain package count (per time), package loss,
+latency and whitebox testing results using perf: Cpu load and cache misses.
+
+In the end a performance model shall be created (as in \cite{compare-highperf})
+and a conclusion shall be made, giving VPP a rough rank relative to real world
+routing solutions.
+
+
+\subsection*{Timetable}
+
+\begin{tabular}{|l|p{10cm}|}
+\hline
+Deadline after $n$ Months & Task \\ \hline
+0.5 & Automate a basic testbench setup and run a test using moongen for
+the tester and VPP for the DUT \\ \hline
+1.0 & Design and run benchmarking scenarios for basic VPP configurations \\ \hline
+1.5 & Create result visualization pipelines and analyze them \\ \hline
+2.5 & Improve tests and implement advanced test scenarios \\ \hline
+3.0 & Analyze new results and review testing methodology \\ \hline
+4.0 & Assemble Thesis from analysiss and testing results \\ \hline
+\end{tabular}
+
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,lit}
+
+
+\end{document}
