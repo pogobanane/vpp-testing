@@ -1,1 +1,0 @@
-['/root/ba-okelmann/MoonGen/build/MoonGen', 'moongen-scripts/l2-throughput.lua', '2', '3', '--hifile', '/tmp/l2_bridging_5000mbit.histogram.csv', '--thfile', '/tmp/l2_bridging_5000mbit.throughput.csv', '--lafile', '/tmp/l2_bridging_5000mbit.latency.csv', '--rate', '5000', '--macs', '0']
