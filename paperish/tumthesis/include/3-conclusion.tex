@@ -41,15 +41,16 @@ routes is of interest.
 % TODO: this has to sound better
 
 % more next steps: 
-% - compare more vpp versions
+% - compare more vpp versions v19.01!
 % - code based comparison of lookup table: v16.09, v18.10, fastclick
-% - more latency research. model/plain why latency
+% - Understand where latency is introduced. model/plain why latency
 %   per load graph looks like it does (read the relevant code)
 % - try to elaborate a better upper bound throughput model as in: 
 %   "Performance Exploration of Software-based Packet Processing Systems"
 % 	- test with different cpus
-% - take a look at open daylight / open flow / open stack to find out 
-%   if there are good solutions to the terrible configuration problem 
+% - test in virtualized scenarios
+%   - take a look at open daylight / open flow / open stack to find out 
+%     if there are good solutions to the terrible configuration problem 
 % - test "smart" numa memory alignment
 % - warmup time: somebody mentioned, that dpdk gets slower (less average throughput), 
 %   when there is too little time between two busy polls
