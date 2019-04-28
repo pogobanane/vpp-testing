@@ -1,0 +1,46 @@
+\usepackage[utf8]{inputenc}
+\usepackage{packages}
+\usepackage{beamermods}
+
+% For beamer mode (default):
+\author[S. G\"unther]{Stephan Günther}
+\title[Networking]{Something with Networking}
+
+% Uncomment to add advisors for presentation in Oberseminar
+%\advisor{Herrmann B. Wolfgang}
+
+% Uncomment to add type for presentation in Oberseminar
+% Usage: \thesistype{intermediate | final}{bachelor | master | idp | gr}
+%\thesistype{intermediate}{gr}
+
+% Uncomment to configure date in dd-mm-yyyy format
+%\newdate{date}{25}{05}{2017}
+%\date{\displaydate{date}}
+
+% Uncomment to add a venue to the title slide
+%\venue{International Conference on Conferencing 2018 \\ Garching b. München, Germany}
+
+% For lecture mode (use package option 'lecture'):
+%\lecture[GRNVS]{Grundlagen Rechnernetze und Verteilte Systeme}
+%\module{IN0010}
+%\semester{SoSe\,2016}
+%\assistants{Johannes Naab, Stephan Günther, Maurice Leclaire}
+
+
+\usepackage{pgfpages}
+\usepackage{ifthen}
+% ============================================================================
+% jobname solution
+% ============================================================================
+\newif\ifsolution%
+\ifthenelse{\equal{\detokenize{notes}}{\jobname}}{%
+\setbeameroption{show notes on second screen=bottom}
+\setbeamercolor{note page}{bg=white, fg=black}
+\setbeamercolor{note title}{bg=white!95!black, fg=black}
+}{
+}
+
+% TeXLive 2018 compatibility: https://tex.stackexchange.com/questions/426088/texlive-pretest-2018-beamer-and-subfig-collide
+\makeatletter
+\let\@@magyar@captionfix\relax
+\makeatother

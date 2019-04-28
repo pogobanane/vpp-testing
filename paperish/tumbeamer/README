@@ -1,0 +1,58 @@
+
+tumbeamer
+=========
+
+LaTeX template for talks and lectures. The most important things are documented
+below:
+
+
+Dependencies
+------------
+
+In order to compile the template you need the following packages:
+    texlive-full >= 2015
+    make
+
+For markdown support (optional) you additionally need:
+    pandoc
+
+Tested under Linux (Debian) and OSX only.
+
+
+Usage
+-----
+
+The template is ready to use for short talks on conferences or seminars. In
+case larger presentations such as lectures are planned, use the class option
+'lecture', which differs in the following points:
+
+1) Font size is decreased.
+
+2) Headline changes and displays section titles instead of the TUM banner to
+   make more room for content.
+
+3) Footer changes and displays the current section/subsection.
+
+
+Class options
+-------------
+
+english/german  - set language
+lecture         - enable lecture mode
+beameralt       - enables alternate beamer mode similar to lecture mode but
+                  suited for normal presentations
+noframenumbers  - disables frame numbers
+notitleframe    - disables titleframe
+nocontentsframe - suppresses automatic generation of contentframes after new
+                  parts/sections
+
+
+Command reference
+-----------------
+
+
+Known bugs:
+-----------
+
+- Frame breaks in TOCs are suboptimal (affects primarily lecture mode)
+
