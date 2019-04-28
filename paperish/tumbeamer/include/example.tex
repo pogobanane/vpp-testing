@@ -2,26 +2,39 @@
 
 \begin{frame}
     \begin{itemize}
-            \item item 1
-            \item $\ldots$
+            \item VPP: A fast Software Router
             \begin{itemize}
-                \item test
-                \item $\ldots$
+                \item Design Goals and Areas of Use
+                \item Packet Processing Graph
             \end{itemize}
+            \item Tested Scenarios
+            \item Benchmarking Setup
+            \item Results
+            \begin{itemize}
+                \item Maximum Throughput: CPU as a Bottleneck
+                \item CPU Scaling
+                \item Lookup Performance
+                \begin{itemize}
+                    \item L2
+                    \item IPv4 v18.10
+                    \item IPv4 v16.04
+                    \item IPv6
+                \end{itemize}
+                \item Latencies
+                \item Comparison
+            \end{itemize}
+            \item Conclusion
         \end{itemize}
 \end{frame}
 
-\section{Next Section}
+\section{VPP: A fast Software Router}
 
 \begin{frame}
-    \frametitle{Benchmarking Setup}
-    \begin{figure}
-    \noindent\hspace{1mm}\includegraphics[width=\linewidth]{pics/topology.png}
-    %\caption{Experiment setup for testing VPP with "kaunas" management server, LoadGen and DUT}
-    \label{setup}
-    \end{figure}
-\end{frame}
+    \frametitle{Design Goals and Areas of Use}
+    development goals...
+    use cases...
 
+\end{frame}
 
 \begin{frame}
     \frametitle{Packet Processing Graph}
@@ -32,19 +45,133 @@
     \end{figure}
 \end{frame}
 
-\section{Tests Conducted}
+\section{Tested Scenarios}
 
 \begin{frame}
-    \frametitle{Scenarios}
-    Scenarios:
-    
+    Tested Features:
+    - XConnect
+    - l2 Bridges: testing big fibs, no multicore
+    - l3: IPv4
+    - l3: IPv6
+    - VXLAN
+
+    Tested Parameters: 
+    - rates
+    - l3 multiple threads and flows
+    - l2/l3 fib sizes
+
+    Hurdles: no l2 multicore, l2 fib filling
+
+    Implementational and hardware details (why no framesizes): \cite{mywork}
+
+\end{frame}
+
+\section{Benchmarking Setup}
+
+\begin{frame}
+    \begin{figure}
+    \noindent\hspace{1mm}\includegraphics[width=\linewidth]{pics/topology.png}
+    %\caption{Experiment setup for testing VPP with "kaunas" management server, LoadGen and DUT}
+    \label{setup}
+    \end{figure}
+\end{frame}
+
+
+\section{Results: CPU}
+
+
+\begin{frame}
+    \frametitle{Maxumim Throughput: CPU as a Bottleneck}
+    \begin{table}[!ht]
+        \vspace{5ex}
+        \begin{tabular}[]{ l r r r }
+            Scenario & 1.6GHz (50\%) & 3.1GHz (97\%)  & 3.2GHz (100\%) \\ 
+            \midrule
+            xconnect & 7.34 (56\%) & 12.90 (98\%) & 13.20 (100\%) \\ % stdDev 0.03 0.02 0.12
+            l2 bridge no features & 6.69 (55\%) & 11.84 (97\%) & 12.18 (100\%) \\ % 0.01 0.03 0.08
+            IPv4 1 route & 6.03 (53\%) & 10.98 (97\%) & 11.28 (100\%) \\ % stdDev 0.01 0.02 0.05
+            l2 bridge mac-learn, mac-age & 6.05 (55\%) & 10.84 (98\%) & 11.09 (100\%) \\ % 0.01 0.05 0.02
+            IPv6 1 route & 5.38 (53\%) & 9.87 (97\%) & 10.14 (100\%) \\ % 0.01 0.02 0.04
+            VXLAN encap & 4.48 (55\%) & 8.15 (99\%) & 8.21 (100\%) \\ % 0.01 0.03 0.39
+            IPv4 255k routes & 4.19 (58\%) & 7.06 (97\%) & 7.25 (100\%) \\ % 0.01 0.04 0.07
+            IPv6 255k routes & 2.34 (62\%) & 3.72 (98\%) & 3.80 (100\%) \\ % 0.01 0.04 0.02
+            \midrule
+        \end{tabular}
+        \caption{Maximum throughput (Mpps) in different scenarios with different CPU frequencies measured on the Xeon E3-1230 system. }
+        \label{bottleneck}
+    \end{table}
+    % With offered Mpps beeing 100\%, "Relative" is the maximum packet throughput in relation to the offered one.  
 \end{frame}
 
 \begin{frame}
-    \frametitle{Parameters}
+    \frametitle{CPU Scaling}
+    \begin{figure}[!ht]
+    \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_summary_multicore.pdf}
+    \caption{VPP CPU scaling with IPv4 traffic with 10GbE, 40GbE and different CPU clock speeds. All workers (besides E3-1230 core 3-6) use physical CPU cores. The 40GbE NIC bottlenecks at around 20Mpps (see Section \ref{sec:40gbelimit}). }
+    \label{graph:multicore}
+    \end{figure}
 \end{frame}
 
-\section{Conclusion}
+\section{Results: Lookup Performance}
+
+\begin{frame}
+    \frametitle{L2 FIB}
+    \begin{figure}[!ht]
+    \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v3.pdf}
+    \caption{Testing VPP v18.10 with different layer 2 FIB sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+    \label{graph:l2fib}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{IPv6 FIB}
+    \begin{figure}[!ht]
+    \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3v6_routes_klaipeda32ghz_v3.pdf}
+    \caption{Testing VPP v18.10 with different IPv6 FIB sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+    \label{graph:ip6fib}
+    \end{figure}
+    Lookup nodes as bottleneck
+\end{frame}
+
+\begin{frame}
+    \frametitle{IPv4 FIB v18.10}
+    \begin{figure}[!ht]
+    \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda32ghz_v3.pdf}
+    \caption{Testing VPP v18.10 with different IPv4 FIB sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions.}
+    \label{graph:ip4fib}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{IPv4 FIB v16.09}
+    \begin{figure}[!ht]
+    \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda_v1609_32ghz_v3.pdf}
+    \caption{Testing VPP v16.09 with different IPv4 FIB sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+    \label{graph:ip4fiblegacy}
+    \end{figure}
+\end{frame}
+
+\section{Results: Latencies}
+
+\begin{frame}
+    \frametitle{asdad}
+    \begin{figure}[!ht]
+    \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/latencies_per_throughput_summary_ip4.pdf}
+    \caption{Latencies in $\mu s$ and packet drops of IPv4 routing with a single route (1 r) and 255k routes (255k r). }
+    \label{graph:latencyoverview}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Histogram}
+    \begin{figure}[!ht]
+    \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/latency_histogram_overview_ip4.pdf}
+    \caption{Latency histogram for IPv4 routing with a single route and 255k routes at approximately 10\%, 50\% and 90\% of the maximum throughput rate. }
+    \label{graph:latencyhistogram}
+    \end{figure}
+\end{frame}
+
+\section{Results}
 
 
 \begin{frame}
@@ -76,6 +203,11 @@
     \end{table}
 \end{frame}
 
+\section{Conclusion}
+
+\begin{frame}
+asdsad
+\end{frame}
 
 
 \section{Questions?}
