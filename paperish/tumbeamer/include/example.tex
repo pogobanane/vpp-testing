@@ -68,9 +68,16 @@
 
 \begin{frame}
     \frametitle{Packet Processing Graph}
+
+    \begin{itemize}
+        \item{dpdk-input: packet vector (max. 256)}
+        \item{l2-fwd: BiHash (inline)}
+        \item{ip4-lookup: MTree}
+        \item{ip6-lookup: BiHash}
+    \end{itemize}
+
     \begin{figure}
     \noindent\hspace{1mm}\includegraphics[width=\linewidth]{pics/vpp-nodes-horizontal.png}
-    \caption{VPP packet processing graph for xconnect, bridging, IPv4 routing and IPv6 routing. Other paths are left out. }
     \label{nodegraph}
     \end{figure}
 \end{frame}
@@ -78,21 +85,26 @@
 \section{Tested Scenarios}
 
 \begin{frame}
+
     Tested Features:
-    - XConnect
-    - l2 Bridges: testing big fibs, no multicore
-    - l3: IPv4
-    - l3: IPv6
-    - VXLAN
+    \begin{itemize}
+        \item XConnect
+        \item l2 Bridges
+        \item l3: IPv4
+        \item l3: IPv6
+        \item VXLAN
+    \end{itemize}
 
     Tested Parameters: 
-    - rates
-    - l3 multiple threads and flows
-    - l2/l3 fib sizes
+    \begin{itemize}
+        \item Packet rates
+        \item l3 multiple threads and flows
+        \item l2/l3 fib sizes
+    \end{itemize}
 
     Hurdles: no l2 multicore, l2 fib filling
 
-    Implementational and hardware details (why no framesizes): \cite{mywork}
+    % Implementational and hardware details (why no framesizes): \cite{mywork}
 
 \end{frame}
 
@@ -100,7 +112,7 @@
 
 \begin{frame}
     \begin{figure}
-    \noindent\hspace{1mm}\includegraphics[width=\linewidth]{pics/topology.png}
+    \noindent\hspace{5mm}\includegraphics[width=0.9\linewidth]{pics/topology.png}
     %\caption{Experiment setup for testing VPP with "kaunas" management server, LoadGen and DUT}
     \label{setup}
     \end{figure}
@@ -127,10 +139,9 @@
             IPv6 255k routes & 2.34 (62\%) & 3.72 (98\%) & 3.80 (100\%) \\ % 0.01 0.04 0.02
             \midrule
         \end{tabular}
-        \caption{Maximum throughput (Mpps) in different scenarios with different CPU frequencies measured on the Xeon E3-1230 system. }
         \label{bottleneck}
     \end{table}
-    % With offered Mpps beeing 100\%, "Relative" is the maximum packet throughput in relation to the offered one.  
+    % With offered Mpps beeing 100\%, "Relative" is the maximum packet throughput in relation to the offered one.
 \end{frame}
 
 \begin{frame}
