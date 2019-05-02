@@ -16,7 +16,7 @@
                 \item Lookup Performance
                 \begin{itemize}
                     \item L2
-                    \item IPv4 v18.10
+                    \item IPv4
                     \item IPv4 v16.04
                     \item IPv6
                 \end{itemize}
@@ -44,16 +44,16 @@
 
     VPP (Vector Packet Processing): 
     \begin{itemize}
-        \item software router
-        \item user space (DPDK)
-        \item mainstream architechtures
+        \item Software router
+        \item User space (DPDK)
+        \item Mainstream architechtures
     \end{itemize}
     \pause
 
     Distinctive Features: % differences to other softwarerouters
     \begin{itemize}
-        \item open-sourced by Cisco \cite{vppwiki:whatis}
-        \item processing graph: feature rich, modular, extensible \cite{linguaglossa2017high}
+        \item Open-sourced by Cisco \cite{vppwiki:whatis}
+        \item Processing graph: feature rich, modular, extensible \cite{linguaglossa2017high}
     \end{itemize}
     \pause
 
@@ -85,6 +85,7 @@
 \section{Tested Scenarios}
 
 \begin{frame}
+    \frametitle{VPP v18.10}
 
     Tested Features:
     \begin{itemize}
@@ -112,7 +113,8 @@
 
 \begin{frame}
     \begin{figure}
-    \noindent\hspace{5mm}\includegraphics[width=0.9\linewidth]{pics/topology.png}
+    \vspace{5mm}
+    \noindent\hspace{1mm}\includegraphics[width=0.9\linewidth]{pics/topology.png}
     %\caption{Experiment setup for testing VPP with "kaunas" management server, LoadGen and DUT}
     \label{setup}
     \end{figure}
@@ -124,6 +126,13 @@
 
 \begin{frame}
     \frametitle{Maxumim Throughput: CPU as a Bottleneck}
+
+    % - XConnect fastest
+    % - l2 bridge with vs without features
+    % - ip 4 vs 6
+    % - 1r vs 255k routes
+    % - proportionally clock/perf decrease -> cpu bottleneck
+
     \begin{table}[!ht]
         \vspace{5ex}
         \begin{tabular}[]{ l r r r }
@@ -139,6 +148,7 @@
             IPv6 255k routes & 2.34 (62\%) & 3.72 (98\%) & 3.80 (100\%) \\ % 0.01 0.04 0.02
             \midrule
         \end{tabular}
+        \caption{Maximum throughput in Mpps.}
         \label{bottleneck}
     \end{table}
     % With offered Mpps beeing 100\%, "Relative" is the maximum packet throughput in relation to the offered one.
@@ -146,48 +156,58 @@
 
 \begin{frame}
     \frametitle{CPU Scaling}
+
+    % - test sequence: 10G 100clock, reduce clock, use hypercores 3-6, switch to 40G
+    % -> perfect scaling
+
+
     \begin{figure}[!ht]
-    \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_summary_multicore.pdf}
-    \caption{VPP CPU scaling with IPv4 traffic with 10GbE, 40GbE and different CPU clock speeds. All workers (besides E3-1230 core 3-6) use physical CPU cores. The 40GbE NIC bottlenecks at around 20Mpps (see Section \ref{sec:40gbelimit}). }
+    \noindent\hspace{0.5mm}\includegraphics[width=.85\linewidth]{pics/throughput_summary_multicore.pdf}
+    \caption{VPP CPU scaling. All workers (besides E3-1230 core 3-6) use physical CPU cores. }
     \label{graph:multicore}
     \end{figure}
+    \hspace{8mm} $\Rightarrow$ Maximum throughput $t$: $ t(w) = w * t_{1w}$ $
 \end{frame}
 
 \section{Results: Lookup Performance}
 
 \begin{frame}
     \frametitle{L2 FIB}
+
+    % - fib size calculations
+    % - explain graph
+    % - drops
+    % - l2fwd_node 1:1 correlation
+
     \begin{figure}[!ht]
-    \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v3.pdf}
-    \caption{Testing VPP v18.10 with different layer 2 FIB sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
+    \noindent\hspace{0.5mm}\includegraphics[width=0.85\linewidth]{pics/throughput_l2_throughmac_klaipeda32ghz_v3.pdf}
     \label{graph:l2fib}
     \end{figure}
+    \hspace{8mm} L2 FIB size $s$: $ s_{l2fib}(n) = n * \frac{1}{16}  $
 \end{frame}
 
 \begin{frame}
     \frametitle{IPv6 FIB}
     \begin{figure}[!ht]
     \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3v6_routes_klaipeda32ghz_v3.pdf}
-    \caption{Testing VPP v18.10 with different IPv6 FIB sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
     \label{graph:ip6fib}
     \end{figure}
-    Lookup nodes as bottleneck
+    % Lookup nodes as bottleneck
 \end{frame}
 
 \begin{frame}
-    \frametitle{IPv4 FIB v18.10}
+    \frametitle{IPv4 FIB}
     \begin{figure}[!ht]
-    \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda32ghz_v3.pdf}
-    \caption{Testing VPP v18.10 with different IPv4 FIB sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions.}
+    \noindent\hspace{0.5mm}\includegraphics[width=.85\linewidth]{pics/throughput_l3_routes_klaipeda32ghz_v3.pdf}
     \label{graph:ip4fib}
     \end{figure}
+    \hspace{8mm} Max. FIB size: 287,743 for v18.10, 12,580,000 for v16.09
 \end{frame}
 
 \begin{frame}
     \frametitle{IPv4 FIB v16.09}
     \begin{figure}[!ht]
     \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/throughput_l3_routes_klaipeda_v1609_32ghz_v3.pdf}
-    \caption{Testing VPP v16.09 with different IPv4 FIB sizes. Throughput, Layer 1 data cache load misses (divided by 10) and Last Level Cache load misses per packet and the percentage of CPU time spent in selected functions. }
     \label{graph:ip4fiblegacy}
     \end{figure}
 \end{frame}
@@ -195,7 +215,11 @@
 \section{Results: Latencies}
 
 \begin{frame}
-    \frametitle{asdad}
+    \frametitle{Average Latencies}
+
+    % - Packet Drops
+    % - Latencies: badge sizes
+
     \begin{figure}[!ht]
     \noindent\hspace{0.5mm}\includegraphics[width=\linewidth]{pics/latencies_per_throughput_summary_ip4.pdf}
     \caption{Latencies in $\mu s$ and packet drops of IPv4 routing with a single route (1 r) and 255k routes (255k r). }
@@ -247,62 +271,77 @@
 \section{Conclusion}
 
 \begin{frame}
-asdsad
+
+Pro: 
+\begin{itemize}
+    \item Feature richness
+    \item Integration into existing stacks
+    \item Good performance for small FIBs with v18.10
+\end{itemize}
+Con:
+\begin{itemize}
+    \item MoonRoute faster with routing
+    \item Issues with routing tables with v18.10
+\end{itemize}
+
 \end{frame}
 
 
 \section{Questions?}
-
 \begin{frame}
-    \frametitle{Example frame}
-    \begin{itemize}
-        \item item 1
-        \item $\ldots$
-        \begin{itemize}
-            \item test
-            \item $\ldots$
-        \end{itemize}
-    \end{itemize}
-    Citation \cite{rfc959}
-
-    \paragraph{Math mode should be fully functional:}
-    $$
-    \hat s
-    \overline s
-    \mathcal S
-    \mathbit S
-    \mathbit \Lambda
-    \sum
-    \pd{\xi}
-    \pr{X=0}
-    \mathbit 1
-    $$
+Peter Okelmann - okelmann@in.tum.de
 \end{frame}
 
-\begin{frame}
-    \frametitle{Figures}
-    \begin{figure}
-        \centering
-        \includegraphics[width=.5\textwidth]{figures/example}
-        \caption{Figure caption}
-        \label{Maizaso0}
-    \end{figure}
-    Figure~\ref{Maizaso0} shows a small network.
-\end{frame}
+% \begin{frame}
+%     \frametitle{Example frame}
+%     \begin{itemize}
+%         \item item 1
+%         \item $\ldots$
+%         \begin{itemize}
+%             \item test
+%             \item $\ldots$
+%         \end{itemize}
+%     \end{itemize}
+%     Citation \cite{rfc959}
 
-\begin{frame}
-    \frametitle{Figures}
-    \begin{table}
-        \begin{tabular}{rccc}
-            \toprule
-            & Competitor 1 & Competitor 2 & we\\
-            \midrule
-            Feature A & \no & \maybe & \yes\\
-            Feature B & \no & \maybe & \yes\\
-            Feature C & \no & \maybe & \yes\\
-            Feature D & \no & \maybe & \yes\\
-            \bottomrule
-        \end{tabular}
-    \end{table}
-\end{frame}
+%     \paragraph{Math mode should be fully functional:}
+%     $$
+%     \hat s
+%     \overline s
+%     \mathcal S
+%     \mathbit S
+%     \mathbit \Lambda
+%     \sum
+%     \pd{\xi}
+%     \pr{X=0}
+%     \mathbit 1
+%     $$
+% \end{frame}
+
+% \begin{frame}
+%     \frametitle{Figures}
+%     \begin{figure}
+%         \centering
+%         \includegraphics[width=.5\textwidth]{figures/example}
+%         \caption{Figure caption}
+%         \label{Maizaso0}
+%     \end{figure}
+%     Figure~\ref{Maizaso0} shows a small network.
+% \end{frame}
+
+% \begin{frame}
+%     \frametitle{Figures}
+%     \begin{table}
+%         \begin{tabular}{rccc}
+%             \toprule
+%             & Competitor 1 & Competitor 2 & we\\
+%             \midrule
+%             Feature A & \no & \maybe & \yes\\
+%             Feature B & \no & \maybe & \yes\\
+%             Feature C & \no & \maybe & \yes\\
+%             Feature D & \no & \maybe & \yes\\
+%             \bottomrule
+%         \end{tabular}
+%     \end{table}
+% \end{frame}
 
