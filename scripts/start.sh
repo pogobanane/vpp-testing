@@ -1,3 +1,4 @@
+#!/bin/bash
 # expects to be run from the ba-okelmann project root
 
 if test "$#" -ne 2; then

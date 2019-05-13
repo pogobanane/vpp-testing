@@ -172,6 +172,11 @@ function l2-throughput-sweetspot () {
 	l2-throughput-complex "${spjobname}_mbit${istr}_final" $max_throughput $macs
 }
 
+#### short and simple bridge test ####
+function bridge_simple_test () {
+	l2-throughput-complex "l2_bridgingSimple_cnf0_mbit9000" 9000 0
+}
+
 #### bridge config testing ####
 function bridge_config_testing () {
 	for i in {0..5}
@@ -316,9 +321,10 @@ function vxlan_throughput_testing () {
 
 #### run test functions ####
 
+bridge_simple_test
 # bridge_config_testing
 # multimac_latency_testing
-multimac_latency_testing_hires
+# multimac_latency_testing_hires
 # multimac_throughput_testing
 # l3ip4_multicore_testing
 # l3ip6_multicore_testing

@@ -1,3 +1,4 @@
+#!/bin/bash
 # expects to be run from the ba-okelmann project root
 
 # hosts. The two experiment scripts demonstrate how to use all of the postools on the hosts.

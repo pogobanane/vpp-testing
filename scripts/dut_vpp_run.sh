@@ -182,6 +182,11 @@ function vpp-find-sweetspot () {
 	vpp-test "${spjobname}_mbit0000_final" "$cmd" "$cmdarg"
 }
 
+#### short and simple bridge test ####
+function bridge_simple_test () {
+	vpp-test "l2_bridgingSimple_cnf0_mbit9000" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "0"
+}
+
 #### bridge config testing ####
 function bridge_config_testing () {
 	for i in {0..5}
@@ -336,9 +341,10 @@ function vxlan_throughput_testing () {
 
 #### run test functions ####
 
+bridge_simple_test
 # bridge_config_testing
 # multimac_latency_testing
-multimac_latency_testing_hires
+# multimac_latency_testing_hires
 # multimac_throughput_testing
 # l3ip4_multicore_testing
 # l3ip6_multicore_testing
