@@ -126,7 +126,7 @@ function vpp-test () {
 
 	cleanup_vpp
 	# pos_run COMMMAND_ID -- COMMAND ARGS
-	pos_run $jobname -- $2 $INT_SRC $INT_DST $3
+	pos_run $jobname -- $2 $INT_SRC $INT_DST $INT_SRC_PCI $INT_DST_PCI $3
 	pos_sync #s1 vpp is set up
 
 	pos_sync #s21: moogen should be generating load now
@@ -222,8 +222,8 @@ function multimac_latency_testing_hires () {
 		do
 			i=$((s*200))
 			istr=`printf "%06i" $i`
-			vpp-test "l3_latroutes1_${istr}_${run}" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 1"
-			vpp-test "l3_latroutes255k_${istr}_${run}" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 255116"
+			vpp-test "l3_latroutes1_${istr}_${run}" "$vppcmd" "1 2 1"
+			vpp-test "l3_latroutes255k_${istr}_${run}" "$vppcmd" "1 2 255116"
 		done
 	done
 }
@@ -254,7 +254,7 @@ function l3ip4_multicore_testing () {
 		do
 			sstr=`printf "%02i" $s`
 			j=$((1+$s))
-			vpp-test "l3_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
+			vpp-test "l3_multicore_${sstr}_$run" "$vppcmd" "$s 2-$j"
 		done
 	done
 }
@@ -269,7 +269,7 @@ function l3ip6_multicore_testing () {
 		do
 			sstr=`printf "%02i" $s`
 			j=$((1+$s))
-			vpp-test "l3v6_multicore_${sstr}_$run" "$vppcmd" "${INT_SRC_PCI} ${INT_DST_PCI} $s 2-$j"
+			vpp-test "l3v6_multicore_${sstr}_$run" "$vppcmd" "$s 2-$j"
 		done
 	done
 }
@@ -285,7 +285,7 @@ function l3ip4_routing_testing () {
 			i=`echo "1.4^$s" | bc`
 			i=`printf "%.0f" $i`
 			istr=`printf "%08i" $i`
-			vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+			vpp-test "l3_routes_${istr}_$run" "$vppcmd" "1 2 $i"
 		done
 	done
 }
@@ -301,7 +301,7 @@ function l3ip6_routing_testing () {
 			i=`echo "1.4^$s" | bc`
 			i=`printf "%.0f" $i`
 			istr=`printf "%08i" $i`
-			vpp-test "l3v6_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+			vpp-test "l3v6_routes_${istr}_$run" "$vppcmd" "1 2 $i"
 		done
 	done
 }
@@ -317,26 +317,33 @@ function l3ip4_routing_legacy () {
 			i=`echo "1.4^$s" | bc`
 			i=`printf "%.0f" $i`
 			istr=`printf "%08i" $i`
-			vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+			vpp-test "l3_routes_${istr}_$run" "$vppcmd" "1 2 $i"
 		done
 
 		# 2^20
 		i=`echo "2^20" | bc`
 		i=`printf "%.0f" $i`
 		istr=`printf "%08i" $i`
-		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "1 2 $i"
 
 		# 2^23
 		i=`echo "2^23" | bc`
 		i=`printf "%.0f" $i`
 		istr=`printf "%08i" $i`
-		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "$INT_SRC_PCI $INT_DST_PCI 1 2 $i"
+		vpp-test "l3_routes_${istr}_$run" "$vppcmd" "1 2 $i"
 	done
 }
 
 #### vxlan throughput ####
 function vxlan_throughput_testing () {
-	vpp-test "vxlan_encap" "${GITDIR}/scripts/vpp_tests/vxlan-encapsulated.sh" "${INT_SRC_PCI} ${INT_DST_PCI}"
+	vpp-test "vxlan_encap" "${GITDIR}/scripts/vpp_tests/vxlan-encapsulated.sh" ""
+}
+
+#### conext experiments ####
+
+function xconext_tests () {
+	# do 0 - 10G in 500th steps
+		# do different packet sizes/mixes
 }
 
 #### run test functions ####
