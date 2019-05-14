@@ -1,14 +1,14 @@
 local mg     = require "moongen"
 local memory = require "memory"
 local device = require "device"
-local ts     = require "timestampinghist"
 local stats  = require "stats"
 local hist   = require "histogram"
 local log    = require "log"
 local random = math.random
 
-package.path = package.path .. ";./throughput-util.lua"
+package.path = package.path .. ";./throughput-util.lua;./timestampingnonhist.lua"
 require "throughput-util"
+local ts     = require "timestampingnonhist"
 
 function configure(parser)
   parser:description("Generates CBR traffic with hardware rate control")
