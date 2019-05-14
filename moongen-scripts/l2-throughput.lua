@@ -3,6 +3,7 @@ local memory = require "memory"
 local device = require "device"
 local stats  = require "stats"
 local hist   = require "histogram"
+local timer  = require "timer"
 local log    = require "log"
 local random = math.random
 
@@ -154,9 +155,12 @@ end
 function timerSlave(txQueue, rxQueue, ethDst, histfile, lafile)
 	local timestamper = ts:newTimestamper(txQueue, rxQueue)
 	local hist = hist:new()
+  local rateLimit = timer:new(0.001)
 	mg.sleepMillis(1000) -- ensure that the load task is running
 	while mg.running() do
 		hist:update(timestamper:measureLatency(function(buf) buf:getEthernetPacket().eth.dst:setString(ethDst) end))
+    rateLimit:wait()
+    rateLimit:reset()
 	end
 	hist:print()
 	hist:save(histfile)

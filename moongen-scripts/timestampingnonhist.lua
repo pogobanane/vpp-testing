@@ -123,7 +123,7 @@ function timestamper:measureLatency(pktSize, packetModifier, maxWait)
 						local rxTs = self.rxQueue:getTimestamp(nil, timesync) 
 						if not rxTs then
 							-- can happen if you hotplug cables
-							return nil, numPkts
+							return nil, numPkts, nil
 						end
 						self.rxBufs:freeAll()
 						local lat = rxTs - tx
@@ -134,9 +134,9 @@ function timestamper:measureLatency(pktSize, packetModifier, maxWait)
 							-- also sometimes happen since changing to DPDK for reading the timing registers
 							-- probably something wrong with the DPDK wraparound tracking
 							-- (but that's really rare and the resulting latency > a few days, so we don't really care)
-							return lat, numPkts
+							return lat, numPkts, tx
 						else
-							return nil, numPkts
+							return nil, numPkts, tx
 						end
 					elseif buf:hasTimestamp() and (seq == timestampedPkt or timestampedPkt == -1) then
 						-- we got a timestamp but the wrong sequence number. meh.
@@ -146,18 +146,18 @@ function timestamper:measureLatency(pktSize, packetModifier, maxWait)
 						-- we got our packet back but it wasn't timestamped
 						-- we likely ran into the previous case earlier and cleared the ts register too late
 						self.rxBufs:freeAll()
-						return nil, numPkts
+						return nil, numPkts, nil
 					end
 				end
 			end
 		end
 		-- looks like our packet got lost :(
-		return nil, numPkts
+		return nil, numPkts, nil
 	else
 		-- happens when hotplugging cables
 		log:warn("Failed to timestamp packet on transmission")
 		timer:new(maxWait):wait()
-		return nil, numPkts
+		return nil, numPkts, nil
 	end
 end
 
