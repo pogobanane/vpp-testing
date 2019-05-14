@@ -2,7 +2,7 @@
 
 Checkout Moongen. It's build.sh will take care of downloading submodules.
 
-Check out vpp release v18.10 or VPPv18.10-benchplug (default) for l2fib
+Check out vpp release v19.04 or VPPv18.10-benchplug (default) for l2fib
 testing support.
 
 # Scripts
