@@ -19,8 +19,8 @@ pos nodes bootstrap $DUT
 pos nodes bootstrap $LOADGEN
 
 echo "load vars for vpp test"
-pos allocations variables $DUT scripts/cesis-nida.yaml
-pos allocations variables $LOADGEN scripts/cesis-nida.yaml
+pos allocations variables $DUT scripts/klaipeda-narva.yaml
+pos allocations variables $LOADGEN scripts/klaipeda-narva.yaml
 
 echo "run test..."
 pos commands launch -n --infile scripts/dut_vpp_run.sh "$DUT"
