@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# requires the vpp-benchplug vpp-fork/plugin
 # expects to be run from the ba-okelmann project root
 # expects $5: mac count
 
