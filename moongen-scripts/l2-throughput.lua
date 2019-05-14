@@ -40,7 +40,7 @@ function master(args)
   -- warmup done
   mg.startTask("statsTask", txDev, rxDev, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.ethSrc, args.ethDst, args.pktSize, args.macs, args.thfile)
-  mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.hifile, args.lafile)
+  mg.startTask("timerSlaveNonhist", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.hifile, args.lafile)
   mg.waitForTasks()
 end
 
@@ -174,11 +174,13 @@ function timerSlaveNonhist(txQueue, rxQueue, ethDst, histfile, lafile)
   local timestamper = ts:newTimestamper(txQueue, rxQueue)
   local rateLimit = timer:new(0.001)
   local latencies = {}
+  local txTimestamps = {}
   mg.sleepMillis(1000) -- ensure that the load task is running
   while mg.running() do
     local lat, numPkts, tx = timestamper:measureLatency(function(buf) buf:getEthernetPacket().eth.dst:setString(ethDst) end)
     if lat and tx then
-      table.insert(rateLimit, lat) -- todo save tx
+      table.insert(latencies, lat)
+      table.insert(txTimestamps, tx)
     end
     rateLimit:wait()
     rateLimit:reset()
@@ -186,9 +188,9 @@ function timerSlaveNonhist(txQueue, rxQueue, ethDst, histfile, lafile)
   local file = "latencies.csv"
   log:info(("Saving latency to '%s'"):format(file))
   file = io.open(file, "w+")
-  file:write("samples,average_ns,stdDev_ns,quartile_25th,quartile_50th,quartile_75th\n")
-  for lat in latencies do
-    file:write(("%u,$u\n"):format(lat))
+  file:write("txTimestamps,latencies(nanoSec?)\n")
+  for i = 1, #latencies, 1 do
+    file:write(("%u,%u\n"):format(txTimestamps[i], latencies[i]))
   end
   file:close()
 end
