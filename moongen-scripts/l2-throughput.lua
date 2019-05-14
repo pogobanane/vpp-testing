@@ -178,7 +178,7 @@ function timerSlaveNonhist(txQueue, rxQueue, ethDst, histfile, lafile)
   while mg.running() do
     local lat, numPkts, tx = timestamper:measureLatency(function(buf) buf:getEthernetPacket().eth.dst:setString(ethDst) end)
     if lat and tx then
-      table.insert(rateLimit, (lat, tx))
+      table.insert(rateLimit, lat) -- todo save tx
     end
     rateLimit:wait()
     rateLimit:reset()
@@ -187,8 +187,8 @@ function timerSlaveNonhist(txQueue, rxQueue, ethDst, histfile, lafile)
   log:info(("Saving latency to '%s'"):format(file))
   file = io.open(file, "w+")
   file:write("samples,average_ns,stdDev_ns,quartile_25th,quartile_50th,quartile_75th\n")
-  for lat, tx in latencies do
-    file:write(("%u,$u\n"):format(lat, tx))
+  for lat in latencies do
+    file:write(("%u,$u\n"):format(lat))
   end
   file:close()
 end
