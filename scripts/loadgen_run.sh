@@ -319,6 +319,13 @@ function vxlan_throughput_testing () {
 	./MoonGen/build/MoonGen ./moongen-scripts/vxlan-throughput2.lua 2 3
 }
 
+#### conext experiments ####
+
+function xconext_tests () {
+	# do 0 - 10G in 500th steps
+		# do different packet sizes/mixes
+}
+
 #### run test functions ####
 
 bridge_simple_test
