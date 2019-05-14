@@ -3,8 +3,14 @@
 # expects to be run from the ba-okelmann project root
 
 # expects $1: INT_SRC; $2: INT_DST
+# example: TenGigabitEthernet5/0/0
 INT_SRC="$1"
 INT_DST="$2"
+
+# expects $3: INT_SRC_PCI; $4: INT_DST_PCI
+# exmaple: 0000:05:00.0
+INT_SRC_PCI=$3
+INT_DST_PCI=$4
 
 MAC_SRC="00:11:22:33:44:55"
 MAC_DST="00:00:00:00:00:00"
@@ -39,6 +45,8 @@ unix {
 }
 dpdk {
 	socket-mem 1024,1024
+	dev $INT_SRC_PCI
+	dev $INT_DST_PCI
 }
 "
 
@@ -53,6 +61,12 @@ cpu {
 }
 dpdk {
 	socket-mem 1024,1024
+	dev $INT_SRC_PCI {
+		num-rx-queues 1
+	}
+	dev $INT_DST_PCI {
+		num-rx-queues 1
+	}
 }
 "
 
@@ -67,5 +81,11 @@ cpu {
 }
 dpdk {
 	socket-mem 1024,1024
+	dev $INT_SRC_PCI {
+		num-rx-queues 2
+	}
+	dev $INT_DST_PCI {
+		num-rx-queues 2
+	}
 }
 "
