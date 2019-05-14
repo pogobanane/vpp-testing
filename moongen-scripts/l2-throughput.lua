@@ -1,7 +1,7 @@
 local mg     = require "moongen"
 local memory = require "memory"
 local device = require "device"
-local ts     = require "timestamping"
+local ts     = require "timestampinghist"
 local stats  = require "stats"
 local hist   = require "histogram"
 local log    = require "log"
