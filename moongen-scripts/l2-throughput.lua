@@ -6,6 +6,7 @@ local hist   = require "histogram"
 local timer  = require "timer"
 local log    = require "log"
 local random = math.random
+local table = table 
 
 package.path = package.path .. ";./throughput-util.lua;./timestampingnonhist.lua"
 require "throughput-util"
@@ -152,6 +153,7 @@ function loadSlave(txQueue, rxDev, eth_src, eth_dst, pktSize, macCount, file)
   end
 end
 
+-- produces latency histogram
 function timerSlave(txQueue, rxQueue, ethDst, histfile, lafile)
 	local timestamper = ts:newTimestamper(txQueue, rxQueue)
 	local hist = hist:new()
@@ -165,6 +167,30 @@ function timerSlave(txQueue, rxQueue, ethDst, histfile, lafile)
 	hist:print()
 	hist:save(histfile)
   logLatency(hist, lafile)
+end
+
+-- produces latency list
+function timerSlaveNonhist(txQueue, rxQueue, ethDst, histfile, lafile)
+  local timestamper = ts:newTimestamper(txQueue, rxQueue)
+  local rateLimit = timer:new(0.001)
+  local latencies = {}
+  mg.sleepMillis(1000) -- ensure that the load task is running
+  while mg.running() do
+    local lat, numPkts, tx = timestamper:measureLatency(function(buf) buf:getEthernetPacket().eth.dst:setString(ethDst) end)
+    if lat and tx then
+      table.insert(rateLimit, (lat, tx))
+    end
+    rateLimit:wait()
+    rateLimit:reset()
+  end
+  local file = "latencies.csv"
+  log:info(("Saving latency to '%s'"):format(file))
+  file = io.open(file, "w+")
+  file:write("samples,average_ns,stdDev_ns,quartile_25th,quartile_50th,quartile_75th\n")
+  for lat, tx in latencies do
+    file:write(("%u,$u\n"):format(lat, tx))
+  end
+  file:close()
 end
 
 -- recTask is only usable in master thread

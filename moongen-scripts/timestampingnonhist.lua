@@ -136,7 +136,7 @@ function timestamper:measureLatency(pktSize, packetModifier, maxWait)
 							-- (but that's really rare and the resulting latency > a few days, so we don't really care)
 							return lat, numPkts, tx
 						else
-							return nil, numPkts, tx
+							return nil, numPkts, nil
 						end
 					elseif buf:hasTimestamp() and (seq == timestampedPkt or timestampedPkt == -1) then
 						-- we got a timestamp but the wrong sequence number. meh.
