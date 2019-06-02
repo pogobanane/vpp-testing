@@ -5,3 +5,6 @@
 	path = vpp
 	url = https://gitlab.pogobanane.de/pogobanane/vpp-benchplug.git
 	branch = benchplug
+[submodule "theleos88-vpp-bench"]
+	path = theleos88-vpp-bench
+	url = https://github.com/theleos88/vpp-bench.git
