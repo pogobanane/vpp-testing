@@ -187,7 +187,7 @@ function vpp-find-sweetspot () {
 # recompile vpp to use only $1 as maximum badge size
 # $1: max badge size
 function recompile-vpp-maxbadge () {
-	$VPP_CLIB_SCRIPT $1
+	VPP_ROOT="$VPP_ROOT" $VPP_CLIB_SCRIPT $1
 	cd ${GITDIR}/vpp
 	make build-release
 	cd ${GITDIR}
