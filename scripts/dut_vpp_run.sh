@@ -1,9 +1,11 @@
 #!/bin/bash
 # expects a dut_test*.yaml
-# expects the ba-okelmann git to be checked out at ~/ba-okelmann
+# expects the ba-okelmann git to be checked out at /root/ba-okelmann
 GITDIR="/root/ba-okelmann"
 # changing only this will probably not work
 BINDIR="${GITDIR}/vpp/build-root/install-vpp_debug-native/vpp/bin"
+VPP_ROOT="${GITDIR}/vpp"
+VPP_CLIB_SCRIPT="${GITDIR}/theleos88-vpp-bench/scripts/vpp_change-frame-size.sh"
 cd "$GITDIR"
 
 # exit on error
@@ -182,6 +184,15 @@ function vpp-find-sweetspot () {
 	vpp-test "${spjobname}_mbit0000_final" "$cmd" "$cmdarg"
 }
 
+# recompile vpp to use only $1 as maximum badge size
+# $1: max badge size
+function recompile-vpp-maxbadge () {
+	$VPP_CLIB_SCRIPT $1
+	cd ${GITDIR}/vpp
+	make build-release
+	cd ${GITDIR}
+}
+
 #### short and simple bridge test ####
 function bridge_simple_test () {
 	vpp-test "l2_bridgingSimple_cnf0_mbit9000" "${GITDIR}/scripts/vpp_tests/l2-bridging.sh" "0"
@@ -341,8 +352,12 @@ function vxlan_throughput_testing () {
 
 #### conext experiments ####
 
-# xconnect
+# xconnect 2*60 runs
 function xconext_tests () {
+	vppcmd="${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
+
+	# test vpp max badge size 256
+	recompile-vpp-maxbadge 256
 	# do 0 - 10G in 500th steps
 	for throughput in {1..20}
 	do
@@ -350,10 +365,25 @@ function xconext_tests () {
 		t=`printf "%.0f" $t`
 		tstr=`printf "%06i" $t`
 		# do different packet sizes/mixes (64, 512, 1522)
-		vpp-test "l2_xconnext_0064_${tstr}" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
-		vpp-test "l2_xconnext_0512_${tstr}" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
-		vpp-test "l2_xconnext_1522_${tstr}" "${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
-		# TODO vpp-test "l2_xconnext_IMIX_${tstr}" $t IMIX
+		vpp-test "l2_xconnext_0256_0064_${tstr}" "$vppcmd"
+		vpp-test "l2_xconnext_0256_0512_${tstr}" "$vppcmd"
+		vpp-test "l2_xconnext_0256_1522_${tstr}" "$vppcmd"
+		# TODO vpp-test "l2_xconnext_0256_IMIX_${tstr}" $t IMIX
+	done
+
+	# test vpp max badge size 16
+	recompile-vpp-maxbadge 16
+	# do 0 - 10G in 500th steps
+	for throughput in {1..20}
+	do
+		t=`echo "$throughput * 500" | bc`
+		t=`printf "%.0f" $t`
+		tstr=`printf "%06i" $t`
+		# do different packet sizes/mixes (64, 512, 1522)
+		vpp-test "l2_xconnext_0016_0064_${tstr}" "$vppcmd"
+		vpp-test "l2_xconnext_0016_0512_${tstr}" "$vppcmd"
+		vpp-test "l2_xconnext_0016_1522_${tstr}" "$vppcmd"
+		# TODO vpp-test "l2_xconnext_0016_IMIX_${tstr}" $t IMIX
 	done
 }
 
