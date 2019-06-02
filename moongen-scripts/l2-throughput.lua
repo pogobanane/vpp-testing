@@ -188,7 +188,7 @@ function timerSlaveNonhist(txQueue, rxQueue, ethDst, histfile, lafile, lalifile)
     rateLimit:reset()
   end
   log:info(("Saving latency to '%s'"):format(lalifile))
-  file = io.open(file, "w+")
+  file = io.open(lalifile, "w+")
   file:write("txTimestamps,latencies(nanoSec?)\n")
   for i = 1, #latencies, 1 do
     file:write(("%u,%u\n"):format(txTimestamps[i], latencies[i]))
