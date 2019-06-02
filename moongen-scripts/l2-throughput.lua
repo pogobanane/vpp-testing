@@ -24,6 +24,7 @@ function configure(parser)
   parser:option("-h --hifile", "Filename for the latency histogram."):default("histogram.csv")
   parser:option("-t --thfile", "Filename for the throughput csv file."):default("throuput.csv")
   parser:option("-l --lafile", "Filename for latency summary file."):default("latency.csv")
+  parser:option("-i --lalifile", "Filename for latencies per packet file."):default("latencies.csv")
 end
 
 function master(args)
@@ -41,7 +42,7 @@ function master(args)
   -- warmup done
   mg.startTask("statsTask", txDev, rxDev, args.thfile)
   mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, args.ethSrc, args.ethDst, args.pktSize, args.macs, args.thfile)
-  mg.startTask("timerSlaveNonhist", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.hifile, args.lafile)
+  mg.startTask("timerSlaveNonhist", txDev:getTxQueue(1), rxDev:getRxQueue(1), args.ethDst, args.hifile, args.lafile, args.lalifile)
   mg.waitForTasks()
 end
 
@@ -171,7 +172,7 @@ function timerSlave(txQueue, rxQueue, ethDst, histfile, lafile)
 end
 
 -- produces latency list
-function timerSlaveNonhist(txQueue, rxQueue, ethDst, histfile, lafile)
+function timerSlaveNonhist(txQueue, rxQueue, ethDst, histfile, lafile, lalifile)
   local timestamper = ts:newTimestamper(txQueue, rxQueue)
   local rateLimit = timer:new(0.001)
   local latencies = {}
@@ -186,8 +187,7 @@ function timerSlaveNonhist(txQueue, rxQueue, ethDst, histfile, lafile)
     rateLimit:wait()
     rateLimit:reset()
   end
-  local file = "latencies.csv"
-  log:info(("Saving latency to '%s'"):format(file))
+  log:info(("Saving latency to '%s'"):format(lalifile))
   file = io.open(file, "w+")
   file:write("txTimestamps,latencies(nanoSec?)\n")
   for i = 1, #latencies, 1 do

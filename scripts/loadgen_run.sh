@@ -61,9 +61,10 @@ function test-throughput () {
 	historyfile="/tmp/$jobname.histogram.csv"
 	throughputfile="/tmp/$jobname.throughput.csv"
 	latencyfile="/tmp/$jobname.latency.csv"
+	lalifile="/tmp/$jobname.latencies.csv"
 
 	# pos_run COMMMAND_ID -- COMMAND ARGS
-	pos_run $jobname -- $2 --hifile $historyfile --thfile $throughputfile --lafile $latencyfile
+	pos_run $jobname -- $2 --hifile $historyfile --thfile $throughputfile --lafile $latencyfile --lalifile $lalifile
 
 	sleep 20
 	pos_sync #s21: moogen should be generating load now
@@ -79,6 +80,8 @@ function test-throughput () {
 	sleep 10 # wait until moongen did actually stop and write the files
 	if [ -f $historyfile ]; then # histfile does not exists when latfile is list of latencies per packet
 		pos_upload $historyfile
+	else
+		pos_upload $lalifile
 	fi
 	pos_upload $throughputfile
 	pos_upload $latencyfile
