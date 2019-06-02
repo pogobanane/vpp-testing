@@ -78,13 +78,13 @@ function test-throughput () {
 
 	echo "uploading csv files..."
 	sleep 10 # wait until moongen did actually stop and write the files
-	if [ -f $historyfile ]; then # histfile does not exists when latfile is list of latencies per packet
-		pos_upload $historyfile
-	else
+	if [ -f $lalifile ]; then # histfile does not exists when latfile is list of latencies per packet
 		pos_upload $lalifile
+	else
+		pos_upload $historyfile
+		pos_upload $latencyfile
 	fi
 	pos_upload $throughputfile
-	pos_upload $latencyfile
 	LAST_THROUGHPUT=`cat $throughputfile | head -n 3 | tail -n 1 | awk -F "\"*,\"*" '{print $4}'`
 	LAST_THROUGHPUT=`printf "%.0f" $LAST_THROUGHPUT` # float2int
 	LAST_LATENCY=`cat $latencyfile | head -n 2 | tail -n 1 | awk -F "\"*,\"*" '{print $6}'`
