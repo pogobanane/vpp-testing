@@ -114,6 +114,13 @@ function l2-throughput-complex () {
 
 # $1: jobname
 # $2: rate in mbit/s
+# $3: packet size
+function l2-throughput-conext () {
+	test-throughput "$1" "${BINDIR}/MoonGen moongen-scripts/l2-throughput.lua $TX_DEV $RX_DEV --rate $2 --pktSize $3"
+}
+
+# $1: jobname
+# $2: rate in mbit/s
 function l2-throughput-rate () {
 	l2-throughput-complex $1 $2 0
 }
@@ -321,14 +328,26 @@ function vxlan_throughput_testing () {
 
 #### conext experiments ####
 
+# xconnect: 60 runs
 function xconext_tests () {
 	# do 0 - 10G in 500th steps
-		# do different packet sizes/mixes
+	for throughput in {1..20}
+	do
+		t=`echo "$throughput * 500" | bc`
+		t=`printf "%.0f" $t`
+		tstr=`printf "%06i" $t`
+		# do different packet sizes/mixes (64, 512, 1522)
+		l2-throughput-conext "l2_xconnext_0064_${tstr}" $t 60
+		l2-throughput-conext "l2_xconnext_0512_${tstr}" $t 508
+		l2-throughput-conext "l2_xconnext_1522_${tstr}" $t 1518
+		# TODO l2-throughput-conext "l2_xconnext_IMIX_${tstr}" $t IMIX
+	done
 }
 
 #### run test functions ####
 
-bridge_simple_test
+xconext_tests
+#bridge_simple_test
 # bridge_config_testing
 # multimac_latency_testing
 # multimac_latency_testing_hires
