@@ -23,7 +23,7 @@ function configure(parser)
   parser:option("-m --macs", "Send to (ethDst...ethDst+macs)."):default(0):convert(tonumber)
   parser:option("-h --hifile", "Filename for the latency histogram."):default("histogram.csv")
   parser:option("-t --thfile", "Filename for the throughput csv file."):default("throuput.csv")
-  parser:option("-l --lafile", "Filename for latency summery file."):default("latency.csv")
+  parser:option("-l --lafile", "Filename for latency summary file."):default("latency.csv")
 end
 
 function master(args)
@@ -31,8 +31,9 @@ function master(args)
   local rxDev = device.config({port = args.rxDev, rxQueues = 2, txQueues = 2})
   device.waitForLinks()
   if args.rate > 0 then
-    txDev:getTxQueue(0):setRate(args.rate)
-    rxDev:getTxQueue(0):setRate(args.rate)
+    local rate = ( args.rate / (args.pktSize + 24) ) * (args.pktSize + 4)
+    txDev:getTxQueue(0):setRate(rate)
+    rxDev:getTxQueue(0):setRate(rate)
   end
   local recTask = mg.startTask("rxWarmup", rxDev:getRxQueue(0), 10000000)
   txWarmup(recTask, txDev:getTxQueue(0), args.ethSrc, args.ethDst, args.pktSize)
