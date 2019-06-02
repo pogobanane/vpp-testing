@@ -333,23 +333,20 @@ function vxlan_throughput_testing () {
 
 #### conext experiments ####
 
-# xconnect: 2*60 runs
-function xconext_tests () {
-	# test vpp max badge size 256
-	# do 0 - 10G in 500th steps
-	for throughput in {1..20}
-	do
-		t=`echo "$throughput * 500" | bc`
-		t=`printf "%.0f" $t`
-		tstr=`printf "%06i" $t`
-		# do different packet sizes/mixes (64, 512, 1522)
-		l2-throughput-conext "l2_xconnext_0256_0064_${tstr}" $t 60
-		l2-throughput-conext "l2_xconnext_0256_0512_${tstr}" $t 508
-		l2-throughput-conext "l2_xconnext_0256_1522_${tstr}" $t 1518
-		# TODO l2-throughput-conext "l2_xconnext_0256_IMIX_${tstr}" $t IMIX
-	done
+# 240 runs
+function xconext_all_tests () {
+	xconext_tests 256
+	xconext_tests 16
+	xconext_tests 64
+	xconext_tests 1024
+}
 
-	# test vpp max badge size 16
+# xconnect: 60 runs
+# $1: maximum batch size
+function xconext_tests () {
+	b=`printf "%.0f" $1`
+	bstr=`printf "%06i" $b`
+	# test vpp max batch size $b
 	# do 0 - 10G in 500th steps
 	for throughput in {1..20}
 	do
@@ -357,16 +354,16 @@ function xconext_tests () {
 		t=`printf "%.0f" $t`
 		tstr=`printf "%06i" $t`
 		# do different packet sizes/mixes (64, 512, 1522)
-		l2-throughput-conext "l2_xconnext_0016_0064_${tstr}" $t 60
-		l2-throughput-conext "l2_xconnext_0016_0512_${tstr}" $t 508
-		l2-throughput-conext "l2_xconnext_0016_1522_${tstr}" $t 1518
-		# TODO l2-throughput-conext "l2_xconnext_0016_IMIX_${tstr}" $t IMIX
+		l2-throughput-conext "l2_xconext_${bstr}_0064_${tstr}" $t 60
+		l2-throughput-conext "l2_xconext_${bstr}_0512_${tstr}" $t 508
+		l2-throughput-conext "l2_xconext_${bstr}_1522_${tstr}" $t 1518
+		# TODO l2-throughput-conext "l2_xconnext_0256_IMIX_${tstr}" $t IMIX
 	done
 }
 
 #### run test functions ####
 
-xconext_tests
+xconext_all_tests
 #bridge_simple_test
 # bridge_config_testing
 # multimac_latency_testing

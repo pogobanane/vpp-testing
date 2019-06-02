@@ -184,9 +184,9 @@ function vpp-find-sweetspot () {
 	vpp-test "${spjobname}_mbit0000_final" "$cmd" "$cmdarg"
 }
 
-# recompile vpp to use only $1 as maximum badge size
-# $1: max badge size
-function recompile-vpp-maxbadge () {
+# recompile vpp to use only $1 as maximum batch size
+# $1: max batch size
+function recompile-vpp-maxbatch () {
 	VPP_ROOT="$VPP_ROOT" $VPP_CLIB_SCRIPT $1
 	cd ${GITDIR}/vpp
 	make build-release
@@ -352,12 +352,23 @@ function vxlan_throughput_testing () {
 
 #### conext experiments ####
 
-# xconnect 2*60 runs
+# 240 runs
+function xconext_all_tests () {
+	xconext_tests 256
+	xconext_tests 16
+	xconext_tests 64
+	xconext_tests 1024
+}
+
+# xconnect 60 runs
+# $1: maximum batch size
 function xconext_tests () {
 	vppcmd="${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
+	b=`printf "%.0f" $1`
+	bstr=`printf "%06i" $b`
 
-	# test vpp max badge size 256
-	recompile-vpp-maxbadge 256
+	# test vpp max batch size $b
+	recompile-vpp-maxbatch $b
 	# do 0 - 10G in 500th steps
 	for throughput in {1..20}
 	do
@@ -365,31 +376,16 @@ function xconext_tests () {
 		t=`printf "%.0f" $t`
 		tstr=`printf "%06i" $t`
 		# do different packet sizes/mixes (64, 512, 1522)
-		vpp-test "l2_xconnext_0256_0064_${tstr}" "$vppcmd"
-		vpp-test "l2_xconnext_0256_0512_${tstr}" "$vppcmd"
-		vpp-test "l2_xconnext_0256_1522_${tstr}" "$vppcmd"
+		vpp-test "l2_xconext_${bstr}_0064_${tstr}" "$vppcmd"
+		vpp-test "l2_xconext_${bstr}_0512_${tstr}" "$vppcmd"
+		vpp-test "l2_xconext_${bstr}_1522_${tstr}" "$vppcmd"
 		# TODO vpp-test "l2_xconnext_0256_IMIX_${tstr}" $t IMIX
-	done
-
-	# test vpp max badge size 16
-	recompile-vpp-maxbadge 16
-	# do 0 - 10G in 500th steps
-	for throughput in {1..20}
-	do
-		t=`echo "$throughput * 500" | bc`
-		t=`printf "%.0f" $t`
-		tstr=`printf "%06i" $t`
-		# do different packet sizes/mixes (64, 512, 1522)
-		vpp-test "l2_xconnext_0016_0064_${tstr}" "$vppcmd"
-		vpp-test "l2_xconnext_0016_0512_${tstr}" "$vppcmd"
-		vpp-test "l2_xconnext_0016_1522_${tstr}" "$vppcmd"
-		# TODO vpp-test "l2_xconnext_0016_IMIX_${tstr}" $t IMIX
 	done
 }
 
 #### run test functions ####
 
-xconext_tests
+xconext_all_tests
 #bridge_simple_test
 # bridge_config_testing
 # multimac_latency_testing
