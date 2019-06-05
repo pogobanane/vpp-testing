@@ -189,6 +189,8 @@ function vpp-find-sweetspot () {
 function recompile-vpp-maxbatch () {
 	VPP_ROOT="$VPP_ROOT" $VPP_CLIB_SCRIPT $1
 	cd ${GITDIR}/vpp
+	# this cache can grow by up to 1GB per recompilation with new batch sizes. 
+	rm -r ./build-root/.ccache/
 	make build-release
 	cd ${GITDIR}
 }
