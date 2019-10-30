@@ -8,3 +8,6 @@
 [submodule "theleos88-vpp-bench"]
 	path = theleos88-vpp-bench
 	url = https://github.com/theleos88/vpp-bench.git
+[submodule "ranger"]
+	path = ranger
+	url = git@gitlab.lrz.de:ai4p/idp-okelmann/ranger-server.git
