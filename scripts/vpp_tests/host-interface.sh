@@ -27,3 +27,4 @@ unix {
 echo "suggestion:"
 echo "trace add af-packet-input 10"
 echo "ping -c 1 10.10.1.2"
+echo "Remember: This scipts probably needs root permissions to set up virtual interfaces on your host. "

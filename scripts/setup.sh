@@ -1,5 +1,5 @@
 #!/bin/bash
-# expects to be run from the ba-okelmann project root
+# expects to be run from the ba-okelmann project root on a management host
 
 # hosts. The two experiment scripts demonstrate how to use all of the postools on the hosts.
 # The experiment is to run one of the example MoonGen scripts
@@ -68,6 +68,9 @@ echo "install vpp..."
 { 
 	ssh "$DUT" "cd ba-okelmann/vpp && ../scripts/dut_vpp_build_install${VPPVERSION}.sh"
 	echo "$DUT vpp installed"
+	echo "$DUT Building ranger..."
+	ssh "$DUT" "cd ba-okelmann/ranger && ../scripts/dut_ranger_build.sh"
+	echo "$DUT ranger installed"
 } &
 {
 	ssh "$LOADGEN" "cd ba-okelmann/MoonGen && ../scripts/loadgen_build.sh"

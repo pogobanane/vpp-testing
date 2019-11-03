@@ -1,5 +1,5 @@
 #!/bin/bash
-# expects to be run from the ba-okelmann project root
+# expects to be run from the ba-okelmann project root on a management host
 
 if test "$#" -ne 2; then
 	echo "Usage: setup.sh dut loadgen"
