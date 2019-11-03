@@ -3,7 +3,7 @@
 	url = https://github.com/emmericp/MoonGen.git
 [submodule "vpp"]
 	path = vpp
-	url = https://gitlab.pogobanane.de/pogobanane/vpp-benchplug.git
+	url = git@gitlab.lrz.de:ai4p/idp-okelmann/vpp-fork.git
 	branch = benchplug
 [submodule "theleos88-vpp-bench"]
 	path = theleos88-vpp-bench
