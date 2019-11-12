@@ -123,6 +123,7 @@ function vpp-test () {
 	perfstatfile="/tmp/$jobname.perfstat.csv"
 	perfdataname="/tmp/$jobname.perfrecord" # without .csv appendix
 	vppfile="/tmp/$jobname.vpp.out"
+	badgesizes="/tmp/$jobname.badgesizes.csv"
 
 	echo "Starting bridging test $1"
 
@@ -133,6 +134,8 @@ function vpp-test () {
 
 	pos_sync #s21: moogen should be generating load now
 	
+	${GITDIR}/ranger/cpp_version/build/ranger 9 "$badgesizes"
+
 	# !!! marks lines commented to disable perf-collect 
 	# !!! perf-collect "$perfstatfile" "$perfdataname" 10
 	sleep 10
