@@ -13,7 +13,7 @@ git submodule update --init --recursive
 cd ../..
 
 cd vpp
-git checkout ai
+git checkout ai-v19.04
 cd ..
 
 cd ranger
