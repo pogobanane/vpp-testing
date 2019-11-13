@@ -134,7 +134,7 @@ function vpp-test () {
 
 	pos_sync #s21: moogen should be generating load now
 	
-	${GITDIR}/ranger/cpp_version/build/ranger 9 "$badgesizes"
+	${GITDIR}/ranger/cpp_version/build/ranger ipcdump 9 "$badgesizes" &
 
 	# !!! marks lines commented to disable perf-collect 
 	# !!! perf-collect "$perfstatfile" "$perfdataname" 10
