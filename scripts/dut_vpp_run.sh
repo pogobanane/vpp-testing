@@ -148,6 +148,7 @@ function vpp-test () {
 	# !!! pos_upload ${perfdataname}.csv
 	# !!! pos_upload $perfstatfile
 	pos_upload $vppfile
+	pos_upload $badgesizes
 
 	# wait for test done signal
 	pos_sync #s42: test end
