@@ -70,6 +70,28 @@ dpdk {
 }
 "
 
+config_1worker_rr="
+unix {
+	exec $VPP_EXEC
+	cli-listen $VPP_CLI_LISTEN
+}
+cpu {
+	main-core 1
+	corelist-workers 2
+	scheduler-policy rr
+	scheduler-priority 90
+}
+dpdk {
+	socket-mem 1024,1024
+	dev $INT_SRC_PCI {
+		num-rx-queues 1
+	}
+	dev $INT_DST_PCI {
+		num-rx-queues 1
+	}
+}
+"
+
 config_2worker="
 unix {
 	exec $VPP_EXEC

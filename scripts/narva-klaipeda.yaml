@@ -1,0 +1,13 @@
+# vpp: narva, moongen: klaipeda
+moongen:
+        tx: 0
+        rx: 1
+
+cpu-freq: 100
+
+vpp:
+        int_src: 'TenGigabitEthernet1/0/0'
+        int_dst: 'TenGigabitEthernet3/0/0'
+        int_src_pci: '0000:01:00.0'
+        int_dst_pci: '0000:03:00.0'
+        driver: 'uio_pci_generic'
