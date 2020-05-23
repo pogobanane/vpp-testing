@@ -9,6 +9,9 @@ echo "Output prefix: trees"
 
 ./ranger/cpp_version/build/ranger ranger --treetype=3 --file=$1 --write --outprefix=$2 --depvarname="result"
 
+# run classification for this with
+# ./ranger ranger --treetype=3 --file=$1 --outprefix=out --depvarname="result" --predict=tree1.forest
+
 if [ $(which pos_upload) ]; then
 	pos_upload $2.forest
 fi

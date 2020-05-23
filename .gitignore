@@ -18,3 +18,4 @@ paperish/*/*.fls
 paperish/*/*.synctex.gz
 statistics/data/*/
 statistics/*.pdf
+**.swp
