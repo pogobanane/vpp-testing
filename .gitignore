@@ -19,3 +19,4 @@ paperish/*/*.synctex.gz
 statistics/data/*/
 statistics/*.pdf
 **.swp
+training_test/
