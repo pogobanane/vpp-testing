@@ -21,7 +21,7 @@ args = parser.parse_args()
 # inputs: count of inputs for a ranger prediction
 def write_stub(reader, writer, inputs, result=None):
     # skip some
-    skip = random.randrange(2, 2*inputs)
+    skip = random.randrange(2, 2*(inputs+1))
     for i in range(skip):
         rrow = next(reader)
 
