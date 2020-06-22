@@ -118,12 +118,15 @@ function vpp-collect () {
 # $1: jobname
 # $2: command
 # $3: additional args for command
-function vpp-test () {
+# $4: ranger mode: { noai | ipcdump | doai }
+# optional $5: ranger ipc response (sample_ipc_for_client_t)
+function vpp-test-ranger () {
 	jobname=$1
 	perfstatfile="/tmp/$jobname.perfstat.csv"
 	perfdataname="/tmp/$jobname.perfrecord" # without .csv appendix
 	vppfile="/tmp/$jobname.vpp.out"
 	badgesizes="/tmp/$jobname.badgesizes.csv"
+	forestio="/tmp/$jobname.forestio.csv"
 
 	echo "Starting bridging test $1"
 
@@ -133,12 +136,21 @@ function vpp-test () {
 	pos_sync #s1 vpp is set up
 
 	pos_sync #s21: moogen should be generating load now
-	
-	${GITDIR}/ranger/cpp_version/build/ranger ipcdump 9 "$badgesizes"
 
 	# !!! marks lines commented to disable perf-collect 
 	# !!! perf-collect "$perfstatfile" "$perfdataname" 10
-	#sleep 10 # sleep disabled because ranger ipcdump is blocking
+
+	# all the following branches MUST block for around 10 seconds
+	if [ $4 = "ipcdump" ]; then
+		${GITDIR}/ranger/cpp_version/build/ranger ipcdump 9 "$badgesizes" $5
+	elif [ $4 = "doai" ]; then
+		for i in {1..10}; do
+			sleep 1
+			${GITDIR}/ranger/cpp_version/build/ranger doai "$forestio"
+		done
+	else # equals $4 = "noai"
+		sleep 10
+	fi
 
 	pos_sync #s31: vpp side live data collection done
 	pos_sync #s32: moongen is now terminating
@@ -148,7 +160,11 @@ function vpp-test () {
 	# !!! pos_upload ${perfdataname}.csv
 	# !!! pos_upload $perfstatfile
 	pos_upload $vppfile
-	pos_upload $badgesizes
+	if [ $4 = "ipcdump" ]; then
+		pos_upload $badgesizes
+	elif [ $4 = "doai" ]; then
+		pos_upload $forestio
+	fi
 
 	# wait for test done signal
 	pos_sync #s42: test end
@@ -157,6 +173,13 @@ function vpp-test () {
 	# kill the process started with pos_run
 	# command/stdout/stderr are uploaded automatically
 	pos_kill $1
+}
+
+# $1: jobname
+# $2: command
+# $3: additional args for command
+function vpp-test () {
+	vpp-test $1 $2 $3 noai
 }
 
 # does 9 test runs to find the maximum throughput with low drop rates
@@ -356,6 +379,36 @@ function vxlan_throughput_testing () {
 	vpp-test "vxlan_encap" "${GITDIR}/scripts/vpp_tests/vxlan-encapsulated.sh" ""
 }
 
+
+#### training ####
+
+# 3*3+1 = 10 runs => 205 training items per day
+# 3*6+1 = 19 runs => 110 items/day
+
+# 7+1 = 8 runs => 257x/day
+# $1: training item id
+# $2: ipc command
+function offline_training () {
+	vppcmd="${GITDIR}/scripts/vpp_tests/l2-xconnect-rr.sh"
+	b=`printf "%.0f" $1`
+	bstr=`printf "%08i" $b`
+
+	# test with 0 packets
+	vpp-test-ranger "l2_training_${bstr}_0000_00000000" "$vppcmd" doai
+
+	# suggested throughputs: 1, 10, 100, 1000, 5000, 10000
+	# or: 1, 500, 10000
+	for throughput in {1,10,100,500,1000,5000,10000}
+	do
+		t=`printf "%.0f" $throughput`
+		tstr=`printf "%06i" $t`
+		vpp-test-ranger "l2_training_${bstr}_0064_${tstr}" "$vppcmd" doai
+		#vpp-test "l2_training_${bstr}_0512_${tstr}" "$vppcmd" "$2"
+		#vpp-test "l2_training_${bstr}_1522_${tstr}" "$vppcmd" "$2"
+	done
+
+}
+
 #### conext experiments ####
 
 # 240 runs
@@ -391,7 +444,8 @@ function xconext_tests () {
 
 #### run test functions ####
 
-xconext_all_tests
+offline_training
+#xconext_all_tests
 #bridge_simple_test
 # bridge_config_testing
 # multimac_latency_testing

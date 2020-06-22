@@ -331,6 +331,30 @@ function vxlan_throughput_testing () {
 	./MoonGen/build/MoonGen ./moongen-scripts/vxlan-throughput2.lua 2 3
 }
 
+#### training ####
+
+# 3*3+1 = 10 runs => 205 training items per day
+# 3*6+1 = 19 runs => 110 items/day
+
+# 7+1 = 8 runs => 257x/day
+# $1: training item id
+function offline_training() {
+	b=`printf "%.0f" $1`
+	bstr=`printf "%08i" $b`
+
+	# test with 0 packets
+	# TODO does 0 work in this context?
+	l2-throughput-conext "l2_xconext_${bstr}_0000_${tstr}" 0 60
+
+	for throughput in {1,10,100,500,1000,5000,10000}
+	do
+		t=`printf "%.0f" $throughput`
+		tstr=`printf "%06i" $t`
+		l2-throughput-conext "l2_xconext_${bstr}_0064_${tstr}" $t 60
+		#l2-throughput-conext "l2_xconext_${bstr}_0512_${tstr}" $t 508
+		#l2-throughput-conext "l2_xconext_${bstr}_1522_${tstr}" $t 1518
+	done
+
 #### conext experiments ####
 
 # 240 runs
@@ -363,7 +387,8 @@ function xconext_tests () {
 
 #### run test functions ####
 
-xconext_all_tests
+offline_training
+#xconext_all_tests
 #bridge_simple_test
 # bridge_config_testing
 # multimac_latency_testing
