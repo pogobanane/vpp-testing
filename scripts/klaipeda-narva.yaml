@@ -1,7 +1,7 @@
 # vpp: klaipeda, moongen: narva
 moongen:
         tx: 0
-        rx: 2
+        rx: 1
 
 cpu-freq: 100
 

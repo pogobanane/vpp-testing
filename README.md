@@ -17,4 +17,4 @@ files for vpp and run it. A good starting point for tests on VMs is `host-interf
 Example klaipeda: `./scripts/vpp_tests/l2-bridging.sh TenGigabitEthernet2/0/0 TenGigabitEthernet2/0/1 0000:02:00.0 0000:02:00.1 1`
 
 `moongen-scripts/*.lua` are used with MoonGen to test vpp.  
-Example narva: `./MoonGen/build/MoonGen moongen-scripts/l2-throughput.lua 0 2`
+Example narva: `./MoonGen/build/MoonGen moongen-scripts/l2-throughput.lua 0 1`
