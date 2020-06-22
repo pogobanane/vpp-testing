@@ -426,6 +426,7 @@ function xconext_all_tests () {
 # $1: maximum batch size
 function xconext_tests () {
 	vppcmd="${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
+	${GITDIR}/ranger/cpp_version/build/ranger respond 1 0 0 0 0 0 0 0 0
 	b=`printf "%.0f" $1`
 	bstr=`printf "%06i" $b`
 
