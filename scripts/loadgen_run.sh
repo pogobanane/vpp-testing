@@ -354,6 +354,7 @@ function offline_training() {
 		#l2-throughput-conext "l2_xconext_${bstr}_0512_${tstr}" $t 508
 		#l2-throughput-conext "l2_xconext_${bstr}_1522_${tstr}" $t 1518
 	done
+}
 
 #### conext experiments ####
 
