@@ -145,6 +145,9 @@ function vpp-test-ranger () {
 		${GITDIR}/ranger/cpp_version/build/ranger ipcdump 9 "$badgesizes" $5
 	elif [ $4 = "doai" ]; then
 		for i in {1..10}; do
+			# file must exist and be empty
+			touch "$forestio"
+			echo "" > "$forestio"
 			sleep 1
 			${GITDIR}/ranger/cpp_version/build/ranger doai "$forestio"
 		done
