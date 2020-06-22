@@ -393,11 +393,12 @@ function vxlan_throughput_testing () {
 # $2: ipc command
 function offline_training () {
 	vppcmd="${GITDIR}/scripts/vpp_tests/l2-xconnect-rr.sh"
+	${GITDIR}/ranger/cpp_version/build/ranger respond 1 0 0 0 0 0 0 0 0
 	b=`printf "%.0f" $1`
 	bstr=`printf "%08i" $b`
 
 	# test with 0 packets
-	vpp-test-ranger "l2_training_${bstr}_0000_00000000" "$vppcmd" doai
+	vpp-test-ranger "l2_training_${bstr}_0000_00000000" "$vppcmd" "" doai
 
 	# suggested throughputs: 1, 10, 100, 1000, 5000, 10000
 	# or: 1, 500, 10000
@@ -405,7 +406,7 @@ function offline_training () {
 	do
 		t=`printf "%.0f" $throughput`
 		tstr=`printf "%06i" $t`
-		vpp-test-ranger "l2_training_${bstr}_0064_${tstr}" "$vppcmd" doai
+		vpp-test-ranger "l2_training_${bstr}_0064_${tstr}" "$vppcmd" "" doai
 		#vpp-test "l2_training_${bstr}_0512_${tstr}" "$vppcmd" "$2"
 		#vpp-test "l2_training_${bstr}_1522_${tstr}" "$vppcmd" "$2"
 	done
@@ -426,7 +427,6 @@ function xconext_all_tests () {
 # $1: maximum batch size
 function xconext_tests () {
 	vppcmd="${GITDIR}/scripts/vpp_tests/l2-xconnect.sh"
-	${GITDIR}/ranger/cpp_version/build/ranger respond 1 0 0 0 0 0 0 0 0
 	b=`printf "%.0f" $1`
 	bstr=`printf "%06i" $b`
 
