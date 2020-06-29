@@ -344,13 +344,13 @@ function offline_training() {
 
 	# test with 0 packets
 	# TODO does 0 work in this context?
-	l2-throughput-conext "l2_xconext_${bstr}_0000_${tstr}" 0 60
+	l2-throughput-conext "l2_training_${bstr}_0000_${tstr}" 0 60
 
 	for throughput in {1,10,100,500,1000,5000,10000}
 	do
 		t=`printf "%.0f" $throughput`
 		tstr=`printf "%06i" $t`
-		l2-throughput-conext "l2_xconext_${bstr}_0064_${tstr}" $t 60
+		l2-throughput-conext "l2_training_${bstr}_0064_${tstr}" $t 60
 		#l2-throughput-conext "l2_xconext_${bstr}_0512_${tstr}" $t 508
 		#l2-throughput-conext "l2_xconext_${bstr}_1522_${tstr}" $t 1518
 	done
