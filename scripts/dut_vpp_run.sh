@@ -110,6 +110,21 @@ dTLB-stores"
 	perf report -i "${2}.data" --field-separator=";" > ${2}.csv
 }
 
+# this function is blocking!
+# $1: filename for perf-stat.csv
+# $2: time to collect (in sec).
+function perf-stat () {
+	vpp_pid=`pgrep $VPP_PNAME`
+	
+	# worker thread to attatch perf record to
+	vpp_wk_spid=`ps -T -p $vpp_pid | grep vpp_wk_0 | tr " " "\n" | head -n2 | tail -n1`
+	if [[ -z "$vpp_wk_spid" ]]; then
+		vpp_wk_spid="$vpp_pid" # vpp runs without a worker -> attatch to vpp
+	fi
+
+	perf stat -x";" -e "cpu-cycles" -o "$1" -p $vpp_pid sleep $2
+}
+
 # $1: filename for vpp output like vpp-stats
 function vpp-collect () {
 	echo "show err" | socat - UNIX-CONNECT:/tmp/vpptesting_cli | tail -n +1 > $1
@@ -139,6 +154,7 @@ function vpp-test-ranger () {
 
 	# !!! marks lines commented to disable perf-collect 
 	# !!! perf-collect "$perfstatfile" "$perfdataname" 10
+	perf-stat "$perfstatfile" 10 &
 
 	# all the following branches MUST block for around 10 seconds
 	if [ $4 = "ipcdump" ]; then
@@ -155,13 +171,14 @@ function vpp-test-ranger () {
 		sleep 10
 	fi
 
+	wait # for perf-stat
 	pos_sync #s31: vpp side live data collection done
 	pos_sync #s32: moongen is now terminating
 	
 	echo "collecting vpp info and upload files..."
 	vpp-collect "$vppfile"
 	# !!! pos_upload ${perfdataname}.csv
-	# !!! pos_upload $perfstatfile
+	pos_upload $perfstatfile
 	pos_upload $vppfile
 	if [ $4 = "ipcdump" ]; then
 		pos_upload $badgesizes
@@ -182,7 +199,7 @@ function vpp-test-ranger () {
 # $2: command
 # $3: additional args for command
 function vpp-test () {
-	vpp-test $1 $2 $3 noai
+	vpp-test-ranger $1 $2 $3 noai
 }
 
 # does 9 test runs to find the maximum throughput with low drop rates
