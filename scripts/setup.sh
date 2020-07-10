@@ -18,11 +18,11 @@ set -e
 
 # takes resolvable host as $1
 # blocks and pings host until he responds
-function posping() {
+function sshping() {
 	set +x
 	printf "%s" "waiting for $1 to come online"
 	i=0
-	while ! ping -c 1 -n -w 1 "$1" &> /dev/null
+	while ! ssh "$1" exit &> /dev/null
 	do
 		if [ $i -gt 800 ]; then
 			echo "server didnt come online ERROR"
@@ -49,8 +49,8 @@ pos nodes reset "$LOADGEN" &
 # are back online. 
 # give nodes time to shut down for posping to work
 sleep 30
-posping "$DUT"
-posping "$LOADGEN"
+sshping "$DUT"
+sshping "$LOADGEN"
 
 echo "transferring binaries to $DUT and $LOADGEN..."
 {
