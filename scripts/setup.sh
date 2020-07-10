@@ -45,10 +45,7 @@ echo "reboot experiment hosts..."
 # run reset blocking in background and wait for processes to end before continuing
 pos nodes reset "$DUT" &
 pos nodes reset "$LOADGEN" &
-# `wait` may not be enough because reset's wait might time out before nodes
-# are back online. 
-# give nodes time to shut down for posping to work
-sleep 30
+wait
 sshping "$DUT"
 sshping "$LOADGEN"
 
