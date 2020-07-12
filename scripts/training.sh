@@ -39,9 +39,10 @@ echo "$DUT finished test"
 wait
 
 # read results
-last=$(ls /srv/testbed/results/okelmann/default | tail -n1)
+posroot="/srv/testbed/results/okelmann/default"
+last=$(ls "$posroot" | tail -n1)
 # run reward function on results and create new dataset to $last
-python3 scripts/training/training_set_refine.py $last $DUT $LOADGEN --outfile "trainingset_refined1.csv"
+python3 scripts/training/training_set_refine.py $posroot/$last $DUT $LOADGEN --outfile "trainingset_refined1.csv"
 
 
 # cp new dataset to $DUT

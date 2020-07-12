@@ -18,3 +18,10 @@ Example klaipeda: `./scripts/vpp_tests/l2-bridging.sh TenGigabitEthernet2/0/0 Te
 
 `moongen-scripts/*.lua` are used with MoonGen to test vpp.  
 Example narva: `./MoonGen/build/MoonGen moongen-scripts/l2-throughput.lua 0 1`
+
+# Requirements
+
+on management host
+
+- numpy
+- pandas
