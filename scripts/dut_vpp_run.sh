@@ -419,7 +419,9 @@ function offline_training () {
 
 	# suggested throughputs: 1, 10, 100, 1000, 5000, 10000
 	# or: 1, 500, 10000
-	for throughput in {1,10,100,500,1000,5000,10000}
+	# //edit: not 10000 but 7500 for not overfitting for 256
+	# //edit: moongen doesnt rate limit with 1. use 2 instead. 
+	for throughput in {2,10,100,500,1000,5000,7500}
 	do
 		t=`printf "%.0f" $throughput`
 		tstr=`printf "%06i" $t`
