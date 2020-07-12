@@ -37,7 +37,6 @@ pos commands launch --infile scripts/loadgen_run.sh "$LOADGEN"
 echo "$DUT finished test"
 
 wait
-exit 0
 
 # read results
 last=$(ls /srv/testbed/results/okelmann/default | tail -n1)
