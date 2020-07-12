@@ -54,6 +54,15 @@ def parse_throughput(csvfile, verbose=False):
         return float(tx[1]), float(tx[2]), float(rx[1]), float(rx[2])
     return "err"
 
+# return: array of lines: string
+def parse_forestio(csvfile):
+    lines = []
+    with open(csvfile, "r") as f:
+        reader = csv.reader(f, delimiter=" ")
+        next(reader)
+        for n in reader:
+            lines.append(n)
+    return lines 
 
 # pasted from https://stackoverflow.com/questions/21844024/weighted-percentile-using-numpy?noredirect=1
 def weighted_quantile(values, quantiles, sample_weight=None, values_sorted=False, old_style=False):
@@ -137,6 +146,44 @@ def parse_histogramfile(latfile):
 def parse_latencies_avg(histfile): 
     latencies, weights = parse_histogramfile(histfile)
     #print(latencies)
-    quantiles = weighted_quantile(latencies, [0.5], sample_weight=weights, values_sorted=False)
-    average = list(map(lambda u: (u / 1000), quantiles))[0]
-    return average
+    quantiles = weighted_quantile(latencies, [0.5, 1], sample_weight=weights, values_sorted=False)
+    ret = list(map(lambda u: (u / 1000), quantiles))
+    average = ret[0]
+    maxi = ret[1]
+    return average, maxi
+
+# return value of key from statfile
+def parse_perfstats(statfile, key):
+    with open(statfile, "r") as f:
+        reader = csv.reader(f, delimiter=";")
+        for row in reader: 
+            if len(row) >= 2 and key in row[2]:
+                ret = 0
+                try:
+                    ret = float(row[0])
+                    return ret
+                except:
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    return -1.0
+    return -1.0
+
+# write header for ranger training set csv
+# inputs: number of inputs ranger will get
+# result: whether to add result column
+def write_header(setfile, inputs, result=True):
+    with open(setfile, "w") as f:
+        w = csv.writer(f, delimiter=",", lineterminator="\n")
+        row = []
+        for i in range(inputs):
+            row.append("a{}".format(i))
+        if result: row.append("result")
+
+        w.writerow(row)
+
+# trainingset: 2d matrix
+def append_trainingset(setfile, trainingset):
+    with open(setfile, "a") as f:
+        w = csv.writer(f, delimiter=",", lineterminator="\n")
+        for row in trainingset:
+            w.writerow(row)
+

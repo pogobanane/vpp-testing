@@ -43,8 +43,8 @@ def extract_sets(training_set, validation_set, finput, n, training_map=None):
         with open(validation_set, "a") as csvval:
             # old batchsize -> new batchsize
             # batchsize0,batchsize1,...,batchsize99,rangerResult
-            trainwriter = csv.writer(csvtrain, delimiter=',')
-            validwriter = csv.writer(csvval, delimiter=',')
+            trainwriter = csv.writer(csvtrain, delimiter=',', lineterminator="\n")
+            validwriter = csv.writer(csvval, delimiter=',', lineterminator="\n")
             with open(finput, "r") as csvin: 
                 # port,queue,batchsize
                 reader = csv.reader(csvin, delimiter=',')
@@ -67,18 +67,6 @@ def extract_sets(training_set, validation_set, finput, n, training_map=None):
                         print("Reached EOF after " + i + " stub predictions.")
                         break
 
-# whether to add result column
-def write_header(setfile, result=True):
-    with open(setfile, "w") as f:
-        w = csv.writer(f, delimiter=",")
-        row = []
-        for i in range(args.inputs):
-            row.append("a{}".format(i))
-        if result: row.append("result")
-
-        w.writerow(row)
-
-
 def main(): 
 
     if os.path.isdir(args.inputfile):
@@ -95,8 +83,8 @@ def main():
         validation_set = args.validation_set
         print("Writing into " + training_set + " and " + validation_set)
 
-        write_header(training_set)
-        write_header(validation_set, result=False)
+        csvutil.write_header(training_set, args.inputs)
+        csvutil.write_header(validation_set, args.inputs, result=False)
 
         training_filter = {}
         training_filter["l2_xconext_000256_0064_001000"] = 100
