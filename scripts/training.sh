@@ -42,15 +42,16 @@ exit 0
 # read results
 last=$(ls /srv/testbed/results/okelmann/default | tail -n1)
 # run reward function on results and create new dataset to $last
-rewards=$(python3 scripts/training/training_set_refine.py $last $DUT $LOADGEN)
+python3 scripts/training/training_set_refine.py $last $DUT $LOADGEN --outfile "trainingset_refined1.csv"
 
 
 # cp new dataset to $DUT
-scp TODO "$DUT:/tmp/trainingset.csv"
+scp "trainingset_refined1.csv" "$DUT:/tmp/trainingset_refined.csv"
 # train with dataset
-pos commands launch -b -i scripts/training/ranger_train.sh /tmp/trainingset.csv /tmp/trained
+pos commands launch -b -i scripts/training/ranger_train.sh /tmp/trainingset.csv /tmp/forest1.forest
 
 # apply model
+ssh $DUT cp /tmp/forest1.forest ~/ba-okelmann/
 
 # repeat
 
