@@ -20,3 +20,4 @@ statistics/data/*/
 statistics/*.pdf
 **.swp
 training_test/
+**/__pycache__/
