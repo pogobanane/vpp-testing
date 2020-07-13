@@ -388,7 +388,12 @@ function xconext_tests () {
 
 #### run test functions ####
 
-offline_training
+# load parameters
+iteration="0"
+if [ -e /tmp/pos_commands_param_1 ]; then
+	iteration=$(cat /tmp/pos_commands_param_1)
+fi
+offline_training $iteration
 #xconext_all_tests
 #bridge_simple_test
 # bridge_config_testing

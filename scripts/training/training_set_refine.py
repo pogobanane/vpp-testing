@@ -12,6 +12,7 @@ parser.add_argument("pos_upload", help="Location for pos_uploads containing $DUT
 parser.add_argument("dut")
 parser.add_argument("loadgen")
 parser.add_argument("-o", "--outfile", default="trainingset.csv", type=str, help="File to write refined trainingset to.")
+parser.add_argument("-i", "--iteration", default="00000000", type=str, help="Integer describing l2_training_i_0064* to match on.")
 
 RANGER_INPUTS = 100
 
@@ -19,7 +20,7 @@ args = parser.parse_args()
 
 dutfiles = os.listdir(args.pos_upload + "/" + args.dut)
 dutfiles = filter(lambda x: 
-            re.search("^l2_training_00000000_0064_.*\.forestio.csv$", x)
+            re.search("^l2_training_" + args.iteration + "_0064_.*\.forestio.csv$", x)
         , dutfiles)
 dutfiles = sorted(dutfiles)
 
