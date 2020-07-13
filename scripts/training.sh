@@ -13,7 +13,7 @@ LOADGEN=$2
 set -e
 
 tmp=/tmp/$USER
-mkdir $tmp
+mkdir -p $tmp
 
 # run test
 
