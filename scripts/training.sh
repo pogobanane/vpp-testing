@@ -29,7 +29,9 @@ pos allocations variables $LOADGEN scripts/klaipeda-narva.yaml
 # scp dataset.csv $DUT
 scp ~/data2.forest ${DUT}:~/ba-okelmann/
 
-for s in {1..2}
+# 6min per run
+# 100*6 = 600min = 10h
+for s in {1..101}
 do
 	i=`printf "%.0f" $s`
 	istr=`printf "%08i" $i`
