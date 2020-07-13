@@ -60,9 +60,8 @@ do
 	# cp new dataset to $DUT
 	scp "$tmp/trainingset_refined_$istr.csv" "$DUT:/tmp/"
 	ssh $DUT "pos_upload /tmp/trainingset_refined_$istr.csv"
-	# train with dataset
+	# train with dataset and pos_upload it
 	ssh $DUT "cd ba-okelmann && scripts/training/ranger_train.sh /tmp/trainingset_refined_$istr.csv /tmp/forest_$istr"
-	ssh $DUT "pos_upload /tmp/forest_$istr.forest"
 
 	# apply model
 	ssh $DUT "cp /tmp/forest_$istr.forest ~/ba-okelmann/data2.forest"
