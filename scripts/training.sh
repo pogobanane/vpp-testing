@@ -48,7 +48,7 @@ python3 scripts/training/training_set_refine.py $posroot/$last $DUT $LOADGEN --o
 # cp new dataset to $DUT
 scp "trainingset_refined1.csv" "$DUT:/tmp/trainingset_refined.csv"
 # train with dataset
-pos commands launch -b -i scripts/training/ranger_train.sh /tmp/trainingset.csv /tmp/forest1.forest
+pos commands launch -b -i scripts/training/ranger_train.sh /tmp/trainingset_refined.csv /tmp/forest1.forest
 
 # apply model
 ssh $DUT cp /tmp/forest1.forest ~/ba-okelmann/
