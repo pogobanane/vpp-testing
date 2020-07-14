@@ -56,7 +56,9 @@ do
 	posroot="/srv/testbed/results/okelmann/default"
 	last=$(ls "$posroot" | tail -n1)
 	# run reward function on results and create new dataset to $last
-	python3 scripts/training/training_set_refine.py $posroot/$last $DUT $LOADGEN --outfile "$tmp/trainingset_refined_$istr.csv" --iteration "$istr"
+	python3 scripts/training/training_set_refine.py $posroot/$last $DUT $LOADGEN --outfile "$tmp/trainingset_refined_$istr.csv" --iteration "$istr" | tee -a $tmp/refinement.log
+	scp "$tmp/refinement.log" "$DUT:/tmp/"
+	ssh $DUT "pos_upload /tmp/refinement.log"
 
 
 	# cp new dataset to $DUT
