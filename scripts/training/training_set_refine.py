@@ -12,7 +12,7 @@ parser.add_argument("pos_upload", help="Location for pos_uploads containing $DUT
 parser.add_argument("dut")
 parser.add_argument("loadgen")
 parser.add_argument("-o", "--outfile", default="trainingset.csv", type=str, help="File to write refined trainingset to.")
-parser.add_argument("-i", "--iteration", default="00000000", type=str, help="Integer describing l2_training_i_0064* to match on.")
+parser.add_argument("-i", "--iteration", default="00000000", type=str, help="Integer describing l2_training_iiiiiiii_0064* to match on.")
 
 RANGER_INPUTS = 100
 
@@ -84,7 +84,7 @@ def refine_scenario(prefix, reward, trainingrows):
     reward -= reward_min 
     # 0 < reward < 100
     p_deviate = 1 - (reward / (numpy.abs(reward_min) + numpy.abs(reward_max))) # normalized deviation
-    stddev = 30 * pow(p_deviate, 2)
+    stddev = 100 * pow(p_deviate, 5) + 5 # +5 to keep randomness at all time for exploration
     old_prediction = trainingrows_avg_result(trainingrows)
     new_prediction = int(positive_random_normal(old_prediction, stddev))
     for row in trainingrows:
