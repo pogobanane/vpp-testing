@@ -346,7 +346,7 @@ function offline_training() {
 	# TODO does 0 work in this context?
 	l2-throughput-conext "l2_training_${bstr}_0000_${tstr}" 0 60
 
-	for throughput in {2,10,100,500,1000,5000,7500}
+	for throughput in {2,10,500,1000,5000,7500}
 	do
 		t=`printf "%.0f" $throughput`
 		tstr=`printf "%06i" $t`
