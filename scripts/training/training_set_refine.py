@@ -84,7 +84,7 @@ def refine_scenario(prefix, reward, trainingrows):
     reward -= reward_min 
     # 0 < reward < 100
     p_deviate = 1 - (reward / (numpy.abs(reward_min) + numpy.abs(reward_max))) # normalized deviation
-    stddev = 2000 * pow(p_deviate, 5) + 5 # +5 to keep randomness at all time for exploration
+    stddev = 100 * pow(p_deviate, 5) + 5 # +5 to keep randomness at all time for exploration
     old_prediction = trainingrows_avg_result(trainingrows)
     new_prediction = int(positive_random_normal(old_prediction, stddev))
     for row in trainingrows:
