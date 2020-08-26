@@ -466,14 +466,39 @@ function xconext_tests () {
 	done
 }
 
+# xconnect 60 runs
+function validation () {
+	vppcmd="${GITDIR}/scripts/vpp_tests/l2-xconnect-rr.sh"
+
+	for run in {0..5}
+	do
+		# do 0 - 10G in 500th steps
+		for throughput in {1..20}
+		do
+			t=`echo "$throughput * 500" | bc`
+			t=`printf "%.0f" $t`
+			tstr=`printf "%06i" $t`
+			# do different packet sizes/mixes (64, 512, 1522)
+			vpp-test-ranger "l2_training_0064_${tstr}_${run}" "$vppcmd" "" ipcdump
+			vpp-test-ranger "l2_training_0512_${tstr}_${run}" "$vppcmd" "" ipcdump
+			vpp-test-ranger "l2_training_1522_${tstr}_${run}" "$vppcmd" "" ipcdump
+		done
+	done
+}
+
+function training_step () {
+	# load parameters
+	iteration="0"
+	if [ -e /tmp/pos_commands_param_1 ]; then
+		iteration=$(cat /tmp/pos_commands_param_1)
+	fi
+	offline_training $iteration
+}
+
 #### run test functions ####
 
-# load parameters
-iteration="0"
-if [ -e /tmp/pos_commands_param_1 ]; then
-	iteration=$(cat /tmp/pos_commands_param_1)
-fi
-offline_training $iteration
+validation
+#training_step
 #xconext_all_tests
 #bridge_simple_test
 # bridge_config_testing
