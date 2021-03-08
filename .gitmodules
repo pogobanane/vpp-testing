@@ -3,11 +3,11 @@
 	url = https://github.com/emmericp/MoonGen.git
 [submodule "vpp"]
 	path = vpp
-	url = git@gitlab.lrz.de:ai4p/idp-okelmann/vpp-fork.git
+	url = git@github.com:pogobanane/vpp-fork.git
 	branch = benchplug
 [submodule "theleos88-vpp-bench"]
 	path = theleos88-vpp-bench
 	url = https://github.com/theleos88/vpp-bench.git
 [submodule "ranger"]
 	path = ranger
-	url = git@gitlab.lrz.de:ai4p/idp-okelmann/ranger-server.git
+	url = git@github.com:pogobanane/ranger-server.git
